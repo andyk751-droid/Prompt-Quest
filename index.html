@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Prompt Quest: a hands-on game for learning to get great results from AI.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Prompt Quest</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: game board — sticky player HUD; home = hero + player card, then a winding world trail; world screen = colored header, 5-stage track, play card */
+:root{
+  --bg:#EDF0FA; --dot:#D3D9EE; --surface:#FFFFFF; --surface-2:#F3F5FC; --ink:#1B2140; --muted:#5B6287; --line:#DCE1F2;
+  --accent:#FF6A4D; --on:#FFFFFF; --gold:#F2AE2A; --gold-deep:#B97A06; --good:#16936F; --good-soft:#DDF5EC; --bad:#D93D52; --bad-soft:#FCE4E7;
+  --w1:#F0623F; --w2:#7656EC; --w3:#11998A; --w4:#3463DB; --w5:#DB9010; --w6:#D23F78;
+  --p-role:#7656EC; --p-task:#DB8A0E; --p-context:#3463DB; --p-examples:#11998A; --p-format:#F0623F; --p-constraints:#B04A9E;
+  --olive:var(--w4); --olive-ink:var(--on); --brass:var(--gold-deep); --brass-soft:#FDF0D5;
+  --shadow:0 1px 0 rgba(27,33,64,.05),0 10px 28px -14px rgba(27,33,64,.28);
+  --display:'Bricolage Grotesque','Trebuchet MS',system-ui,sans-serif; --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10132A; --dot:#1E2348; --surface:#1B2045; --surface-2:#242A55; --ink:#EEF0FF; --muted:#A6ACD3; --line:#323A6B;
+  --accent:#FF8468; --on:#10132A; --gold:#F6C356; --gold-deep:#F6C356; --good:#4BD3A6; --good-soft:#163A33; --bad:#FF7487; --bad-soft:#43202C;
+  --w1:#FF8A6C; --w2:#A08BFF; --w3:#3CD2B6; --w4:#709AFF; --w5:#F7BC45; --w6:#F773A5;
+  --p-role:#A08BFF; --p-task:#F7BC45; --p-context:#709AFF; --p-examples:#3CD2B6; --p-format:#FF8A6C; --p-constraints:#E08AD6;
+  --brass-soft:#3B3017; --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 30px -14px rgba(0,0,0,.6); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#10132A; --dot:#1E2348; --surface:#1B2045; --surface-2:#242A55; --ink:#EEF0FF; --muted:#A6ACD3; --line:#323A6B;
+  --accent:#FF8468; --on:#10132A; --gold:#F6C356; --gold-deep:#F6C356; --good:#4BD3A6; --good-soft:#163A33; --bad:#FF7487; --bad-soft:#43202C;
+  --w1:#FF8A6C; --w2:#A08BFF; --w3:#3CD2B6; --w4:#709AFF; --w5:#F7BC45; --w6:#F773A5;
+  --p-role:#A08BFF; --p-task:#F7BC45; --p-context:#709AFF; --p-examples:#3CD2B6; --p-format:#FF8A6C; --p-constraints:#E08AD6;
+  --brass-soft:#3B3017; --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 30px -14px rgba(0,0,0,.6); color-scheme:dark }
+*{box-sizing:border-box}
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.6px);background-size:24px 24px;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;line-height:1.08;margin:0;letter-spacing:-.015em}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+.ico{display:inline-block;vertical-align:middle;flex:none}
+
+/* HUD */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hud .wrap{display:flex;align-items:center;gap:10px 16px;padding-block:10px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:22px;display:flex;align-items:center;gap:9px;background:none;border:0;padding:0;letter-spacing:-.02em}
+.brand .logo{width:34px;height:34px;border-radius:11px;background:conic-gradient(from 200deg,var(--w1),var(--w5),var(--w3),var(--w4),var(--w2),var(--w6),var(--w1));display:grid;place-items:center;color:#fff;box-shadow:var(--shadow)}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav button{background:none;border:0;border-radius:999px;padding:7px 13px;font-size:14px;font-weight:600;color:var(--muted)}
+.nav button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+.stats{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13.5px;padding:5px 11px 5px 6px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill .ico{width:22px;height:22px}
+.pill.lvl{padding-left:4px}
+.pill.lvl svg{width:26px;height:30px}
+.pill.hot{color:var(--accent);border-color:var(--accent)}
+.pill.ai{font-weight:600;font-size:12.5px;padding-left:10px}
+.pill.ai i{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pill.ai.on i{background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.coin{width:22px;height:22px}
+main{padding-block:30px 70px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;border:2px solid var(--line);background:var(--surface);padding:10px 18px;font-weight:700;font-size:15px;box-shadow:0 3px 0 var(--line);transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on);box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.btn.primary:active:not(:disabled){box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.btn.brass,.btn.gold{background:var(--gold);border-color:var(--gold);color:#3A2600;box-shadow:0 4px 0 color-mix(in srgb,var(--gold) 55%,#000)}
+.btn.big{padding:14px 26px;font-size:17px;border-radius:16px}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.sm{padding:6px 12px;font-size:13.5px;border-radius:11px;box-shadow:0 2px 0 var(--line)}
+.btn.ghost{background:none;box-shadow:none;border-color:transparent;color:var(--muted)}
+
+/* Home hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr);gap:30px;align-items:center;margin-bottom:46px}
+.hero h1{font-size:clamp(40px,6.6vw,70px);font-weight:800;letter-spacing:-.035em;line-height:.98}
+.hero h1 .hl{background:linear-gradient(100deg,var(--w1),var(--w6) 50%,var(--w2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:50ch;font-size:18px;color:var(--muted);margin:16px 0 22px}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+.player{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.player::before{content:"";position:absolute;inset:-40% -30% auto auto;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--gold) 35%,transparent),transparent 70%)}
+.player .top{display:flex;gap:14px;align-items:center;position:relative}
+.player .top svg{width:72px;height:86px}
+.player .lv{font-family:var(--display);font-size:30px;font-weight:800;line-height:1}
+.statgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px;position:relative}
+.stat{background:var(--surface-2);border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+.xpbar{margin-top:14px;position:relative}
+.xpbar .track{height:14px;border-radius:99px;background:var(--surface-2);overflow:hidden;border:1px solid var(--line)}
+.xpbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--accent));transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.xpbar .lbl{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:5px;font-variant-numeric:tabular-nums}
+.nextup{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:relative}
+
+/* Trail map */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 18px;flex-wrap:wrap}
+.sec-h h2{font-size:clamp(28px,4vw,38px);font-weight:800}
+.trail{position:relative;display:grid;gap:26px;padding-block:6px}
+.trail-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.trow{position:relative;display:flex;align-items:center;gap:22px;justify-content:center}
+.trow.alt{flex-direction:row-reverse}
+.trow:nth-child(4n+2){transform:translateX(-7%)}
+.trow:nth-child(4n+4){transform:translateX(7%)}
+.wnode{position:relative;flex:none;width:104px;height:104px;border-radius:50%;border:0;padding:0;background:transparent;display:grid;place-items:center;z-index:1}
+.wnode .disc{width:80px;height:80px;border-radius:50%;background:var(--wc);color:#fff;display:grid;place-items:center;box-shadow:0 6px 0 color-mix(in srgb,var(--wc) 60%,#000),0 14px 24px -10px var(--wc);transition:transform .15s}
+.wnode:not(:disabled):hover .disc{transform:translateY(-3px) rotate(-4deg)}
+.wnode .disc svg{width:38px;height:38px}
+.wnode .ring{position:absolute;inset:0}
+.wnode:disabled{cursor:not-allowed}
+.wnode:disabled .disc{background:var(--surface-2);color:var(--muted);box-shadow:0 6px 0 var(--line)}
+.wnode .crown{position:absolute;top:-2px;right:-2px;width:34px;height:34px;border-radius:50%;background:var(--gold);color:#3A2600;display:grid;place-items:center;box-shadow:0 3px 0 color-mix(in srgb,var(--gold) 55%,#000)}
+.wnode .crown svg{width:20px;height:20px}
+.wnode.current::after{content:"";position:absolute;inset:6px;border-radius:50%;border:3px solid var(--wc);animation:halo 1.8s ease-out infinite;pointer-events:none}
+@keyframes halo{from{transform:scale(.95);opacity:.9}to{transform:scale(1.35);opacity:0}}
+.wcard{flex:0 1 420px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);display:grid;gap:6px;position:relative;z-index:1}
+.wcard.locked{opacity:.62}
+.wcard .wn{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--wc)}
+.wcard h3{font-size:24px;font-weight:800}
+.wcard p{margin:0;font-size:14.5px;color:var(--muted)}
+.wcard .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap}
+.pips{display:flex;gap:5px}
+.pips i{width:22px;height:8px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line)}
+.pips i.on{background:var(--wc);border-color:var(--wc)}
+.stars{font-size:18px;letter-spacing:2px;color:var(--gold)}
+.stars .off{color:var(--line)}
+
+.howto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:50px}
+.htile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:flex-start}
+.htile .bub{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none;color:#fff}
+.htile b{font-family:var(--display);font-size:18px;display:block}
+.htile span{font-size:14px;color:var(--muted)}
+.foot-tools{display:flex;justify-content:center;gap:8px;margin-top:34px;flex-wrap:wrap}
+
+/* World screen */
+.whead{position:relative;border-radius:26px;padding:22px clamp(18px,3vw,30px);background:linear-gradient(135deg,color-mix(in srgb,var(--wc) 88%,#000),color-mix(in srgb,var(--wc) 55%,#1B2140));color:#fff;overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow)}
+.whead::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.1);box-shadow:-120px 140px 0 -40px rgba(255,255,255,.07)}
+.whead .row1{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:1;flex-wrap:wrap}
+.whead .back{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
+.whead .main{display:flex;gap:18px;align-items:center;margin-top:16px;position:relative;z-index:1}
+.whead .glyph{width:74px;height:74px;border-radius:22px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:none}
+.whead .glyph svg{width:40px;height:40px}
+.whead .wn{font-size:12.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.whead h1{font-size:clamp(30px,5vw,46px);font-weight:800;color:#fff}
+.whead p{margin:4px 0 0;opacity:.92;max-width:56ch}
+.whead .stars{color:#fff}.whead .stars .off{color:rgba(255,255,255,.35)}
+
+.track{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin:6px 0 22px}
+.track::before{content:"";position:absolute;left:10%;right:10%;top:27px;height:6px;border-radius:9px;background:var(--line)}
+.track .prog{position:absolute;left:10%;top:27px;height:6px;border-radius:9px;background:var(--wc);transition:width .6s}
+.stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;min-width:0}
+.stage .dot{width:60px;height:60px;border-radius:50%;background:var(--surface);border:3px solid var(--line);display:grid;place-items:center;color:var(--muted);transition:transform .15s}
+.stage .dot svg{width:24px;height:24px}
+.stage.boss .dot{width:66px;height:66px;margin-top:-3px}
+.stage.done .dot{background:var(--wc);border-color:var(--wc);color:#fff}
+.stage[aria-current="true"] .dot{border-color:var(--wc);color:var(--wc);transform:scale(1.08);box-shadow:0 0 0 6px color-mix(in srgb,var(--wc) 20%,transparent)}
+.stage.done[aria-current="true"] .dot{color:#fff}
+.stage .lbl{font-size:13px;font-weight:700;text-align:center;line-height:1.2}
+.stage:disabled{cursor:not-allowed;opacity:.55}
+
+.act{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(18px,3vw,30px);box-shadow:var(--shadow)}
+.act-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.act-h .kicker{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--wc)}
+.act-h .kicker svg{width:16px;height:16px}
+.act-h h2{font-size:clamp(26px,3.6vw,34px);font-weight:800;margin-top:4px}
+.xptag{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;color:var(--gold-deep);background:var(--brass-soft);border-radius:999px;padding:5px 12px 5px 6px;white-space:nowrap}
+.xptag svg{width:20px;height:20px}
+.intro{max-width:66ch;margin:6px 0 20px;font-size:16.5px}
+.next-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px;padding-top:18px;border-top:2px dashed var(--line);flex-wrap:wrap}
+.clear{display:flex;align-items:center;gap:12px;background:var(--good-soft);border:2px solid var(--good);color:var(--ink);border-radius:16px;padding:10px 16px;font-weight:700}
+.clear .burst{width:38px;height:38px;border-radius:50%;background:var(--good);color:#fff;display:grid;place-items:center;flex:none}
+.clear .burst svg{width:22px;height:22px}
+.clear b{font-family:var(--display);font-size:20px;display:block;line-height:1.1}
+.clear.pop{animation:popin .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes popin{from{transform:scale(.7);opacity:0}}
+
+/* Activities */
+textarea{width:100%;min-height:120px;padding:13px;border-radius:14px;border:2px solid var(--line);background:var(--surface-2);font-family:var(--mono);font-size:13.5px;line-height:1.55;resize:vertical}
+textarea:focus{border-color:var(--wc,var(--accent));outline:none}
+input[type=text]{width:100%;padding:11px 13px;border-radius:12px;border:2px solid var(--line);background:var(--surface-2);font-size:15px}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:700}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs button .ck{color:var(--good);margin-left:5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.out{margin-top:14px;background:var(--surface-2);border:2px dashed var(--line);border-radius:16px;padding:16px;white-space:pre-wrap;font-size:15px;max-height:400px;overflow:auto;min-height:60px}
+.out .tag{display:block;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:6px}
+.scenario{background:var(--brass-soft);border-radius:16px;padding:13px 16px;margin-bottom:14px;font-size:15.5px}
+.scenario b{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);display:block;margin-bottom:2px}
+.meter{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.meter span{font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:99px;border:2px solid var(--line);color:var(--muted)}
+.meter span.on{color:#fff;border-color:transparent}
+
+.q{margin-bottom:20px}
+.q .qt{font-weight:700;margin-bottom:10px;font-size:16.5px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;font-size:15.5px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 3px 0 var(--line);transition:transform .08s}
+.opt:hover:not(:disabled){border-color:var(--wc,var(--accent))}
+.opt:active:not(:disabled){transform:translateY(2px)}
+.opt .box{flex:none;width:22px;height:22px;border:2px solid var(--muted);border-radius:7px;margin-top:1px;display:grid;place-items:center;font-size:13px;line-height:1;font-weight:800}
+.opt.radio .box{border-radius:50%}
+.opt[aria-pressed="true"]{border-color:var(--wc,var(--accent))}
+.opt[aria-pressed="true"] .box{background:var(--wc,var(--accent));border-color:var(--wc,var(--accent));color:#fff}
+.opt.right{border-color:var(--good);background:var(--good-soft);box-shadow:0 3px 0 var(--good)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);box-shadow:0 3px 0 var(--bad)}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;padding:12px 14px;border-radius:14px;font-size:15px;background:var(--surface-2)}
+.fb.good{background:var(--good-soft)}.fb.bad{background:var(--bad-soft)}
+.fb b{display:block;margin-bottom:2px;font-family:var(--display);font-size:17px}
+.qprog{display:flex;gap:5px;margin-bottom:16px}
+.qprog i{flex:1;height:9px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line)}
+.qprog i.g{background:var(--good);border-color:var(--good)}.qprog i.b{background:var(--bad);border-color:var(--bad)}.qprog i.c{background:var(--wc,var(--accent));border-color:var(--wc,var(--accent))}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;margin-bottom:18px}
+.lcard{border:2px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--surface);min-width:0;box-shadow:0 3px 0 var(--line)}
+.lcard h4{margin:0 0 4px;font-size:18px}
+.lcard p{margin:0;font-size:14.5px}
+.lcard .ex{margin-top:10px;font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--surface-2);border-radius:10px;padding:8px 10px}
+.pcard{border-color:var(--pc);box-shadow:0 4px 0 var(--pc)}
+.pcard h4{color:var(--pc);font-size:24px;font-weight:800}
+.mnemonic{font-family:var(--display);font-size:clamp(22px,3vw,28px);font-weight:800;margin:4px 0 16px}
+.mnemonic b{color:var(--accent)}
+pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:16px;padding:16px;white-space:pre-wrap;font-family:var(--mono);font-size:13px;overflow-x:auto;margin:0 0 18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.panel h3{font-size:22px;font-weight:800;margin-bottom:8px}
+
+.palette{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.palette button{border:2px solid var(--pc);color:var(--pc);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px}
+.palette button[aria-pressed="true"]{background:var(--pc);color:#fff}
+.segs{line-height:2.2;font-size:16px;background:var(--surface-2);border-radius:16px;padding:14px 16px}
+.seg{border:2px dashed var(--muted);background:var(--surface);border-radius:9px;padding:2px 7px;text-align:left;font-size:16px;line-height:1.6;margin:2px 0}
+.seg.ok{border:2px solid var(--pc);background:color-mix(in srgb,var(--pc) 16%,var(--surface));cursor:default}
+.seg.ok sup{font-size:10.5px;color:var(--pc);text-transform:uppercase;margin-left:5px;font-weight:800}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.duel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dcard{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:18px;padding:16px;font-family:var(--mono);font-size:13px;line-height:1.55;min-width:0;box-shadow:0 4px 0 var(--line);transition:transform .1s}
+.dcard:hover:not(:disabled){transform:translateY(-2px);border-color:var(--wc)}
+.dcard .lab{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--display);font-size:18px;font-weight:800;margin-bottom:8px}
+.dcard.right{border-color:var(--good);background:var(--good-soft);box-shadow:0 4px 0 var(--good)}
+.dcard.wrong{border-color:var(--bad);background:var(--bad-soft);box-shadow:0 4px 0 var(--bad)}
+
+.slots{display:grid;gap:12px}
+.slot label{display:flex;justify-content:space-between;gap:8px;font-weight:800;font-size:15px;color:var(--pc)}
+.slot label small{font-weight:500;color:var(--muted);font-size:13px;text-align:right}
+.slot textarea{min-height:60px;border-left:6px solid var(--pc)}
+
+.ranklist{display:grid;gap:10px}
+.ritem{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:12px;font-family:var(--mono);font-size:13px;box-shadow:0 3px 0 var(--line);align-items:center}
+.ritem .pos{width:44px;height:44px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px;color:var(--muted)}
+.ritem.set .pos{background:var(--wc);color:#fff}
+.ritem.right{border-color:var(--good)}.ritem.wrong{border-color:var(--bad)}
+
+.rub{display:grid;gap:10px;margin-top:12px}
+.rubrow{display:grid;grid-template-columns:130px minmax(0,1fr);gap:10px;align-items:center}
+.seg5{display:flex;gap:6px}
+.seg5 button{width:42px;height:40px;border-radius:12px;border:2px solid var(--line);background:var(--surface);font-weight:800;box-shadow:0 2px 0 var(--line)}
+.seg5 button[aria-pressed="true"]{background:var(--wc);color:#fff;border-color:var(--wc)}
+.seg5 button.exp{outline:3px solid var(--gold);outline-offset:2px}
+
+.grade{margin-top:14px;border-radius:18px;padding:16px;background:var(--surface-2)}
+.grade .score{font-family:var(--display);font-weight:800;font-size:46px;line-height:1}
+.grade .score.pass{color:var(--good)}.grade .score.fail{color:var(--bad)}
+.grade ul{margin:6px 0 0;padding-left:20px;font-size:14.5px}
+.grade .improved{margin-top:12px;font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;background:var(--surface);border-radius:12px;padding:10px 12px}
+.grade .chip{display:inline-flex;font-weight:800;font-size:13px;padding:5px 12px;border-radius:999px;background:var(--surface);border:2px solid var(--line)}
+.weak{font-family:var(--mono);font-size:14px;background:var(--bad-soft);border-radius:10px;padding:7px 11px;display:inline-block;margin-bottom:10px}
+.mission{border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.mission h4{margin:0 0 8px;font-size:21px}
+
+/* Trophies */
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:12px}
+.badge{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow)}
+.badge svg{width:52px;height:52px;flex:none}
+.badge.off{opacity:.5;box-shadow:none}
+.badge.off svg{filter:grayscale(1)}
+.badge b{display:block;font-size:15px}
+.badge span{font-size:13px;color:var(--muted)}
+.ranks{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:10px;margin-top:12px}
+.rk{border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center;background:var(--surface)}
+.rk svg{width:40px;height:48px}
+.rk.me{border:2px solid var(--gold);box-shadow:0 4px 0 var(--gold)}
+.rk .x{font-size:12px;color:var(--muted);font-weight:600}
+.rk b{display:block;font-size:14px}
+
+/* Champion card */
+.cert{margin-top:46px}
+.certificate{border-radius:28px;padding:34px 22px;text-align:center;background:linear-gradient(135deg,var(--w2),var(--w6) 55%,var(--w1));color:#fff;box-shadow:var(--shadow)}
+.certificate .eyebrow{color:rgba(255,255,255,.85)}
+.certificate h2{font-size:clamp(30px,5vw,48px);font-weight:800;color:#fff}
+.certificate .who{font-family:var(--display);font-size:36px;font-weight:800;border-bottom:2px solid rgba(255,255,255,.5);display:inline-block;padding:0 18px 2px;margin:10px 0}
+
+/* Toasts / modal */
+.toasts{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:20;pointer-events:none}
+.toast{background:var(--ink);color:var(--bg);border-radius:16px;padding:11px 16px;font-weight:700;font-size:15px;box-shadow:0 10px 26px rgba(0,0,0,.3);animation:pop .35s cubic-bezier(.2,1.5,.4,1);max-width:300px}
+.toast small{display:block;font-weight:500;opacity:.8}
+@keyframes pop{from{transform:translateY(16px) scale(.9);opacity:0}}
+.modal{position:fixed;inset:0;background:rgba(12,14,34,.6);display:grid;place-items:center;z-index:30;padding:20px;backdrop-filter:blur(3px)}
+.modal .card{background:var(--surface);border-radius:28px;padding:30px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:popin .5s cubic-bezier(.2,1.6,.4,1)}
+.modal svg{width:96px;height:114px}
+.modal h2{font-size:40px;font-weight:800;margin:6px 0 8px}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .howto{grid-template-columns:1fr}
+  .stats{margin-left:0;width:100%}
+}
+@media (max-width:640px){
+  .trow,.trow.alt{flex-direction:row;justify-content:flex-start;gap:14px;transform:none!important}
+  .wnode{width:84px;height:84px}.wnode .disc{width:64px;height:64px}.wnode .disc svg{width:30px;height:30px}
+  .wcard{flex:1 1 auto}
+  .track::before,.track .prog{top:21px}
+  .stage .dot{width:48px;height:48px}.stage.boss .dot{width:52px;height:52px;margin-top:-2px}
+  .stage .lbl{font-size:11.5px}
+  .duel{grid-template-columns:1fr}
+  .rubrow{grid-template-columns:1fr}
+  .hud{position:static}
+  .pill.ai{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="hud">
+  <div class="wrap">
+    <button class="brand" id="brand" aria-label="Map"><span class="logo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5l2.6 6.2 6.7.6-5.1 4.4 1.6 6.6L12 16.8l-5.8 3.5 1.6-6.6L2.7 9.3l6.7-.6z" fill="#fff"/></svg></span>Prompt Quest</button>
+    <nav class="nav" id="nav"></nav>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script>
+/* ============ DATA ============ */
+const PARTS = [
+  {k:'role', n:'Role', d:'Who the AI should be.', ex:'You are a patient personal-finance coach.'},
+  {k:'task', n:'Task', d:'The job, stated with a clear action verb.', ex:'Create a simple monthly budget plan for me.'},
+  {k:'context', n:'Context', d:'What the AI can’t guess: audience, purpose, situation, background.', ex:'I\u2019m 28, just started my first full-time job, and I\u2019ve never made a budget.'},
+  {k:'examples', n:'Examples', d:'A sample of what “good” looks like.', ex:'I like explanations like: \u201cThink of savings as paying your future self first.\u201d'},
+  {k:'format', n:'Format', d:'The shape of the output.', ex:'Use a table with columns for Category, Amount, and Notes.'},
+  {k:'constraints', n:'Constraints', d:'Limits, rules, and tone.', ex:'Under 300 words. No jargon. Don\u2019t recommend specific stocks.'}
+];
+const PART = Object.fromEntries(PARTS.map(p=>[p.k,p]));
+
+const PHASES = [
+  {k:'ce', n:'Try It'},
+  {k:'pp', n:'Your Take'},
+  {k:'gen', n:'Power-Up'},
+  {k:'dev', n:'Practice'},
+  {k:'apply', n:'Boss'}
+];
+
+const RANKS = [
+  {n:'Novice', a:'LV 1', xp:0},
+  {n:'Apprentice', a:'LV 2', xp:120},
+  {n:'Explorer', a:'LV 3', xp:280},
+  {n:'Builder', a:'LV 4', xp:480},
+  {n:'Crafter', a:'LV 5', xp:720},
+  {n:'Specialist', a:'LV 6', xp:1000},
+  {n:'Expert', a:'LV 7', xp:1320},
+  {n:'Master', a:'LV 8', xp:1680},
+  {n:'Prompt Sage', a:'LV 9', xp:2050}
+];
+
+const BADGES = [
+  {k:'first_run', n:'First Contact', d:'Run your first prompt.'},
+  {k:'iterator', n:'Iterator', d:'Run 5 prompts in the sandbox.'},
+  {k:'reflect', n:'Deep Thinker', d:'Share your take 4 times.'},
+  {k:'combo5', n:'Hot Streak', d:'5 correct answers in a row.'},
+  {k:'combo10', n:'On Fire', d:'10 correct answers in a row.'},
+  {k:'anatomy', n:'Ingredient Expert', d:'Perfect score on the World 1 boss.'},
+  {k:'builder', n:'Builder', d:'Build a full six-ingredient prompt.'},
+  {k:'coached', n:'Coachable', d:'Get your first prompt review from the coach.'},
+  {k:'bughunter', n:'Bug Hunter', d:'Diagnose every flawed prompt exactly.'},
+  {k:'judge', n:'Sound Judgment', d:'Match the pro on every score (within 1).'},
+  {k:'capstone', n:'Prompt Master', d:'Beat the final boss.'},
+  {k:'dhg', n:'Gold Standard', d:'Earn 3 stars in every world.'}
+];
+
+const XP = {ce:40, pp:40, gen:50, dev:80, apply:120};
+
+const MODULES = [
+/* ---------- MODULE 1 ---------- */
+{id:'m1', title:'Six Ingredients', bloom:'Remember', lvl:1,
+ obj:'Every great prompt uses the same six ingredients. Learn to spot them.',
+ phases:{
+  ce:{type:'sandbox', title:'Two Prompts, One Topic', intro:'Run Prompt A, then Prompt B. Same topic, very different instructions. Watch what comes back.',
+    requireAll:true,
+    prompts:[
+      {label:'Prompt A', text:'Write something about teamwork.',
+       canned:`Teamwork is the collaborative effort of a group to achieve a common goal. Effective teams communicate openly, respect each other's strengths, and share responsibility. In business, sports, and everyday life, teamwork leads to better outcomes and stronger relationships. As the saying goes, "Teamwork makes the dream work." By working together, people can accomplish more than they ever could alone...`},
+      {label:'Prompt B', text:'You are an upbeat youth soccer coach. Write a 150-word pep talk for a team of 10-year-olds before the first game of their season. Use simple words, include one funny thing that could happen on the field, and end with a short team chant they can shout together.',
+       canned:`Okay team, huddle up! Today is our very first game, and I am SO proud of you already.\n\nHere's the deal: we pass the ball, we cheer for each other, and we never give up, even if we're behind. Remember at practice when Max kicked the ball so hard it landed in the snack cooler? That's the kind of energy I want today. Just maybe aim for the goal this time.\n\nIf you fall down, get back up. If a teammate makes a mistake, give them a high five. Winning is fun, but trying your hardest together is what makes us a team.\n\nNow hands in the middle. On three:\n"One, two, three... TIGERS ROAR!"`}
+    ]},
+  pp:{type:'reflect', title:'What Happened?', intro:'Quick gut check. What did you notice?',
+    questions:[
+      {q:'Which response would you actually use with your team?', any:true, opts:['Response A','Response B'], fb:'Most people pick B. It was written for a specific audience, length, and purpose, so it was ready to use. A needed a total rewrite.'},
+      {q:'What did Prompt B include that Prompt A didn’t? (Select all that apply.)', multi:true,
+       opts:[{t:'A role for the AI (a youth soccer coach)',ok:1},{t:'Who the audience is (10-year-olds before a game)',ok:1},{t:'A length (150 words)',ok:1},{t:'A required ending (a team chant)',ok:1},{t:'Bigger vocabulary words',ok:0}],
+       fb:'Prompt B added a role, an audience, a length, and a specific structure. None of that is fancy wording. It’s information the AI could not have guessed.'}
+    ],
+    journal:'In one or two sentences: what was the biggest difference between the two responses, and why do you think it happened?'},
+  gen:{type:'lesson', title:'The Six Ingredients', intro:'Every strong prompt is built from the same six ingredients. Quick questions only need two or three. Big deliverables need all six.',
+    showParts:true,
+    mnemonic:'<b>R</b>eally <b>T</b>asty <b>C</b>akes <b>E</b>ven <b>F</b>eed <b>C</b>rowds',
+    mnemonicNote:'Role · Task · Context · Examples · Format · Constraints',
+    check:{q:'Which part answers “Who is going to read this, and why?”', opts:['Role','Task','Context','Format'], ok:2, why:'Context covers audience, purpose, and background: the things the AI can’t know unless you tell it. Role is who the AI is, not who the reader is.'}},
+  dev:{type:'tagger', title:'Ingredient Spotter', intro:'Pick an ingredient from the palette, then tap the matching piece of the prompt. Tag every piece to clear the stage.',
+    items:[
+      {segs:[['role','You are a friendly travel planner.'],['task','Plan a 3-day weekend trip to Chicago'],['context','for a couple in their 60s who love museums and don\u2019t enjoy long walks.'],['format','Lay it out day by day, with morning, afternoon, and evening.'],['constraints','Keep the total under $1,200 and skip the nightlife.'],['examples','Style I like: \u201cMorning: Art Institute (2 hrs). Grab a bench in the Impressionist wing.\u201d']]},
+      {segs:[['task','Summarize the news article below'],['role','the way a fun science teacher would.'],['context','I want to talk about it at dinner tonight with my kids, ages 8 and 12.'],['format','Give me 4 short bullets and one question to ask the kids.'],['examples','A good bullet sounds like: \u201cScientists found a way to pull plastic out of the ocean using tiny bubbles.\u201d'],['constraints','Don\u2019t add any facts that aren\u2019t in the article.']]}
+    ]},
+  apply:{type:'quiz', boss:true, title:'The Ingredient Test', intro:'Six questions. Get 5 right to beat the boss and open World 2.', pass:5,
+    questions:[
+      {q:'“Use a table with columns for Date, Task, and Owner.” Which part is this?', opts:['Context','Format','Constraints','Task'], ok:1, why:'It describes the shape of the output: Format.'},
+      {q:'“You are a patient math tutor for 7th graders.” Which part is this?', opts:['Role','Context','Examples','Task'], ok:0, why:'It tells the AI who to be: Role.'},
+      {q:'\u201cThe audience is first-time homebuyers who know nothing about mortgages.\u201d Which part is this?', opts:['Role','Constraints','Context','Format'], ok:2, why:'Audience and background are Context.'},
+      {q:'“No jargon, and stay under 150 words.” Which part is this?', opts:['Format','Constraints','Task','Examples'], ok:1, why:'Limits and rules are Constraints.'},
+      {q:'Pasting in a paragraph you wrote last year and saying “match this style” is…', opts:['Context','Role','Examples','Task'], ok:2, why:'Showing a sample of what good looks like is an Example.'},
+      {q:'Which part can a prompt NOT work without?', opts:['Role','Task','Examples','Format'], ok:1, why:'Everything else improves the result. Without a Task, there’s nothing for the AI to do.'}
+    ]}
+ }},
+/* ---------- MODULE 2 ---------- */
+{id:'m2', title:'Mind the Gap', bloom:'Understand', lvl:2,
+ obj:'Find out why AI gives bland answers, and how to stop it.',
+ phases:{
+  ce:{type:'duel', title:'Prompt Duels', intro:'Three head-to-head matchups. Tap the prompt you think will get the better first-try result.',
+    pairs:[
+      {a:'Make a presentation about online safety.', b:'Create an outline for a 10-slide presentation that teaches my grandparents how to spot scam texts and phone calls. One idea per slide, no more than 3 bullets per slide, plain words, and end with a 3-question quiz.', better:'b', why:'B names the audience, the scope (scams, not all of online safety), the size, and the structure. A leaves all of that to chance.'},
+      {a:'Write a 200-word post for our neighborhood Facebook group announcing the block party on Saturday, June 14, 2\u20136 pm at Maple Park. Mention it\u2019s a potluck with kids\u2019 games, and how to RSVP. Friendly, upbeat tone.', b:'You are an expert writer. Write a great, amazing, really good post about the block party. Make it good and interesting. This is VERY important!!!', better:'a', why:'Hype words (“amazing,” “VERY important”) add emotion, not information. A gives facts, length, purpose, and tone.'},
+      {a:'Summarize this.', b:'Summarize the school email below in 3 bullets for my spouse, focusing only on dates and things we need to decide.\n\nEMAIL:\n"""\n(paste email here)\n"""', better:'b', why:'B gives a reader, a purpose, a focus, a format, and clearly marks where the source text begins and ends.'}
+    ]},
+  pp:{type:'reflect', title:'Spot the Pattern', intro:'Look back at the winners.',
+    questions:[
+      {q:'What did the winning prompts have in common?', opts:[{t:'They were longer',ok:0},{t:'They gave specifics the AI couldn’t guess',ok:1},{t:'They used more polite wording',ok:0},{t:'They used technical vocabulary',ok:0}],
+       fb:'Length was a side effect, not the goal. The winners supplied details (audience, scope, format, facts) the AI had no way to know.'}
+    ],
+    journal:'Think of a time an AI gave you a disappointing answer. What do you think it was missing?'},
+  gen:{type:'lesson', title:'How the AI Reads Your Prompt', intro:'Five ideas explain almost every bad result.',
+    cards:[
+      {h:'It predicts. It doesn’t read minds.', b:'The AI writes the most likely response to the words you give it. Anything you leave out gets filled with the average, and average reads as generic.'},
+      {h:'Talk to it like a smart helper who just walked in.', b:'It\u2019s fast and well-read, but knows nothing about your life, your audience, or what you consider good. Tell it what you\u2019d tell a helpful friend who\u2019s new to the situation.'},
+      {h:'Specific beats emphatic.', b:'“VERY IMPORTANT” and “make it amazing” carry no information. Numbers, names, audiences, and examples do.'},
+      {h:'Five classic misses.', b:'Vague task · Missing context · No format · Conflicting instructions · Assumed knowledge (it doesn\u2019t know your situation, your files, or past conversations).'},
+      {h:'Confident is not correct.', b:'AI can invent facts, numbers, and citations that sound right. Give it your source material and tell it not to add facts.', ex:'Answer only from the text below. If it isn’t there, say “Not in source.”'}
+    ],
+    check:{q:'Why does “Write a cover letter” usually produce a generic letter?', opts:['The AI is lazy with short prompts','The AI fills every missing detail with the most typical answer','Cover letters are too hard for AI','It needs the word “please”'], ok:1, why:'No job, company, experience, or tone means the AI defaults to the most common version of a cover letter.'}},
+  dev:{type:'quiz', title:'Classify the Miss', intro:'Name the failure type for each prompt. These five labels will come up again and again.', pass:0,
+    questions:[
+      {q:'“Write a short, detailed, comprehensive summary.”', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:3, why:'“Short” and “comprehensive” pull in opposite directions. The AI has to pick one.'},
+      {q:'\u201cFix the problems in the plan we talked about.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:4, why:'The AI wasn\u2019t in that conversation and doesn\u2019t have the plan. Paste it in and list the problems.'},
+      {q:'\u201cWrite about dogs.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:0, why:'\u201cWrite about\u201d isn\u2019t a job. A poem? A training guide? A list of breeds? For whom?'},
+      {q:'\u201cCreate a workout schedule for me.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:1, why:'The task is clear, but the AI doesn\u2019t know your fitness level, goals, schedule, or equipment.'},
+      {q:'\u201cCompare three budgeting apps.\u201d (You wanted a side-by-side table.)', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:2, why:'Without a format you might get three essays. Ask for a table and name the columns.'},
+      {q:'\u201cExplain my company\u2019s vacation policy.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:4, why:'It doesn\u2019t know your company\u2019s policy, so it may invent one that sounds official.'}
+    ]},
+  apply:{type:'quiz', boss:true, title:'The Explainer', intro:'Five questions on why prompts hit or miss. Get 4 right to win.', pass:4,
+    questions:[
+      {q:'A coworker says “AI is useless. It gives me junk.” Their prompt was \u201cWrite an email.\u201d What\u2019s the best explanation?', opts:['The AI tool is broken','The prompt left almost everything for the AI to guess','Emails are too personal for AI','They needed a longer email'], ok:1, why:'No subject, reader, purpose, or format, so the AI guessed all of it.'},
+      {q:'Adding “This is VERY IMPORTANT!!!” to a prompt usually…', opts:['Makes the AI try harder','Adds emotion but no usable information','Gets a longer answer','Breaks the prompt'], ok:1, why:'Replace emphasis with specifics: who it’s for, what it must include, how long.'},
+      {q:'Why paste the source document into the prompt instead of asking from memory?', opts:['It makes the prompt look professional','So answers are grounded in your real content and are less likely to be invented','The AI can’t answer without a document','It’s faster to read'], ok:1, why:'Grounding the AI in your text is the best defense against confident made-up details.'},
+      {q:'Which comparison fits prompting best?', opts:['A prompt is a search query: fewer words is better','A prompt is like instructions for a contractor: the clearer the job, the better the result','A prompt is a password: exact words unlock answers','A prompt is a wish: be positive'], ok:1, why:'Like a contractor, the AI does its best work when the job, the purpose, and the finish you expect are spelled out.'},
+      {q:'Which prompt is most likely to work on the first try?', opts:['Help me with homework.','Make a quiz.','Write 5 multiple-choice questions to quiz my 10-year-old on the water cycle, using the textbook page pasted below. One correct answer and three believable wrong answers each.','Quiz about water, important!'], ok:2, why:'It has a task, an audience, a count, a source, and a standard for the wrong answers.'}
+    ]}
+ }},
+/* ---------- MODULE 3 ---------- */
+{id:'m3', title:'The Workshop', bloom:'Apply', lvl:3,
+ obj:'Build prompts from scratch that land on the first try.',
+ phases:{
+  ce:{type:'sandbox', title:'Your First Build', intro:'Write a prompt for this scenario however you normally would. No rules yet. Then run it.',
+    scenario:'Your book club meets this Thursday and three people haven\u2019t said whether they\u2019re coming. You want a short, friendly reminder text you can send to the group.',
+    free:true, meter:true, store:'m3ce',
+    prompts:[{label:'Your prompt', text:'', canned:null}]},
+  pp:{type:'reflect', title:'Check Your Build', intro:'Here’s what the scanner found in the prompt you just wrote.',
+    showLast:'m3ce',
+    questions:[
+      {q:'Which missing part would most improve your prompt?', any:true, opts:['Role','Context (who it\u2019s for, the date, the tone)','Format (length, text vs. email)','Constraints (what to avoid)'], fb:'For a reminder text, Context and Constraints usually matter most: the date and time, what you need from people, and that you want it friendly without guilt-tripping anyone.'}
+    ],
+    journal:'What would you add or change if you wrote that prompt again?'},
+  gen:{type:'lesson', title:'The Build Formula', intro:'Use this fill-in-the-blanks prompt until it becomes habit. Then trim the parts a task doesn\u2019t need.',
+    template:`You are a [ROLE].\n[TASK] for [AUDIENCE] so that [PURPOSE].\n\nBackground: [CONTEXT]\n\nHere’s an example of what I like:\n[EXAMPLE]\n\nFormat: [FORMAT]\nRules: [CONSTRAINTS]`,
+    cards:[
+      {h:'Scale it to the job.', b:'A quick question needs Task + Context. Something important you’ll share with others needs all six.'},
+      {h:'Let it ask you first.', b:'For big tasks, end your prompt with a line that makes the AI interview you before it writes.', ex:'Before you start, ask me up to 3 questions you need answered.'},
+      {h:'Iterate. Don’t restart.', b:'The first answer is a draft. Reply with targeted fixes instead of starting over.', ex:'Cut this to 150 words. Make bullet 2 more specific. Swap the example for a cooking one.'},
+      {h:'Give the why.', b:'A reason helps the AI make good choices you didn’t spell out.', ex:'Keep paragraphs short, because most people will read this on their phones.'}
+    ],
+    check:{q:'The first answer is close, but too long. What’s the best next move?', opts:['Start a brand-new chat and retype everything','Reply: “Cut this to 150 words and keep the three main points.”','Reply: “Better.”','Accept it and edit by hand'], ok:1, why:'A targeted follow-up keeps everything that worked and fixes only what didn’t.'}},
+  dev:{type:'builder', title:'Six-Part Build', intro:'Fill in all six parts for this scenario. The meter lights up as you go. When it’s full, run it or send it to the coach.',
+    scenario:'You want a 7-day dinner plan for a family of four on a tight budget. One of the kids is a very picky eater.', store:'m3dev'},
+  apply:{type:'rewrite', boss:true, title:'Rescue Mission', intro:'Three friends sent you weak prompts. Rescue each one so it works on the first try. Average 70 or higher to win.', pass:70,
+    items:[
+      {weak:'Write a post about my bakery.', scenario:'You run a small home bakery and want a social media post announcing your new weekend hours and a grand-reopening special.'},
+      {weak:'Help me with my resume.', scenario:'You want AI help tailoring your resume for a specific job posting you\u2019re excited about.'},
+      {weak:'Plan my vacation.', scenario:'You want a 5-day beach trip plan for two adults and two kids (ages 6 and 9) with a $3,000 budget.'}
+    ]}
+ }},
+/* ---------- MODULE 4 ---------- */
+{id:'m4', title:'Case Files', bloom:'Analyze', lvl:4,
+ obj:'Crack the case: figure out exactly why a prompt went wrong.',
+ phases:{
+  ce:{type:'sandbox', title:'Case File 04-A', intro:'This prompt came back wrong. Run it and study what it produced.',
+    prompts:[{label:'Case prompt', text:'You are a stand-up comedian. Write a serious, formal fire-safety speech for my kid\u2019s school assembly. Make it short but cover everything in detail. Add statistics.',
+      canned:`Alright, alright, settle down, kids! So... FIRE. Hot. Bad. You know what else is hot? The cafeteria pizza on Fridays. (Kidding, Mrs. Johnson!)\n\nAccording to a 2023 National Fire Safety Institute study, 84% of house fires start in a kitchen where someone said "I'll just be a minute," and 61% of smoke alarms are disconnected because of burnt toast.\n\nBut seriously, folks: Stop, drop, and roll. Know two ways out. And never, ever let your dad make toast unsupervised.\n\nYou've been a great audience! Tip your fire marshal!`}]},
+  pp:{type:'reflect', title:'Process the Case', intro:'Trace the bad output back to the prompt.',
+    questions:[
+      {q:'Which problems in the prompt caused this output? (Select all that apply.)', multi:true,
+       opts:[{t:'The role (comedian) conflicts with the tone (serious, formal)',ok:1},{t:'“Short” conflicts with “cover everything in detail”',ok:1},{t:'“Add statistics” with no source invites made-up numbers',ok:1},{t:'The prompt has no role',ok:0},{t:'The prompt is too long',ok:0}],
+       fb:'Three conflicts in one prompt. The AI had to pick a side each time, and the request for statistics with no source produced numbers that look real but aren’t verifiable.'}
+    ],
+    journal:'Which flaw would cause the most trouble if this speech were actually read at the assembly? Why?'},
+  gen:{type:'lesson', title:'The Usual Suspects', intro:'Good detectives don\u2019t say \u201cit\u2019s bad.\u201d They name the culprit. Meet the lineup.',
+    cards:[
+      {h:'Ambiguity', b:'A word or phrase can be read two ways (“fun,” “professional,” “short”).'},
+      {h:'Conflicting instructions', b:'Two instructions can’t both be true (“brief but detailed”).'},
+      {h:'Missing context', b:'Audience, purpose, or background is absent.'},
+      {h:'Overloaded prompt', b:'Five deliverables in one request. Each one gets shallow treatment.'},
+      {h:'No success criteria', b:'Nothing says what “done” looks like, so you can’t judge the output.'},
+      {h:'Hallucination bait', b:'Asking for facts, stats, or citations without giving a source.'},
+      {h:'Negative-only rules', b:'Only says what NOT to do (“don’t be boring”) with no target.'},
+      {h:'Privacy risk', b:'Pasting Social Security numbers, account numbers, passwords, medical details, or someone else\u2019s private info. Remove or replace it before you paste.'}
+    ],
+    drill:['Read the output. What exactly is wrong?','Trace it to a word, or a missing piece, in the prompt.','Name the failure from the catalog.','Change one thing, re-run, and compare.'],
+    check:{q:'An AI output includes a statistic you can’t verify. Most likely cause?', opts:['The AI was set to be creative','The prompt asked for facts without providing a source','The prompt was too short','The role was wrong'], ok:1, why:'That’s hallucination bait. Supply the data, or tell it to mark anything it can’t source.'}},
+  dev:{type:'flaws', title:'Flaw Hunt', intro:'Select every real flaw in each prompt, then check your answer. Exact matches earn full credit.',
+    items:[
+      {p:'Plan my daughter\u2019s birthday party and also write the invitations and a shopping list and a game schedule and the thank-you notes. Make it fun.',
+       opts:[{t:'Overloaded: too many deliverables at once',ok:1},{t:'No format or length for any deliverable',ok:1},{t:'“Fun” is ambiguous',ok:1},{t:'Missing a task',ok:0},{t:'Hallucination bait',ok:0}]},
+      {p:'Here is my coworker\u2019s full performance review, with his Social Security number and home address included. Rewrite it to sound more positive.',
+       opts:[{t:'Privacy risk: contains someone\u2019s personal information',ok:1},{t:'“More positive” has no limits; it could distort the facts',ok:1},{t:'Overloaded prompt',ok:0},{t:'Missing a task',ok:0},{t:'Conflicting instructions',ok:0}]},
+      {p:'Don’t make it too long. Don’t use bullets. Don’t be boring. Don’t use jargon. Write about the new rule.',
+       opts:[{t:'Negative-only rules: no target format',ok:1},{t:'Assumed knowledge: which rule?',ok:1},{t:'Missing context: no audience or purpose',ok:1},{t:'Overloaded prompt',ok:0},{t:'Too many examples',ok:0}]}
+    ]},
+  apply:{type:'quiz', boss:true, title:'The Final Case', intro:'Five mysteries. Name the culprit in 4 of them to close the case.', pass:4,
+    questions:[
+      {q:'Prompt: “Write a 5-bullet summary as one paragraph.” The output was a paragraph. Root cause?', opts:['The AI ignored you','Conflicting format instructions','Missing context','No role'], ok:1, why:'Bullets and a paragraph can’t both happen. The AI picked one.'},
+      {q:'Prompt: \u201cExplain how a 401(k) works to my son.\u201d The output was accurate but far too technical. What was missing?', opts:['A role','Context about his age, what he already knows, and why he\u2019s asking','A longer task','Statistics'], ok:1, why:'\u201cMy son\u201d names the audience, but not his age, knowledge level, or what he cares about.'},
+      {q:'The AI quoted a news article that doesn\u2019t exist. Best fix?', opts:['Ask it to double-check','Tell it to be accurate','Paste the real article and say: answer only from this; say \u201cnot found\u201d if it isn\u2019t there','Use a longer prompt'], ok:2, why:'Grounding plus an explicit way out (“not found”) removes the pressure to invent.'},
+      {q:'Your prompt works great for you, but fails for a coworker in a fresh chat. Most likely cause?', opts:['Their AI is a different version','Your chat had earlier context the prompt relied on','They typed it slower','The AI is random'], ok:1, why:'Earlier messages in your chat filled in context the prompt itself never stated.'},
+      {q:'Best order for diagnosing a bad output?', opts:['Rewrite everything → run again → hope','Identify what’s wrong → trace it to the prompt → name the failure → change one thing and re-run','Change the AI tool → re-run','Add more emphasis → re-run'], ok:1, why:'Changing one variable at a time is how you learn what actually fixed it.'}
+    ]}
+ }},
+/* ---------- MODULE 5 ---------- */
+{id:'m5', title:'The Judge\u2019s Table', bloom:'Evaluate', lvl:5,
+ obj:'Taste-test prompts like a pro and pick the right tricks.',
+ phases:{
+  ce:{type:'rank', title:'Rank the Prompts', intro:'Goal: get help writing a message to your landlord about a heater that stopped working. Tap the prompts in order from best (1) to worst (3).',
+    items:[
+      {t:'write something to yell at my landlord lol', r:3},
+      {t:'You are a polite but firm tenant advocate. Write a short email to my landlord about my broken heater. Facts: it stopped working Monday, Jan 6; I called the office on Jan 7; no one has come; it\u2019s been under 60\u00b0F inside. Ask for a repair date within 48 hours. Respectful but firm. Under 150 words. Use only the facts I gave you.', r:1},
+      {t:'Write an email to my landlord about my heater. Make it professional.', r:2}
+    ],
+    why:'The best prompt sets a role, gives facts with dates, states what you want, sets the tone, and limits the AI to those facts. The middle one has a task but no facts, so the AI will invent details. The last one invites a tone that won\u2019t get your heater fixed.'},
+  pp:{type:'reflect', title:'Name Your Criteria', intro:'You just made a judgment call. What drove it?',
+    questions:[
+      {q:'Which criteria did you use to rank them? (Select all you used.)', multi:true, any:true,
+       opts:[{t:'Clarity: it can only be read one way'},{t:'Completeness: it has what the AI can’t guess'},{t:'Specificity: real facts, numbers, names'},{t:'Testability: I could tell if the output met the requirement'},{t:'Efficiency: no filler or hype'}],
+       fb:'All five are valid, and they’re the scorecard you’ll use next. Most people use clarity and specificity by instinct and forget testability.'}
+    ],
+    journal:'Which criterion do your own prompts most often miss?'},
+  gen:{type:'lesson', title:'Pro Tricks', intro:'A simple scorecard for judging prompts, plus six tricks the pros use.',
+    cards:[
+      {h:'The 5-point scorecard', b:'Clarity · Completeness · Specificity · Testability · Efficiency. Score each 1–5.'},
+      {h:'Few-shot examples', b:'Show 1\u20133 real samples of what you want. Best way to match a style or tone.'},
+      {h:'Step-by-step reasoning', b:'For math, logic, or decisions, have it work through the problem before answering.', ex:'Work through the calculation step by step, then give the total.'},
+      {h:'Delimiters', b:'Fence off source text so instructions and data don’t blur together.', ex:'<document> … </document>   or   """ … """'},
+      {h:'Self-check', b:'Have it review its own draft against your requirements before it hands it over.', ex:'Before you finish, check your draft against each requirement and fix any gaps.'},
+      {h:'Prompt chaining', b:'Break big jobs into stages (outline → approve → draft → edit) instead of one giant prompt.'}
+    ],
+    check:{q:'You want the AI to write in your own personal style. Best technique?', opts:['Step-by-step reasoning','Few-shot examples of your own writing','Prompt chaining','Delimiters'], ok:1, why:'Showing is more precise than describing. Two real samples of your writing beat a paragraph of adjectives.'}},
+  dev:{type:'rubric', title:'Score Like a Pro', intro:'Rate each prompt from 1 to 5 on three things, then see how the pro scored it. Within 1 point counts as a match.',
+    items:[
+      {p:'Write a one-page guide for my family on sharing our second car. Include who can use it, how to sign up for a day, the gas rule (refill when it drops below 1/4 tank), and what to do after a fender-bender. Numbered steps, plain language.', e:{Clarity:5,Completeness:4,Specificity:5}, why:'Clear and specific. It could add an example or the tone to use (fun vs. strict), so Completeness is 4.'},
+      {p:'Write a guide about sharing the family car. Make it clear and thorough and not too long.', e:{Clarity:3,Completeness:2,Specificity:2}, why:'\u201cThorough\u201d vs. \u201cnot too long\u201d is a soft conflict. No rules or details, so the AI will invent them.'},
+      {p:'can u do something for the car thing, like a doc or whatever', e:{Clarity:1,Completeness:1,Specificity:1}, why:'No clear task, no audience, no format. Nearly everything is left to guessing.'}
+    ]},
+  apply:{type:'quiz', boss:true, title:'Final Verdict', intro:'Pick the best move for each situation. Get 4 of 5 to win.', pass:4,
+    questions:[
+      {q:'You want a study guide for a 300-page textbook. Best approach?', opts:['One giant prompt with the whole book','Prompt chaining: outline first, approve it, then build section by section','Ask for 40 slides and fix it later','Few-shot examples only'], ok:1, why:'Big jobs fail in one shot. Chaining gives you checkpoints to steer.'},
+      {q:'Answers keep including details that aren’t in your source document. Best fix?', opts:['Say “be accurate”','Wrap the source in delimiters and instruct: use only this; say “not in source” when missing','Use a bigger AI','Ask for shorter answers'], ok:1, why:'Clear boundaries plus permission to say “not in source”.'},
+      {q:'The AI’s totals on a budget table are wrong. Best technique?', opts:['Few-shot examples','Ask it to show its calculations step by step, then check them yourself','Delimiters','A more formal tone'], ok:1, why:'Step-by-step reasoning improves accuracy, and showing the work lets you check it.'},
+      {q:'Two prompts both produce decent output. By the scorecard, which is better?', opts:['The longer one','The one where you can objectively check whether the output met the requirements','The one with more adjectives','The one written first'], ok:1, why:'Testability: clear success criteria make quality something you can check, not a guess.'},
+      {q:'A friend\u2019s prompt is 600 words, mostly repeated warnings in capital letters. Your critique?', opts:['Excellent: very thorough','Weak on efficiency. Cut the repetition and replace emphasis with specific requirements','Needs more capitals','Perfect length'], ok:1, why:'Repetition and shouting add noise, not information.'}
+    ]}
+ }},
+/* ---------- MODULE 6 ---------- */
+{id:'m6', title:'Signature Move', bloom:'Create', lvl:6,
+ obj:'Create a reusable prompt of your own and claim the crown.',
+ phases:{
+  ce:{type:'sandbox', title:'A Template in Action', intro:'This is a reusable template. The parts in [BRACKETS] change each week; everything else stays the same. One copy is filled in for you. Run it.',
+    prompts:[{label:'Filled template', text:`You are a friendly home cook and meal planner.\n\nCreate a dinner plan for [NIGHTS: 5 weeknights] for [WHO: 2 adults and 2 kids, one vegetarian] with a grocery budget of [BUDGET: $120].\n\nFormat:\n1. A table: Day | Meal | Prep time | Main ingredients\n2. One combined grocery list, grouped by store section\n3. One tip for saving time on a busy night\n\nRules: Every meal under 40 minutes. No repeating a protein two nights in a row. Kid-friendly flavors. If you need information I didn\u2019t give, list your assumptions at the end.`,
+      canned:`Day | Meal | Prep time | Main ingredients\nMon | Black bean tacos | 25 min | beans, tortillas, cheese, salsa\nTue | Chicken & veggie sheet pan | 35 min | chicken thighs, potatoes, broccoli\nWed | Pasta primavera (veg) | 25 min | pasta, zucchini, peppers, parmesan\nThu | Turkey meatballs + rice | 35 min | ground turkey, rice, marinara\nFri | Homemade pizza night | 30 min | dough, sauce, mozzarella, toppings\n(Vegetarian swaps: bean tacos, primavera, veggie pizza; tofu for chicken Tue.)\n\nGrocery list\nProduce: broccoli, potatoes, zucchini, 2 peppers, onion\nProtein: chicken thighs, ground turkey, tofu, 2 cans black beans\nDairy: cheese, mozzarella, parmesan\nPantry: tortillas, pasta, rice, marinara, pizza dough, salsa\n\nTime-saver: Chop all the veggies Sunday night.\n\nAssumptions: Basic spices and oil on hand; kids are school-age.`}]},
+  pp:{type:'reflect', title:'What Made It Reusable?', intro:'Pull the template apart.',
+    questions:[
+      {q:'What makes a prompt reusable as a template? (Select all that apply.)', multi:true,
+       opts:[{t:'Variables in [BRACKETS] for the parts that change',ok:1},{t:'Standing rules that apply every time',ok:1},{t:'A fixed output format',ok:1},{t:'A one-time detail hard-coded in the middle',ok:0},{t:'An instruction to state its assumptions',ok:1}],
+       fb:'Variables, standing rules, a fixed format, and a way to surface gaps. Hard-coded one-time details break reuse.'}
+    ],
+    journal:'Name one thing you do every week or month that a template like this could help with.'},
+  gen:{type:'lesson', title:'Make It Reusable', intro:'Pros don\u2019t write great prompts one at a time. They build one great prompt and reuse it forever.',
+    cards:[
+      {h:'Variables', b:'Put everything that changes in [BRACKETS] with a hint. Everything else is the standing order.', ex:'[AUDIENCE: who and how experienced]'},
+      {h:'Standing instructions', b:'Role, standards, tone, and references that never change. Write them once, carefully.'},
+      {h:'Output contract', b:'A fixed format, so every result is consistent and easy to check.'},
+      {h:'Guardrails', b:'Use only the info provided. Flag unknowns. No personal details. State assumptions.'},
+      {h:'Test with three inputs', b:'Run it on an easy case, a normal case, and an odd case. Fix whatever breaks, then retest all three.'},
+      {h:'Save and share it', b:'Keep it where you\u2019ll find it again: a notes app, a doc, or saved instructions in your AI tool (many offer projects or custom assistants). Update it when you improve it.'}
+    ],
+    check:{q:'You tested your template with 3 inputs. One gave a bad result. Next step?', opts:['Delete the template','Find which instruction failed, revise it, and retest all three','Only use it for the 2 that worked','Add “IMPORTANT” to every line'], ok:1, why:'Revise, then retest everything. A fix for one case can break another.'}},
+  dev:{type:'builder', title:'Draft Your Template', intro:'Build a template for one of YOUR recurring tasks. Use at least one [VARIABLE] in square brackets for the parts that change.',
+    scenario:'Pick something you do again and again: meal plans, workout routines, emails, social posts, study guides, trip plans, gift ideas, anything.', requireVar:true, store:'m6dev'},
+  apply:{type:'capstone', boss:true, title:'Your Signature Prompt', intro:'Submit your finished template to the judges. It’s loaded from your draft, so polish it first. Score 80 or higher to win the crown and your Champion card.', pass:80}
+ }}
+];
+
+/* ============ STATE ============ */
+const KEY='promptops.v1';
+const fresh=()=>({xp:0,done:{},scores:{},badges:{},streak:0,best:0,runs:0,journals:{},drafts:{},flawExact:{},rubricMatch:{},unlockAll:false,name:'',certDate:''});
+let S=fresh();
+try{const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+let view={screen:'home',mi:0,pi:0};
+let sample=null, aiState='checking';
+
+
+/* ============ HELPERS ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function h(tag,attrs={},...kids){const el=document.createElement(tag);for(const[k,v]of Object.entries(attrs||{})){if(v==null||v===false)continue;if(k==='class')el.className=v;else if(k==='html')el.innerHTML=v;else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else if(k==='style')el.setAttribute('style',v);else el.setAttribute(k,v===true?'':v);}for(const kd of kids.flat()){if(kd==null||kd===false)continue;el.append(kd.nodeType?kd:document.createTextNode(kd));}return el;}
+const rankIdx=xp=>{let i=0;RANKS.forEach((r,j)=>{if(xp>=r.xp)i=j});return i};
+const words=s=>(s||'').trim().split(/\s+/).filter(Boolean).length;
+
+function insignia(i){
+  const c='var(--brass)';const top=i===RANKS.length-1;
+  const pct=(i+1)/RANKS.length, R=15, C=2*Math.PI*R;
+  let g=`<circle cx="20" cy="24" r="${R}" fill="none" stroke="var(--surface-2)" stroke-width="4"/><circle cx="20" cy="24" r="${R}" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(C*pct).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 20 24)"/>`;
+  g+= top?`<polygon points="20,15 22.6,21 29,21.4 24,25.5 25.6,32 20,28.4 14.4,32 16,25.5 11,21.4 17.4,21" fill="${c}"/>`
+         :`<text x="20" y="29.5" text-anchor="middle" font-family="Bricolage Grotesque,system-ui,sans-serif" font-size="15" font-weight="800" fill="${c}">${i+1}</text>`;
+  return `<svg viewBox="0 0 40 48" aria-hidden="true">${g}</svg>`;
+}
+function badgeSvg(i,on){const cs=['--p-role','--p-task','--p-context','--p-examples','--p-format','--p-constraints'];const c=`var(${cs[i%6]})`;
+  return `<svg viewBox="0 0 48 48" aria-hidden="true"><polygon points="24,3 43,14 43,34 24,45 5,34 5,14" fill="${on?c:'var(--surface-2)'}" stroke="${c}" stroke-width="2"/><text x="24" y="30" text-anchor="middle" font-family="Bricolage Grotesque,system-ui,sans-serif" font-weight="800" font-size="16" fill="${on?'var(--surface)':c}">${i+1}</text></svg>`;}
+const flame=`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1c1 3 4 4.5 4 8a4 4 0 0 1-8 0c0-2 1-3 2-4 0 1.5.6 2.4 1.4 2.6C7 5.5 7.4 3 8 1z" fill="currentColor"/></svg>`;
+
+function toast(t,sub){const el=h('div',{class:'toast'},t,sub?h('small',{},sub):null);$('#toasts').append(el);setTimeout(()=>el.remove(),3200);}
+function modal(html,btn='Carry on'){const m=h('div',{class:'modal',role:'dialog','aria-modal':'true'},h('div',{class:'card',html}));const b=h('button',{class:'btn primary',onclick:()=>m.remove()},btn);m.firstChild.append(b);$('#modalRoot').append(m);b.focus();}
+
+function addXP(n,why){const before=rankIdx(S.xp);S.xp+=n;save();toast(`+${n} XP`,why);const after=rankIdx(S.xp);
+  if(after>before){const r=RANKS[after];setTimeout(()=>modal(`${insignia(after)}<div class="eyebrow">Level up</div><h2>${esc(r.n)}</h2><p class="muted">You\u2019ve reached ${r.xp} XP. Keep going.</p>`,"Let\u2019s go"),500);} renderHUD();}
+function award(k){if(S.badges[k])return;S.badges[k]=Date.now();save();const b=BADGES.find(x=>x.k===k);toast(`Badge earned: ${b.n}`,b.d);setTimeout(()=>addXP(25,'Badge bonus'),400);}
+function streakHit(ok){if(ok){S.streak++;S.best=Math.max(S.best,S.streak);if(S.streak>=5)award('combo5');if(S.streak>=10)award('combo10');}else S.streak=0;save();renderHUD();}
+function checkAllStars(){if(MODULES.every(m=>(S.scores[m.id]||0)>=100))award('dhg');}
+
+/* ============ PROMPT ANALYSIS (local) ============ */
+const DETECT={
+  role:/\b(you are|you're|act as|acting as|as an? [a-z]+ (expert|instructor|writer|designer|officer|ncO|coach|teacher|editor|counselor|specialist|manager|recruiter)|pretend (you|to be)|take the role|your role)\b/i,
+  task:/\b(write|create|draft|summari[sz]e|explain|list|generate|build|design|analy[sz]e|compare|rewrite|edit|plan|outline|develop|make|produce|review|tailor|suggest|give me|help me (write|create|draft|build|tailor|plan))\b/i,
+  context:/\b(audience|for (new|my|our|a|an|the|staff|soldiers|recruits|students|employees|parents|leaders|people|team)|students|soldiers|recruits|employees|beginners|readers|team|because|so that|purpose|goal|background|situation|deadline|due|who (are|have|will)|most (are|have)|experience)\b/i,
+  examples:/\b(example|e\.g\.|for instance|such as|sample|like this|here'?s (one|a|an)|model (after|on)|match (this|the) (style|tone))\b|["“][^"”]{12,}["”]/i,
+  format:/\b(bullet|bullets|table|list|paragraphs?|steps|numbered|headings?|sections?|json|markdown|columns?|outline|one-page|1-page|page|slides?|email|script|format|subject line|checklist|\d+\s*(words|sentences|questions|items|points|bullets|slides|paragraphs|minutes?|seconds?))\b/i,
+  constraints:/\b(no more than|under \d+|at most|at least|avoid|don't|do not|never|must|only|limit|maximum|minimum|tone|plain language|keep it|without|define|cite|if you (need|don'?t)|assumptions?)\b/i
+};
+function analyze(text){const p={};PARTS.forEach(x=>p[x.k]=DETECT[x.k].test(text||''));return p;}
+function localGrade(text,opts={}){
+  const p=analyze(text);const n=Object.values(p).filter(Boolean).length;const w=words(text);
+  let score=n*13; if(w>=25)score+=8; if(w>=45)score+=6; if(w>350)score-=6;
+  const vars=(text.match(/\[[^\]]{2,}\]/g)||[]).length;
+  if(opts.template){score+=vars>=2?8:vars===1?4:-10;}
+  score=Math.max(5,Math.min(100,Math.round(score)));
+  const miss=PARTS.filter(x=>!p[x.k]);
+  const fixes=miss.slice(0,3).map(x=>`Add ${x.n}: ${x.d.toLowerCase()} e.g. “${x.ex}”`);
+  if(opts.template&&vars===0)fixes.unshift('Add [VARIABLES] in square brackets for the parts that change each time.');
+  if(w<20)fixes.unshift('It’s very short. Add the details the AI can’t guess.');
+  const strengths=PARTS.filter(x=>p[x.k]).slice(0,2).map(x=>`Includes ${x.n.toLowerCase()}.`);
+  return {score,parts:p,strengths,fixes:fixes.slice(0,3),improved:'',source:'local'};
+}
+async function aiGrade(text,scenario,opts={}){
+  const extra=opts.template?'This is meant to be a REUSABLE TEMPLATE: reward [BRACKETED VARIABLES] for parts that change, standing rules, a fixed output format, and guardrails. Penalize hard-coded one-time details.':'';
+  const prompt=`You are a prompt-engineering instructor grading a learner's prompt in a training course.\n\nScenario the learner was given: ${scenario}\n\nLearner's prompt:\n<prompt>\n${text.slice(0,6000)}\n</prompt>\n\nGrade how well this prompt would get a useful first-try result from an AI assistant. Check six parts: role, task, context, examples, format, constraints. Not every task needs every part; judge fitness for this scenario. ${extra}\nScore 0-100, where 70 is solid and 85+ is excellent. Be encouraging but honest and specific. Write plain sentences.\n\nReply with only JSON in this shape:\n{"score": 0, "parts": {"role": false, "task": false, "context": false, "examples": false, "format": false, "constraints": false}, "strengths": ["up to 2 short strings"], "fixes": ["up to 3 short, specific strings"], "improved": "a stronger version of the prompt, under 130 words"}`;
+  const r=await sample.json(prompt,{modelTier:'default'});
+  if(!r||typeof r.score!=='number')throw {code:'invalid_json'};
+  const parts={};PARTS.forEach(x=>parts[x.k]=!!(r.parts&&r.parts[x.k]));
+  return {score:Math.max(0,Math.min(100,Math.round(r.score))),parts,strengths:(r.strengths||[]).slice(0,2).map(String),fixes:(r.fixes||[]).slice(0,3).map(String),improved:String(r.improved||''),source:'ai'};
+}
+async function grade(text,scenario,opts={}){
+  if(sample&&aiState!=='offline'){try{const g=await aiGrade(text,scenario,opts);aiState='live';renderHUD();award('coached');return g;}catch(e){if(e&&(e.code==='not_granted'||e.code==='sampling_disabled'||e.code==='not_declared'||e.code==='capability_disabled')){aiState='offline';renderHUD();}const g=localGrade(text,opts);g.note=e&&e.code==='rate_limited'?'The AI coach is busy. Scored by the built-in checker instead.':'Scored by the built-in checker.';return g;}}
+  const g=localGrade(text,opts);g.note='Scored by the built-in checker.';return g;
+}
+function meterEl(text){return h('div',{class:'meter','aria-label':'Parts detected'},PARTS.map(x=>{const on=analyze(text)[x.k];return h('span',{class:on?'on':'',style:on?`background:var(--p-${x.k})`:''},(on?'✓ ':'')+x.n);}));}
+function gradeEl(g,pass){const ok=g.score>=pass;return h('div',{class:'grade'},
+  h('div',{class:'row',style:'margin-top:0;justify-content:space-between'},h('div',{},h('div',{class:'eyebrow'},g.source==='ai'?'AI coach review':'Checker review'),h('div',{class:'score '+(ok?'pass':'fail')},g.score,h('span',{class:'muted',style:'font-size:18px'},' / 100'))),h('span',{class:'chip'},ok?'Nailed it':`Need ${pass}+`)),
+  h('div',{class:'meter'},PARTS.map(x=>h('span',{class:g.parts[x.k]?'on':'',style:g.parts[x.k]?`background:var(--p-${x.k})`:''},(g.parts[x.k]?'✓ ':'')+x.n))),
+  g.strengths.length?h('div',{style:'margin-top:8px'},h('b',{},'Strengths'),h('ul',{},g.strengths.map(s=>h('li',{},s)))):null,
+  g.fixes.length?h('div',{style:'margin-top:6px'},h('b',{},'Fixes'),h('ul',{},g.fixes.map(s=>h('li',{},s)))):null,
+  g.improved?h('div',{class:'improved'},h('b',{},'Stronger version\n'),g.improved):null,
+  g.note?h('p',{class:'muted',style:'font-size:12.5px;margin:8px 0 0'},g.note):null);}
+
+/* ============ RUN PROMPT ============ */
+let runCtl=null;
+async function runPrompt(text,out,canned){
+  out.innerHTML='';const tag=h('span',{class:'tag'},'');const body=h('div',{});out.append(tag,body);
+  S.runs++;save();award('first_run');if(S.runs>=5)award('iterator');
+  if(sample&&aiState!=='offline'){
+    tag.textContent='Live AI response';body.textContent='Thinking…';runCtl=new AbortController();
+    try{await sample(text,{modelTier:'quick',signal:runCtl.signal,cache:false,onText:({text})=>{body.textContent=text;}});aiState='live';renderHUD();return true;}
+    catch(e){if(e.code==='cancelled'){body.textContent=(e.text||'')+'\n[stopped]';return true;}
+      if(['not_granted','sampling_disabled','not_declared','capability_disabled'].includes(e.code)){aiState='offline';renderHUD();}
+      else if(e.text){body.textContent=e.text+'\n[interrupted]';return true;}
+    }
+  }
+  if(canned){tag.textContent='Sample response';body.textContent=canned;return true;}
+  tag.textContent='Try it in your AI tool';body.textContent='Copy this prompt into the AI tool you use at work, run it there, and look at the result. Then come back and continue.';return true;
+}
+async function copyText(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='Copied';}catch(e){btn.textContent='Select & copy manually';}setTimeout(()=>btn.textContent='Copy prompt',1600);}
+
+/* ============ ACTIVITIES ============ */
+const A={};
+
+A.sandbox=(act,ctx)=>{
+  const done=new Set();let cur=0;const root=h('div');
+  if(act.scenario)root.append(h('div',{class:'scenario'},h('b',{},'Scenario'),act.scenario));
+  const tabs=h('div',{class:'tabs'});const ta=h('textarea',{id:`sb-${ctx.key}`,'aria-label':'Prompt',placeholder:act.free?'Type your prompt here…':''});
+  const texts=act.prompts.map(p=>p.text);
+  if(act.store&&S.drafts[act.store])texts[0]=S.drafts[act.store];
+  ta.value=texts[0];
+  const meterBox=h('div');const out=h('div',{class:'out',html:'<span class="tag">Output</span>Run the prompt to see a response.'});
+  const runB=h('button',{class:'btn primary'},'Run prompt');const stopB=h('button',{class:'btn sm',hidden:true},'Stop');const copyB=h('button',{class:'btn sm'},'Copy prompt');
+  function drawTabs(){tabs.innerHTML='';if(act.prompts.length<2)return;act.prompts.forEach((p,i)=>tabs.append(h('button',{'aria-pressed':String(i===cur),onclick:()=>{texts[cur]=ta.value;cur=i;ta.value=texts[i];drawTabs();drawMeter();out.innerHTML='<span class="tag">Output</span>Run the prompt to see a response.';}},p.label,done.has(i)?h('span',{class:'ck'},'✓'):null)));}
+  function drawMeter(){if(!act.meter)return;meterBox.innerHTML='';meterBox.append(meterEl(ta.value));}
+  ta.addEventListener('input',()=>{texts[cur]=ta.value;drawMeter();if(act.store){S.drafts[act.store]=ta.value;save();}});
+  runB.onclick=async()=>{const t=ta.value.trim();if(words(t)<3){out.innerHTML='';out.append(h('span',{class:'tag'},'Need a prompt'),'Write at least a few words first.');return;}
+    runB.disabled=true;stopB.hidden=false;await runPrompt(t,out,act.prompts[cur].canned);runB.disabled=false;stopB.hidden=true;
+    done.add(cur);drawTabs();const need=act.requireAll?act.prompts.length:1;if(done.size>=need)ctx.complete();else toast('Nice. Now run the other prompt.');};
+  stopB.onclick=()=>runCtl&&runCtl.abort();copyB.onclick=()=>copyText(ta.value,copyB);
+  drawTabs();drawMeter();
+  root.append(tabs,ta,meterBox,h('div',{class:'row'},runB,stopB,copyB),out);return root;
+};
+
+A.reflect=(act,ctx)=>{
+  const root=h('div');const answered=new Set();
+  if(act.showLast){const t=S.drafts[act.showLast]||'';root.append(h('div',{class:'panel',style:'margin-bottom:16px;background:var(--bg)'},h('div',{class:'eyebrow'},'Your prompt from Try It'),h('p',{style:'font-family:var(--mono);font-size:13px;white-space:pre-wrap;margin:6px 0'},t||'(No prompt saved. Go back to Try It and run one.)'),meterEl(t),h('p',{class:'muted',style:'font-size:13px;margin:8px 0 0'},`The scanner found ${Object.values(analyze(t)).filter(Boolean).length} of 6 parts.`)));}
+  act.questions.forEach((q,qi)=>{
+    const box=h('div',{class:'q'},h('div',{class:'qt'},q.q));const opts=h('div',{class:'opts'});const fb=h('div');const sel=new Set();
+    const list=q.opts.map(o=>typeof o==='string'?{t:o}:o);
+    list.forEach((o,i)=>{const b=h('button',{class:'opt'+(q.multi?'':' radio'),'aria-pressed':'false'},h('span',{class:'box'},''),h('span',{},o.t));
+      b.onclick=()=>{if(box.dataset.locked)return;if(q.multi){sel.has(i)?sel.delete(i):sel.add(i);}else{sel.clear();sel.add(i);}
+        [...opts.children].forEach((c,j)=>{c.setAttribute('aria-pressed',String(sel.has(j)));c.querySelector('.box').textContent=sel.has(j)?'✓':'';});
+        if(!q.multi)check();};opts.append(b);});
+    function check(){if(!sel.size)return;box.dataset.locked='1';let good=true;
+      if(!q.any){list.forEach((o,i)=>{const c=opts.children[i];if(o.ok&&sel.has(i))c.classList.add('right');else if(!o.ok&&sel.has(i)){c.classList.add('wrong');good=false;}else if(o.ok&&!sel.has(i)){c.classList.add('right');good=false;}});streakHit(good);}
+      [...opts.children].forEach(c=>c.disabled=true);
+      fb.innerHTML='';fb.append(h('div',{class:'fb'+(q.any?'':good?' good':' bad')},h('b',{},q.any?'Noted.':good?'Exactly right.':'Close. Here’s the full picture.'),q.fb));
+      answered.add(qi);maybe();}
+    box.append(opts);if(q.multi)box.append(h('div',{class:'row'},h('button',{class:'btn sm',onclick:check},'Check')));box.append(fb);root.append(box);
+  });
+  const jt=h('textarea',{id:`jr-${ctx.key}`,placeholder:'Your answer…',style:'min-height:80px;font-family:var(--body)'});jt.value=S.journals[ctx.key]||'';
+  const jmsg=h('p',{class:'muted',style:'font-size:12.5px;margin:4px 0 0'},'Write at least one full sentence (15+ characters).');
+  jt.addEventListener('input',()=>{S.journals[ctx.key]=jt.value;save();maybe();});
+  root.append(h('div',{class:'q'},h('div',{class:'qt'},'Your take: '+act.journal),jt,jmsg));
+  function maybe(){const jok=(jt.value.trim().length>=15);jmsg.textContent=jok?'Saved.':'Write at least one full sentence (15+ characters).';
+    if(answered.size===act.questions.length&&jok){if(Object.values(S.journals).filter(v=>v&&v.trim().length>=15).length>=4)award('reflect');ctx.complete();}}
+  setTimeout(maybe,0);return root;
+};
+
+A.lesson=(act,ctx)=>{
+  const root=h('div');
+  if(act.showParts){root.append(h('div',{class:'mnemonic',html:act.mnemonic}),h('p',{class:'muted',style:'margin:-10px 0 14px;font-family:var(--mono);font-size:12.5px'},act.mnemonicNote));
+    root.append(h('div',{class:'cards'},PARTS.map(p=>h('div',{class:'lcard pcard',style:`--pc:var(--p-${p.k})`},h('h4',{},p.n),h('p',{},p.d),h('div',{class:'ex'},p.ex)))));}
+  if(act.template)root.append(h('div',{class:'eyebrow',style:'margin-bottom:6px'},'Fill-in-the-blanks prompt'),h('pre',{class:'tpl'},act.template));
+  if(act.cards)root.append(h('div',{class:'cards'},act.cards.map(c=>h('div',{class:'lcard'},h('h4',{},c.h),h('p',{},c.b),c.ex?h('div',{class:'ex'},c.ex):null))));
+  if(act.drill)root.append(h('div',{class:'panel',style:'margin-bottom:16px;background:var(--bg)'},h('h3',{style:'font-size:19px'},'The diagnosis drill'),h('ol',{style:'margin:4px 0 0;padding-left:20px'},act.drill.map(d=>h('li',{},d)))));
+  const c=act.check;const box=h('div',{class:'q panel',style:'background:var(--bg)'},h('div',{class:'eyebrow'},'Lock it in'),h('div',{class:'qt',style:'margin-top:4px'},c.q));const opts=h('div',{class:'opts'});const fb=h('div');
+  c.opts.forEach((o,i)=>{const b=h('button',{class:'opt radio'},h('span',{class:'box'}),h('span',{},o));b.onclick=()=>{const ok=i===c.ok;streakHit(ok);b.classList.add(ok?'right':'wrong');fb.innerHTML='';fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Correct.':'Not quite. Try another answer.'),ok?c.why:''));if(ok){[...opts.children].forEach(x=>x.disabled=true);ctx.complete();}else b.disabled=true;};opts.append(b);});
+  box.append(opts,fb);root.append(box);return root;
+};
+
+A.tagger=(act,ctx)=>{
+  const root=h('div');let label=null;let doneCount=0;
+  const pal=h('div',{class:'palette',role:'group','aria-label':'Part labels'});
+  PARTS.forEach(p=>pal.append(h('button',{style:`--pc:var(--p-${p.k})`,'aria-pressed':'false',onclick:e=>{label=p.k;[...pal.children].forEach(c=>c.setAttribute('aria-pressed',String(c===e.currentTarget)));}},p.n)));
+  root.append(h('p',{class:'muted',style:'font-size:13px;margin:0 0 6px'},'1. Pick an ingredient   2. Tap the matching text'),pal);
+  act.items.forEach((it,ii)=>{const box=h('div',{class:'segs',style:'margin-bottom:12px'},h('div',{class:'eyebrow',style:'margin-bottom:4px'},`Prompt ${ii+1}`));let left=it.segs.length;
+    it.segs.forEach(([k,t])=>{const s=h('button',{class:'seg'},t);s.onclick=()=>{if(s.classList.contains('ok'))return;if(!label){toast('Pick an ingredient first');return;}
+      if(label===k){s.classList.add('ok');s.style.setProperty('--pc',`var(--p-${k})`);s.append(h('sup',{},PART[k].n));streakHit(true);left--;if(!left){doneCount++;toast(`Prompt ${ii+1} fully labeled`);if(doneCount===act.items.length)ctx.complete();}}
+      else{streakHit(false);s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake');toast(`Not ${PART[label].n}`,'Try a different label for that piece.');}};box.append(s,' ');});
+    root.append(box);});
+  return root;
+};
+
+A.duel=(act,ctx)=>{
+  const root=h('div');let n=0,right=0;
+  act.pairs.forEach((p,pi)=>{const wrap=h('div',{class:'q'},h('div',{class:'qt'},`Matchup ${pi+1}`));const d=h('div',{class:'duel'});const fb=h('div');
+    ['a','b'].forEach(s=>{const c=h('button',{class:'dcard'},h('span',{class:'lab'},s.toUpperCase()),p[s]);c.onclick=()=>{if(wrap.dataset.locked)return;wrap.dataset.locked='1';const ok=s===p.better;streakHit(ok);if(ok)right++;
+      [...d.children].forEach((x,j)=>{x.disabled=true;x.classList.add(['a','b'][j]===p.better?'right':'wrong');});
+      fb.innerHTML='';fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Good call.':'The other one wins this round.'),p.why));n++;if(n===act.pairs.length){toast(`${right}/${act.pairs.length} duels won`);ctx.complete();}};d.append(c);});
+    wrap.append(d,fb);root.append(wrap);});
+  return root;
+};
+
+A.quiz=(act,ctx)=>{
+  const root=h('div');let i=0,score=0;const res=[];
+  const prog=h('div',{class:'qprog'},act.questions.map(()=>h('i')));const stage=h('div');root.append(prog,stage);
+  function show(){stage.innerHTML='';[...prog.children].forEach((b,j)=>b.className=res[j]===true?'g':res[j]===false?'b':j===i?'c':'');
+    if(i>=act.questions.length)return finish();
+    const q=act.questions[i];const opts=h('div',{class:'opts'});const fb=h('div');const nextB=h('button',{class:'btn primary',hidden:true,onclick:()=>{i++;show();}},i===act.questions.length-1?'See results':'Next question');
+    q.opts.forEach((o,j)=>{const b=h('button',{class:'opt radio'},h('span',{class:'box'}),h('span',{},o));b.onclick=()=>{const ok=j===q.ok;res[i]=ok;if(ok)score++;streakHit(ok);
+      [...opts.children].forEach((x,k)=>{x.disabled=true;if(k===q.ok)x.classList.add('right');else if(k===j)x.classList.add('wrong');});
+      fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Correct.':'Not this time.'),q.why));nextB.hidden=false;nextB.focus();[...prog.children][i].className=ok?'g':'b';};opts.append(b);});
+    stage.append(h('div',{class:'eyebrow'},`Question ${i+1} of ${act.questions.length}`),h('div',{class:'qt',style:'font-weight:600;margin:6px 0 10px;font-size:16.5px'},q.q),opts,fb,h('div',{class:'row'},nextB));}
+  function finish(){const total=act.questions.length;const pct=Math.round(score/total*100);const passed=score>=(act.pass||0);
+    stage.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},act.boss?'Boss result':'Results'),h('div',{class:'score '+(passed?'pass':'fail')},`${score} / ${total}`),
+      h('p',{style:'margin:6px 0 0'},act.boss?(passed?'Boss defeated! The next world is open.':`You need ${act.pass} to win. Read the tips and take another swing.`):'Review any misses above, then continue.'),
+      h('div',{class:'row'},h('button',{class:'btn',onclick:()=>{i=0;score=0;res.length=0;show();}},'Retry'))));
+    if(passed)ctx.complete({score:pct});}
+  show();return root;
+};
+
+A.flaws=(act,ctx)=>{
+  const root=h('div');let n=0,exact=0;
+  act.items.forEach((it,ii)=>{const box=h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--bg);border-color:var(--line);display:block'},it.p));const opts=h('div',{class:'opts'});const sel=new Set();const fb=h('div');
+    it.opts.forEach((o,i)=>{const b=h('button',{class:'opt','aria-pressed':'false'},h('span',{class:'box'}),h('span',{},o.t));b.onclick=()=>{sel.has(i)?sel.delete(i):sel.add(i);b.setAttribute('aria-pressed',String(sel.has(i)));b.querySelector('.box').textContent=sel.has(i)?'✓':'';};opts.append(b);});
+    const chk=h('button',{class:'btn sm'},'Check');chk.onclick=()=>{if(!sel.size){toast('Select at least one flaw');return;}chk.disabled=true;let hits=0,errs=0,total=it.opts.filter(o=>o.ok).length;
+      it.opts.forEach((o,i)=>{const c=opts.children[i];c.disabled=true;if(o.ok){c.classList.add('right');if(sel.has(i))hits++;}else if(sel.has(i)){c.classList.add('wrong');errs++;}});
+      const ex=hits===total&&!errs;if(ex)exact++;streakHit(ex);fb.append(h('div',{class:'fb '+(ex?'good':'bad')},h('b',{},ex?'Exact diagnosis.':`Found ${hits} of ${total} flaws${errs?`, with ${errs} false alarm${errs>1?'s':''}`:''}.`),'Green items are the real flaws.'));
+      n++;if(n===act.items.length){if(exact===act.items.length)award('bughunter');ctx.complete();}};
+    box.append(opts,h('div',{class:'row'},chk),fb);root.append(box);});
+  return root;
+};
+
+A.builder=(act,ctx)=>{
+  const root=h('div');const d=S.drafts[act.store+'_slots']||{};
+  root.append(h('div',{class:'scenario'},h('b',{},'Scenario'),act.scenario));
+  const hints={role:'Who should the AI be?',task:act.requireVar?'The job, with [VARIABLES] for what changes':'Action verb + deliverable',context:'Audience, purpose, background',examples:'A sample of what good looks like',format:'Shape: table, bullets, length…',constraints:'Limits, tone, rules, guardrails'};
+  const slots=h('div',{class:'slots'});const tas={};
+  PARTS.forEach(p=>{const t=h('textarea',{id:`bd-${ctx.key}-${p.k}`,placeholder:p.ex});t.value=d[p.k]||'';tas[p.k]=t;t.addEventListener('input',upd);
+    slots.append(h('div',{class:'slot',style:`--pc:var(--p-${p.k})`},h('label',{for:t.id},p.n,h('small',{},hints[p.k])),t));});
+  const status=h('div',{class:'meter'});const preview=h('pre',{class:'tpl',style:'margin-top:14px'});
+  const out=h('div',{class:'out',hidden:true});const gbox=h('div');
+  const runB=h('button',{class:'btn'},'Run it');const coachB=h('button',{class:'btn brass'},'Send to coach');const copyB=h('button',{class:'btn sm'},'Copy prompt');const stopB=h('button',{class:'btn sm',hidden:true,onclick:()=>runCtl&&runCtl.abort()},'Stop');
+  function assembled(){const v=k=>tas[k].value.trim();return [v('role'),[v('task'),v('context')].filter(Boolean).join(' '),v('examples')?'Example of what I want:\n'+v('examples'):'',v('format')?'Format: '+v('format'):'',v('constraints')?'Rules: '+v('constraints'):''].filter(Boolean).join('\n\n');}
+  let completed=false;
+  function upd(){const slotsD={};PARTS.forEach(p=>slotsD[p.k]=tas[p.k].value);S.drafts[act.store+'_slots']=slotsD;S.drafts[act.store]=assembled();save();
+    status.innerHTML='';let full=0;PARTS.forEach(p=>{const ok=words(tas[p.k].value)>=3;if(ok)full++;status.append(h('span',{class:ok?'on':'',style:ok?`background:var(--p-${p.k})`:''},(ok?'✓ ':'')+p.n));});
+    const hasVar=/\[[^\]]{2,}\]/.test(assembled());if(act.requireVar)status.append(h('span',{class:hasVar?'on':'',style:hasVar?'background:var(--olive)':''},(hasVar?'✓ ':'')+'[VARIABLE]'));
+    preview.textContent=assembled()||'Your assembled prompt will appear here.';
+    if(!completed&&full===6&&(!act.requireVar||hasVar)){completed=true;award('builder');ctx.complete();}}
+  runB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few parts first');out.hidden=false;runB.disabled=true;stopB.hidden=false;await runPrompt(t,out,null);runB.disabled=false;stopB.hidden=true;};
+  coachB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few parts first');coachB.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Reviewing… (the coach can take up to a minute)'));
+    const g=await grade(t,act.scenario,{template:!!act.requireVar});gbox.innerHTML='';gbox.append(gradeEl(g,act.requireVar?80:70));coachB.disabled=false;};
+  copyB.onclick=()=>copyText(assembled(),copyB);
+  root.append(slots,h('div',{style:'margin-top:12px'},h('div',{class:'eyebrow'},'Build status'),status),h('div',{class:'eyebrow',style:'margin-top:14px'},'Assembled prompt'),preview,h('div',{class:'row'},runB,stopB,coachB,copyB),out,gbox);
+  upd();return root;
+};
+
+async function gradeMission(ta,scenario,gbox,btn,pass,opts){const t=ta.value.trim();if(words(t)<4){toast('Write a fuller prompt first');return null;}
+  btn.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Grading… (the coach can take up to a minute)'));const g=await grade(t,scenario,opts);gbox.innerHTML='';gbox.append(gradeEl(g,pass));btn.disabled=false;return g;}
+
+A.rewrite=(act,ctx)=>{
+  const root=h('div');const scores={};const sumB=h('div');
+  act.items.forEach((it,ii)=>{const ta=h('textarea',{id:`rw-${ctx.key}-${ii}`,placeholder:'Your rewritten prompt…'});ta.value=S.drafts[`${ctx.key}-${ii}`]||'';ta.addEventListener('input',()=>{S.drafts[`${ctx.key}-${ii}`]=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));});
+    const mt=h('div');mt.append(meterEl(ta.value));const gbox=h('div');const b=h('button',{class:'btn primary'},'Grade this rewrite');
+    b.onclick=async()=>{const g=await gradeMission(ta,it.scenario,gbox,b,act.pass);if(!g)return;scores[ii]=Math.max(scores[ii]||0,g.score);streakHit(g.score>=act.pass);sum();};
+    root.append(h('div',{class:'mission'},h('h4',{},`Round ${ii+1}`),h('div',{class:'weak'},'Weak: '+it.weak),h('p',{style:'margin:0 0 8px;font-size:14px'},it.scenario),ta,mt,h('div',{class:'row'},b),gbox));});
+  function sum(){const ks=Object.keys(scores);sumB.innerHTML='';if(!ks.length)return;const avg=Math.round(ks.reduce((a,k)=>a+scores[k],0)/act.items.length);
+    sumB.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},'Your average (best score per round)'),h('div',{class:'score '+(avg>=act.pass&&ks.length===act.items.length?'pass':'fail')},avg),h('p',{style:'margin:4px 0 0'},ks.length<act.items.length?`Graded ${ks.length} of ${act.items.length}. Finish all three.`:avg>=act.pass?'Boss defeated!':`Average must reach ${act.pass}. Use the fixes and regrade any round.`)));
+    if(ks.length===act.items.length&&avg>=act.pass)ctx.complete({score:avg});}
+  root.append(sumB);return root;
+};
+
+A.capstone=(act,ctx)=>{
+  const root=h('div');const ta=h('textarea',{id:`cap-${ctx.key}`,style:'min-height:220px'});ta.value=S.drafts.m6cap||S.drafts.m6dev||'';
+  const mt=h('div');const upd=()=>{S.drafts.m6cap=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));const v=(ta.value.match(/\[[^\]]{2,}\]/g)||[]).length;mt.firstChild.append(h('span',{class:v?'on':'',style:v?'background:var(--olive)':''},`${v} variable${v===1?'':'s'}`));};
+  ta.addEventListener('input',upd);upd();
+  const gbox=h('div');const b=h('button',{class:'btn brass'},'Submit for grading');
+  const sc='The learner is building a reusable prompt template for a recurring task in their everyday life or work.';
+  b.onclick=async()=>{const g=await gradeMission(ta,sc,gbox,b,act.pass,{template:true});if(!g)return;if(g.score>=act.pass){award('capstone');if(!S.certDate){S.certDate=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});save();}ctx.complete({score:g.score});}};
+  root.append(h('div',{class:'scenario'},h('b',{},'Judged on'),'All six parts \u00b7 [VARIABLES] for what changes \u00b7 standing rules \u00b7 a fixed output format \u00b7 guardrails (sources, assumptions, privacy)'),ta,mt,h('div',{class:'row'},b,h('button',{class:'btn sm',onclick:e=>copyText(ta.value,e.currentTarget)},'Copy prompt')),gbox);
+  return root;
+};
+
+A.rank=(act,ctx)=>{
+  const root=h('div');let order=[];const list=h('div',{class:'ranklist'});const fb=h('div');const chk=h('button',{class:'btn primary',disabled:true},'Check ranking');const reset=h('button',{class:'btn sm'},'Reset');
+  function draw(){list.innerHTML='';act.items.forEach((it,i)=>{const pos=order.indexOf(i);const b=h('button',{class:'ritem'+(pos>=0?' set':'')},h('span',{class:'pos'},pos>=0?pos+1:'–'),h('span',{},it.t));b.onclick=()=>{if(chk.dataset.done)return;if(pos>=0)order.splice(pos,1);else order.push(i);draw();};list.append(b);});chk.disabled=order.length!==act.items.length||!!chk.dataset.done;}
+  chk.onclick=()=>{chk.dataset.done='1';let right=0;order.forEach((idx,p)=>{const ok=act.items[idx].r===p+1;if(ok)right++;list.children[idx].classList.add(ok?'right':'wrong');});streakHit(right===act.items.length);
+    fb.append(h('div',{class:'fb '+(right===act.items.length?'good':'bad')},h('b',{},right===act.items.length?'Perfect ranking.':`${right} of ${act.items.length} in the right spot. Pro\u2019s order: ${act.items.map((x,i)=>[x.r,i]).sort((a,b)=>a[0]-b[0]).map(([r,i])=>'#'+r+': '+act.items[i].t.slice(0,32)+'…').join('  ')}`),act.why));chk.disabled=true;ctx.complete();};
+  reset.onclick=()=>{if(chk.dataset.done)return;order=[];draw();};
+  draw();root.append(list,h('div',{class:'row'},chk,reset),fb);return root;
+};
+
+A.rubric=(act,ctx)=>{
+  const root=h('div');let n=0,allMatch=true;
+  act.items.forEach((it,ii)=>{const box=h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--bg);border-color:var(--line);display:block'},it.p));const val={};const rows=h('div',{class:'rub'});
+    Object.keys(it.e).forEach(cr=>{const seg=h('div',{class:'seg5',role:'group','aria-label':cr});for(let s=1;s<=5;s++){seg.append(h('button',{'aria-pressed':'false',onclick:e=>{if(box.dataset.done)return;val[cr]=s;[...seg.children].forEach((c,j)=>c.setAttribute('aria-pressed',String(j===s-1)));}},String(s)));}rows.append(h('div',{class:'rubrow'},h('b',{style:'font-size:14px'},cr),seg));});
+    const fb=h('div');const chk=h('button',{class:'btn sm'},'Reveal the pro\u2019s score');
+    chk.onclick=()=>{const ks=Object.keys(it.e);if(ks.some(k=>!val[k])){toast('Score all three criteria');return;}box.dataset.done='1';chk.disabled=true;let m=0;
+      ks.forEach((k,ki)=>{const seg=rows.children[ki].querySelector('.seg5');seg.children[it.e[k]-1].classList.add('exp');if(Math.abs(val[k]-it.e[k])<=1)m++;});
+      if(m<ks.length)allMatch=false;streakHit(m===ks.length);fb.append(h('div',{class:'fb '+(m===ks.length?'good':'bad')},h('b',{},`${m} of ${ks.length} within 1 point of the pro (gold outline).`),it.why));
+      n++;if(n===act.items.length){if(allMatch)award('judge');ctx.complete();}};
+    box.append(rows,h('div',{class:'row'},chk),fb);root.append(box);});
+  return root;
+};
+
+/* ============ GAME ART ============ */
+const G={
+  bowl:'<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M8 7.5c0-2 2-2 2-4M13 7.5c0-2 2-2 2-4"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/>',
+  hammer:'<path d="M13.5 4.5l6 6-2.5 2.5-6-6z"/><path d="M11 7l-8 8 3 3 8-8"/>',
+  lens:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/>',
+  scales:'<path d="M12 3v17M7 20.5h10M4 7h16"/><path d="M6 7l-3 6.5h6zM18 7l-3 6.5h6z"/>',
+  crown:'<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
+  play:'<path d="M7 4.5l12.5 7.5L7 19.5z"/>',
+  bubble:'<path d="M4 5h16v11H9.5L4 20.5z"/><path d="M8.5 10.5h7"/>',
+  bolt:'<path d="M13 2L4.5 13.5h6.5l-1 8.5 8.5-11.5h-6.5z"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>'
+};
+const ico=(n,s=24,sw=2.2)=>`<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${G[n]}</svg>`;
+const coinSvg=`<svg class="coin ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--gold)"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6"/><path d="M12 8.5v7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`;
+const WORLD=[{c:'--w1',g:'bowl'},{c:'--w2',g:'target'},{c:'--w3',g:'hammer'},{c:'--w4',g:'lens'},{c:'--w5',g:'scales'},{c:'--w6',g:'crown'}];
+const STAGE_ICON={ce:'play',pp:'bubble',gen:'bolt',dev:'target',apply:'crown'};
+
+function confetti(){
+  try{ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
+  const cv=h('canvas',{class:'confetti'});document.body.append(cv);const W=cv.width=innerWidth,H=cv.height=innerHeight;const x=cv.getContext('2d');
+  const cs=getComputedStyle(document.documentElement);const cols=['--w1','--w2','--w3','--w4','--w5','--w6','--gold'].map(v=>cs.getPropertyValue(v).trim()||'#f60');
+  const P=Array.from({length:150},()=>({x:W/2+(Math.random()-.5)*W*.3,y:H*.35,vx:(Math.random()-.5)*16,vy:-Math.random()*15-4,s:Math.random()*8+5,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.floor(Math.random()*cols.length)]}));
+  let t=0;(function f(){x.clearRect(0,0,W,H);P.forEach(p=>{p.vy+=.45;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();});if(++t<130)requestAnimationFrame(f);else cv.remove();})();
+}
+
+/* ============ PROGRESS ============ */
+const pk=(m,p)=>`${m}.${p}`;
+const modUnlocked=i=>S.unlockAll||i===0||!!S.done[pk(MODULES[i-1].id,'apply')];
+const phaseUnlocked=(mi,pi)=>modUnlocked(mi)&&(S.unlockAll||pi===0||!!S.done[pk(MODULES[mi].id,PHASES[pi-1].k)]);
+const stars=sc=>sc>=100?3:sc>=85?2:sc>=1?1:0;
+function starEl(n){return h('span',{class:'stars','aria-label':`${n} of 3 stars`},[0,1,2].map(i=>h('span',{class:i<n?'':'off'},'★')));}
+
+function completePhase(mi,pi,extra={}){
+  const m=MODULES[mi],ph=PHASES[pi],key=pk(m.id,ph.k);let first=!S.done[key];let gained=0;
+  if(extra.score!=null){const prev=S.scores[m.id]||0;if(extra.score>prev){S.scores[m.id]=extra.score;if(extra.score>=100&&m.id==='m1')award('anatomy');}}
+  if(first){S.done[key]=Date.now();save();gained=XP[ph.k];if(ph.k==='apply')gained+=Math.round((extra.score||0)/4);addXP(gained,`${m.title}: ${ph.n}`);}
+  save();checkAllStars();
+  if(ph.k==='apply'&&(first||extra.score>=85))confetti();
+  const nb=$('#nextBtn');if(nb){nb.disabled=false;nb.classList.add('primary');}
+  const cl=$('#clear');if(cl){cl.hidden=false;cl.classList.remove('pop');void cl.offsetWidth;cl.classList.add('pop');const g=cl.querySelector('.gain');if(g)g.textContent=gained?`+${gained} coins`:'Replayed. Nice practice.';}
+  const pd=$('#phaseDone');if(pd)pd.hidden=true;
+  renderTrack();
+}
+
+/* ============ RENDER ============ */
+function renderHUD(){
+  const ri=rankIdx(S.xp),r=RANKS[ri];
+  $('#nav').innerHTML='';[['home','Map'],['card','Cheat Sheet'],['badges','Trophies']].forEach(([k,l])=>$('#nav').append(h('button',{'aria-current':String(view.screen===k||(k==='home'&&view.screen==='module')),onclick:()=>go(k)},l)));
+  const on=aiState==='ready'||aiState==='live';
+  $('#stats').innerHTML='';$('#stats').append(
+    h('span',{class:'pill lvl',title:`Level ${ri+1}: ${r.n}`,html:`${insignia(ri)}${esc(r.n)}`}),
+    h('span',{class:'pill',title:'Coins (XP)',html:`${coinSvg}${S.xp}`}),
+    h('span',{class:'pill'+(S.streak>=3?' hot':''),title:'Correct answers in a row',html:`${flame.replace('<svg','<svg class="ico" width="18" height="18"')} ${S.streak}`}),
+    h('span',{class:'pill',title:'Trophies',html:`${ico('crown',18)} ${Object.keys(S.badges).length}`}),
+    window.claude?h('span',{class:'pill ai'+(on?' on':'')},h('i'),aiState==='checking'?'Coach loading':on?'AI coach on':'AI coach offline'):null);
+}
+function go(screen,mi,pi){view.screen=screen;if(mi!=null)view.mi=mi;if(pi!=null)view.pi=pi;render();window.scrollTo({top:0,behavior:'instant'});}
+function render(){renderHUD();const app=$('#app');app.style.removeProperty('--wc');({home:renderHome,module:renderModule,badges:renderBadges,card:renderCard})[view.screen]();}
+function resumePoint(){for(let i=0;i<MODULES.length;i++){if(!modUnlocked(i))break;for(let p=0;p<5;p++){if(!S.done[pk(MODULES[i].id,PHASES[p].k)])return [i,p];}}return [MODULES.length-1,4];}
+
+function xpBar(){const ri=rankIdx(S.xp),r=RANKS[ri],nx=RANKS[ri+1];const pct=nx?Math.round((S.xp-r.xp)/(nx.xp-r.xp)*100):100;
+  return h('div',{class:'xpbar'},h('div',{class:'track',role:'progressbar','aria-valuenow':pct,'aria-valuemin':0,'aria-valuemax':100,'aria-label':'Progress to next level'},h('div',{class:'fill',style:`width:${pct}%`})),h('div',{class:'lbl'},h('span',{},`${S.xp} coins`),h('span',{},nx?`${nx.xp-S.xp} to ${nx.n}`:'Max level!')));}
+
+function ringSvg(done){const R=48,C=2*Math.PI*R,seg=C/5,gap=6;let s='';for(let i=0;i<5;i++){s+=`<circle cx="52" cy="52" r="${R}" fill="none" stroke="${i<done?'var(--wc)':'var(--line)'}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${seg-gap} ${C-seg+gap}" stroke-dashoffset="${-(i*seg)}" transform="rotate(-90 52 52)"/>`;}return `<svg class="ring" viewBox="0 0 104 104" aria-hidden="true">${s}</svg>`;}
+
+let trailRO=null;
+function drawTrail(){const tr=$('.trail');if(!tr)return;const svg=tr.querySelector('.trail-svg');const box=tr.getBoundingClientRect();
+  const pts=[...tr.querySelectorAll('.wnode')].map(n=>{const b=n.getBoundingClientRect();return [b.left-box.left+b.width/2,b.top-box.top+b.height/2];});
+  let d='',dd='';const doneUpTo=MODULES.reduce((a,m,i)=>S.done[pk(m.id,'apply')]?i+1:a,0);
+  for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];const my=(y0+y1)/2;const seg=`M${x0} ${y0} C${x0} ${my} ${x1} ${my} ${x1} ${y1}`;if(i<=doneUpTo)dd+=seg;else d+=seg;}
+  svg.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
+  svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--line)" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 16"/><path d="${dd}" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round"/>`;}
+
+function renderHome(){
+  const app=$('#app');app.innerHTML='';const [rm,rp]=resumePoint();const started=Object.keys(S.done).length>0;const ri=rankIdx(S.xp),r=RANKS[ri];
+  const nextM=MODULES[rm];
+  app.append(h('section',{class:'hero'},
+    h('div',{},h('div',{class:'eyebrow'},'A game about talking to AI'),h('h1',{html:'Get AI to do <span class="hl">exactly</span> what you want.'}),
+      h('p',{},'Six worlds. Thirty quick stages. Duel bad prompts, crack broken ones, and build your own. Play a few minutes at a time, and watch your answers get dramatically better.'),
+      h('div',{class:'cta'},h('button',{class:'btn primary big',onclick:()=>go('module',rm,rp),html:`${ico('play',18)} ${started?'Continue':'Play now'}`}),h('button',{class:'btn big',onclick:()=>go('card')},'Cheat Sheet'))),
+    h('div',{class:'player'},
+      h('div',{class:'top',html:`${insignia(ri)}<div><div class="eyebrow">Level ${ri+1}</div><div class="lv">${esc(r.n)}</div></div>`}),
+      xpBar(),
+      h('div',{class:'statgrid'},h('div',{class:'stat'},h('b',{},S.xp),h('span',{},'Coins')),h('div',{class:'stat'},h('b',{},S.best),h('span',{},'Best streak')),h('div',{class:'stat'},h('b',{},`${Object.keys(S.badges).length}/${BADGES.length}`),h('span',{},'Trophies'))),
+      h('div',{class:'nextup',style:`--wc:var(${WORLD[rm].c})`},h('div',{},h('div',{class:'eyebrow'},'Up next'),h('b',{},`${nextM.title} · ${PHASES[rp].n}`)),h('button',{class:'btn sm',onclick:()=>go('module',rm,rp),html:`${ico('play',14)} Go`})))));
+
+  app.append(h('div',{class:'sec-h'},h('h2',{},'The Map'),h('span',{class:'muted',style:'font-size:14.5px'},'Beat a world’s boss to open the next one.')));
+  const trail=h('div',{class:'trail'});trail.innerHTML='<svg class="trail-svg" aria-hidden="true"></svg>';
+  MODULES.forEach((m,i)=>{const un=modUnlocked(i);const dn=PHASES.filter(p=>S.done[pk(m.id,p.k)]).length;const beat=!!S.done[pk(m.id,'apply')];const cur=un&&!beat&&i===rm;
+    const open=()=>{const ff=PHASES.findIndex(p=>!S.done[pk(m.id,p.k)]);go('module',i,ff<0?0:ff);};
+    const node=h('button',{class:'wnode'+(cur?' current':''),disabled:!un,'aria-label':`World ${i+1}: ${m.title}`,onclick:open,html:`${ringSvg(dn)}<span class="disc">${un?ico(WORLD[i].g,38,2.4):ico('lock',30,2.4)}</span>${beat?`<span class="crown">${ico('crown',20,2.4)}</span>`:''}`});
+    const card=h('div',{class:'wcard'+(un?'':' locked')},h('div',{class:'wn'},`World ${i+1}`),h('h3',{},m.title),h('p',{},m.obj),
+      h('div',{class:'foot'},h('div',{class:'pips','aria-label':`${dn} of 5 stages cleared`},PHASES.map(p=>h('i',{class:S.done[pk(m.id,p.k)]?'on':''}))),
+        un?h('div',{class:'row',style:'margin:0'},beat?starEl(stars(S.scores[m.id]||0)):null,h('button',{class:'btn sm'+(cur?' primary':''),onclick:open},beat?'Replay':dn?'Continue':'Play')):h('span',{class:'muted',style:'font-size:13.5px;font-weight:700'},'Locked')));
+    trail.append(h('div',{class:'trow'+(i%2?' alt':''),style:`--wc:var(${WORLD[i].c})`},node,card));});
+  app.append(trail);requestAnimationFrame(drawTrail);
+  if(!trailRO&&window.ResizeObserver){trailRO=new ResizeObserver(()=>drawTrail());}
+  if(trailRO){trailRO.disconnect();trailRO.observe(trail);}
+
+  const tile=(c,i,t,s)=>h('div',{class:'htile'},h('span',{class:'bub',style:`background:var(${c})`,html:i}),h('div',{},h('b',{},t),h('span',{},s)));
+  app.append(h('div',{class:'howto'},
+    tile('--w1',ico('play',24),'Jump right in','Every stage starts with you trying something. No lectures.'),
+    tile('--w5',coinSvg.replace('class="coin ico"','class="coin ico" width="26" height="26"'),'Earn coins & trophies','Clear stages, build streaks, and beat bosses for bonus coins.'),
+    tile('--w2',ico('crown',24),'Level up to Prompt Sage','Nine levels. One very useful superpower at the end.')));
+  if(S.badges.capstone)app.append(certEl());
+  app.append(h('div',{class:'foot-tools'},h('button',{class:'btn ghost sm',onclick:()=>{S.unlockAll=!S.unlockAll;save();render();}},S.unlockAll?'Unlock all worlds: on':'Unlock all worlds'),h('button',{class:'btn ghost sm',onclick:askReset},'Reset progress')));
+}
+function askReset(e){const b=e.currentTarget;if(b.dataset.arm){S=fresh();save();render();toast('Progress reset');return;}b.dataset.arm='1';b.textContent='Tap again to erase everything';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Reset progress';}},4000);}
+function certEl(){const ip=h('input',{type:'text',id:'certName',placeholder:'Type your name',value:S.name||'',style:'max-width:320px;text-align:center'});const nm=h('div',{class:'who'},S.name||'Your Name');ip.addEventListener('input',()=>{S.name=ip.value;save();nm.textContent=ip.value||'Your Name';});
+  const r=RANKS[rankIdx(S.xp)];
+  return h('section',{class:'cert'},h('div',{class:'certificate'},h('div',{class:'eyebrow'},'Prompt Quest'),h('h2',{},'Champion'),h('p',{style:'margin:8px 0 0;opacity:.9'},'Awarded to'),nm,
+    h('p',{style:'max-width:52ch;margin:6px auto'},'for conquering all six worlds and building a signature prompt that gets AI to deliver, every time.'),
+    h('p',{class:'eyebrow',style:'margin-top:12px'},`${r.n} · ${S.xp} coins · ${Object.keys(S.badges).length} trophies · ${S.certDate||''}`)),h('div',{class:'row',style:'justify-content:center'},ip));}
+
+function renderTrack(){const tr=$('#track');if(!tr)return;const mi=view.mi,m=MODULES[mi];tr.innerHTML='';
+  const dn=PHASES.filter(p=>S.done[pk(m.id,p.k)]).length;tr.append(h('div',{class:'prog',style:`width:${Math.min(dn,4)/4*80}%`}));
+  PHASES.forEach((p,pi)=>{const d=!!S.done[pk(m.id,p.k)];tr.append(h('button',{class:'stage'+(d?' done':'')+(p.k==='apply'?' boss':''),'aria-current':String(pi===view.pi),disabled:!phaseUnlocked(mi,pi),onclick:()=>go('module',mi,pi),'aria-label':`Stage ${pi+1}: ${p.n}`},
+    h('span',{class:'dot',html:d&&pi!==view.pi?ico('check',24,3):ico(phaseUnlocked(mi,pi)?STAGE_ICON[p.k]:'lock',24)}),h('span',{class:'lbl'},p.n)));});}
+
+function renderModule(){
+  const app=$('#app');app.innerHTML='';const mi=view.mi,pi=view.pi,m=MODULES[mi],ph=PHASES[pi],act=m.phases[ph.k];const key=pk(m.id,ph.k);
+  if(!phaseUnlocked(mi,pi)){return go('home');}
+  app.style.setProperty('--wc',`var(${WORLD[mi].c})`);
+  app.append(h('section',{class:'whead'},
+    h('div',{class:'row1'},h('button',{class:'back',onclick:()=>go('home'),html:`${ico('back',14,3)} Map`}),S.done[pk(m.id,'apply')]?starEl(stars(S.scores[m.id]||0)):h('span',{class:'wn'},`${PHASES.filter(p=>S.done[pk(m.id,p.k)]).length} of 5 cleared`)),
+    h('div',{class:'main'},h('div',{class:'glyph',html:ico(WORLD[mi].g,40,2.2)}),h('div',{},h('div',{class:'wn'},`World ${mi+1}`),h('h1',{},m.title),h('p',{},m.obj)))));
+  app.append(h('nav',{class:'track',id:'track','aria-label':'Stages'}));renderTrack();
+  const ctx={key,complete:(extra)=>completePhase(mi,pi,extra||{})};
+  const actEl=A[act.type](act,ctx);
+  const done=!!S.done[key];const isLast=pi===4;
+  const nextB=h('button',{class:'btn big'+(done?' primary':''),id:'nextBtn',disabled:!done,onclick:()=>{if(!isLast)go('module',mi,pi+1);else if(mi<MODULES.length-1)go('module',mi+1,0);else go('home');}},isLast?(mi<MODULES.length-1?`Next world →`:'Back to the map'):`Next stage →`);
+  const clear=h('div',{class:'clear',id:'clear',hidden:!done},h('span',{class:'burst',html:ico('check',22,3)}),h('div',{},h('b',{},act.boss?'Boss defeated!':'Stage clear!'),h('span',{class:'gain muted',style:'font-size:14px'},done?'Play it again any time.':'')));
+  app.append(h('section',{class:'act'},
+    h('div',{class:'act-h'},h('div',{},h('div',{class:'kicker',html:`${ico(STAGE_ICON[ph.k],16,2.6)} ${act.boss?'Boss round':`Stage ${pi+1} · ${ph.n}`}`}),h('h2',{},act.title)),h('span',{class:'xptag',html:`${coinSvg} +${XP[ph.k]}${act.boss?' + bonus':''}`})),
+    h('p',{class:'intro'},act.intro),actEl,
+    h('div',{class:'next-row'},clear,h('span',{id:'phaseDone',class:'muted',style:'font-size:14.5px;font-weight:600',hidden:done},act.boss?'Beat the boss to move on.':'Finish this stage to move on.'),nextB)));
+}
+
+function renderBadges(){const app=$('#app');app.innerHTML='';const ri=rankIdx(S.xp);
+  app.append(h('div',{class:'sec-h'},h('h2',{},'Trophies'),h('span',{class:'muted'},`${Object.keys(S.badges).length} of ${BADGES.length} earned · Best streak: ${S.best}`)));
+  app.append(h('div',{class:'badges'},BADGES.map((b,i)=>h('div',{class:'badge'+(S.badges[b.k]?'':' off'),html:`${badgeSvg(i,!!S.badges[b.k])}<div><b>${esc(b.n)}</b><span>${esc(b.d)}</span></div>`}))));
+  app.append(h('div',{class:'sec-h',style:'margin-top:40px'},h('h2',{},'Levels')));
+  app.append(h('div',{class:'ranks'},RANKS.map((r,i)=>h('div',{class:'rk'+(i===ri?' me':''),html:`${insignia(i)}<b>${esc(r.n)}</b><div class="x">${r.xp} coins${i===ri?' · you':''}</div>`}))));
+  const sc=h('div',{class:'panel',style:'margin-top:40px'},h('h3',{},'Boss scores'));MODULES.forEach((m,i)=>sc.append(h('div',{class:'row',style:'justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:8px'},h('span',{style:'font-weight:600'},`World ${i+1} · ${m.title}`),h('span',{},S.scores[m.id]!=null?`${S.scores[m.id]}% `:'– ',starEl(stars(S.scores[m.id]||0))))));app.append(sc);
+}
+
+function renderCard(){const app=$('#app');app.innerHTML='';
+  app.append(h('div',{class:'sec-h'},h('h2',{},'Cheat Sheet'),h('span',{class:'muted'},'Everything you’ve unlocked, on one page.')));
+  app.append(h('div',{class:'mnemonic',html:MODULES[0].phases.gen.mnemonic}));
+  app.append(h('div',{class:'cards'},PARTS.map(p=>h('div',{class:'lcard pcard',style:`--pc:var(--p-${p.k})`},h('h4',{},p.n),h('p',{},p.d),h('div',{class:'ex'},p.ex)))));
+  app.append(h('div',{class:'eyebrow',style:'margin:8px 0 8px'},'Fill-in-the-blanks prompt'),h('pre',{class:'tpl'},MODULES[2].phases.gen.template));
+  app.append(h('div',{class:'cards'},
+    h('div',{class:'lcard'},h('h4',{},'Five classic misses'),h('ul',{style:'margin:4px 0 0;padding-left:18px;font-size:14.5px'},['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'].map(x=>h('li',{},x)))),
+    h('div',{class:'lcard'},h('h4',{},'Power moves'),h('ul',{style:'margin:4px 0 0;padding-left:18px;font-size:14.5px;display:grid;gap:4px'},
+      ['“Before you start, ask me up to 3 questions.”','“Answer only from the text below. If it isn’t there, say ‘Not in source.’”','Show 1–3 real examples to match a style.','Fence source text with """ or <document> tags.','“Check your draft against each requirement and fix gaps.”','Chain big jobs: outline → approve → draft → edit.','Never paste passwords, account numbers, or other people’s private info.'].map(x=>h('li',{},x))))));
+}
+
+$('#brand').onclick=()=>go('home');
+render();
+(async()=>{try{ if(window.claude&&claude.use){ sample=await claude.use('sample'); } }catch(e){} aiState=sample?'ready':'offline'; renderHUD(); })();
+</script>
+
+</body>
+</html>
