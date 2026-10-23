@@ -34,6 +34,7 @@
   --p-role:#A08BFF; --p-task:#F7BC45; --p-context:#709AFF; --p-examples:#3CD2B6; --p-format:#FF8A6C; --p-constraints:#E08AD6;
   --brass-soft:#3B3017; --shadow:0 1px 0 rgba(0,0,0,.2),0 12px 30px -14px rgba(0,0,0,.6); color-scheme:dark }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.6px);background-size:24px 24px;color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 button,input,textarea{font:inherit;color:inherit}
@@ -273,6 +274,13 @@ pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:
 .mission{border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
 .mission h4{margin:0 0 8px;font-size:21px}
 
+.hint{font-size:14px;color:var(--muted);margin:-4px 0 10px;font-weight:600}
+.steps{background:var(--surface-2);border-radius:18px;padding:14px 18px 16px;margin:8px 0 22px;border:2px solid color-mix(in srgb,var(--wc,var(--accent)) 30%,var(--line))}
+.steps ol{list-style:none;counter-reset:st;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.steps li{counter-increment:st;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start;font-size:16px;line-height:1.45}
+.steps li::before{content:counter(st);width:28px;height:28px;border-radius:50%;background:var(--wc,var(--accent));color:#fff;font-weight:800;font-size:14px;display:grid;place-items:center}
+.btn.submit{min-width:120px}
+.dcard[aria-pressed="true"]{border-color:var(--wc);box-shadow:0 4px 0 var(--wc);background:color-mix(in srgb,var(--wc) 8%,var(--surface))}
 /* Trophies */
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:12px}
 .badge{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow)}
@@ -393,7 +401,7 @@ const MODULES = [
 {id:'m1', title:'Six Ingredients', bloom:'Remember', lvl:1,
  obj:'Every great prompt uses the same six ingredients. Learn to spot them.',
  phases:{
-  ce:{type:'sandbox', title:'Two Prompts, One Topic', intro:'Run Prompt A, then Prompt B. Same topic, very different instructions. Watch what comes back.',
+  ce:{type:'sandbox', title:'Two Prompts, One Topic', steps:["Read Prompt A in the box below.", "Click Run Prompt and read the answer that appears.", "Click the Prompt B tab, read that prompt, and click Run Prompt again.", "Compare the two answers. Which one would you actually use?"], intro:'Run Prompt A, then Prompt B. Same topic, very different instructions. Watch what comes back.',
     requireAll:true,
     prompts:[
       {label:'Prompt A', text:'Write something about teamwork.',
@@ -401,7 +409,7 @@ const MODULES = [
       {label:'Prompt B', text:'You are an upbeat youth soccer coach. Write a 150-word pep talk for a team of 10-year-olds before the first game of their season. Use simple words, include one funny thing that could happen on the field, and end with a short team chant they can shout together.',
        canned:`Okay team, huddle up! Today is our very first game, and I am SO proud of you already.\n\nHere's the deal: we pass the ball, we cheer for each other, and we never give up, even if we're behind. Remember at practice when Max kicked the ball so hard it landed in the snack cooler? That's the kind of energy I want today. Just maybe aim for the goal this time.\n\nIf you fall down, get back up. If a teammate makes a mistake, give them a high five. Winning is fun, but trying your hardest together is what makes us a team.\n\nNow hands in the middle. On three:\n"One, two, three... TIGERS ROAR!"`}
     ]},
-  pp:{type:'reflect', title:'What Happened?', intro:'Quick gut check. What did you notice?',
+  pp:{type:'reflect', title:'What Happened?', steps:["Answer each question, then click Submit.", "Type a sentence or two in the last box, then click Submit."], intro:'Quick gut check. What did you notice?',
     questions:[
       {q:'Which response would you actually use with your team?', any:true, opts:['Response A','Response B'], fb:'Most people pick B. It was written for a specific audience, length, and purpose, so it was ready to use. A needed a total rewrite.'},
       {q:'What did Prompt B include that Prompt A didn’t? (Select all that apply.)', multi:true,
@@ -409,17 +417,17 @@ const MODULES = [
        fb:'Prompt B added a role, an audience, a length, and a specific structure. None of that is fancy wording. It’s information the AI could not have guessed.'}
     ],
     journal:'In one or two sentences: what was the biggest difference between the two responses, and why do you think it happened?'},
-  gen:{type:'lesson', title:'The Six Ingredients', intro:'Every strong prompt is built from the same six ingredients. Quick questions only need two or three. Big deliverables need all six.',
+  gen:{type:'lesson', title:'The Six Ingredients', steps:["Read the six ingredient cards.", "Answer the question at the bottom, then click Submit."], intro:'Every strong prompt is built from the same six ingredients. Quick questions only need two or three. Big deliverables need all six.',
     showParts:true,
     mnemonic:'<b>R</b>eally <b>T</b>asty <b>C</b>akes <b>E</b>ven <b>F</b>eed <b>C</b>rowds',
     mnemonicNote:'Role · Task · Context · Examples · Format · Constraints',
     check:{q:'Which part answers “Who is going to read this, and why?”', opts:['Role','Task','Context','Format'], ok:2, why:'Context covers audience, purpose, and background: the things the AI can’t know unless you tell it. Role is who the AI is, not who the reader is.'}},
-  dev:{type:'tagger', title:'Ingredient Spotter', intro:'Pick an ingredient from the palette, then tap the matching piece of the prompt. Tag every piece to clear the stage.',
+  dev:{type:'tagger', title:'Ingredient Spotter', steps:["Click an ingredient button at the top (for example, Role).", "Click the piece of the prompt that matches it. It turns that color when you’re right.", "Keep going until every piece of both prompts is tagged."], intro:'Pick an ingredient from the palette, then tap the matching piece of the prompt. Tag every piece to clear the stage.',
     items:[
       {segs:[['role','You are a friendly travel planner.'],['task','Plan a 3-day weekend trip to Chicago'],['context','for a couple in their 60s who love museums and don\u2019t enjoy long walks.'],['format','Lay it out day by day, with morning, afternoon, and evening.'],['constraints','Keep the total under $1,200 and skip the nightlife.'],['examples','Style I like: \u201cMorning: Art Institute (2 hrs). Grab a bench in the Impressionist wing.\u201d']]},
       {segs:[['task','Summarize the news article below'],['role','the way a fun science teacher would.'],['context','I want to talk about it at dinner tonight with my kids, ages 8 and 12.'],['format','Give me 4 short bullets and one question to ask the kids.'],['examples','A good bullet sounds like: \u201cScientists found a way to pull plastic out of the ocean using tiny bubbles.\u201d'],['constraints','Don\u2019t add any facts that aren\u2019t in the article.']]}
     ]},
-  apply:{type:'quiz', boss:true, title:'The Ingredient Test', intro:'Six questions. Get 5 right to beat the boss and open World 2.', pass:5,
+  apply:{type:'quiz', boss:true, title:'The Ingredient Test', steps:["Read the question and pick one answer.", "Click Submit to check it, then read the tip.", "Click Next question to keep going.", "Get 5 of 6 right to win."], intro:'Six questions. Get 5 right to beat the boss and open World 2.', pass:5,
     questions:[
       {q:'“Use a table with columns for Date, Task, and Owner.” Which part is this?', opts:['Context','Format','Constraints','Task'], ok:1, why:'It describes the shape of the output: Format.'},
       {q:'“You are a patient math tutor for 7th graders.” Which part is this?', opts:['Role','Context','Examples','Task'], ok:0, why:'It tells the AI who to be: Role.'},
@@ -433,19 +441,19 @@ const MODULES = [
 {id:'m2', title:'Mind the Gap', bloom:'Understand', lvl:2,
  obj:'Find out why AI gives bland answers, and how to stop it.',
  phases:{
-  ce:{type:'duel', title:'Prompt Duels', intro:'Three head-to-head matchups. Tap the prompt you think will get the better first-try result.',
+  ce:{type:'duel', title:'Prompt Duels', steps:["Read Prompt A and Prompt B.", "Click the one you think will get the better answer.", "Click Submit to see if you’re right.", "Do the same for all three matchups."], intro:'Three head-to-head matchups. Tap the prompt you think will get the better first-try result.',
     pairs:[
       {a:'Make a presentation about online safety.', b:'Create an outline for a 10-slide presentation that teaches my grandparents how to spot scam texts and phone calls. One idea per slide, no more than 3 bullets per slide, plain words, and end with a 3-question quiz.', better:'b', why:'B names the audience, the scope (scams, not all of online safety), the size, and the structure. A leaves all of that to chance.'},
       {a:'Write a 200-word post for our neighborhood Facebook group announcing the block party on Saturday, June 14, 2\u20136 pm at Maple Park. Mention it\u2019s a potluck with kids\u2019 games, and how to RSVP. Friendly, upbeat tone.', b:'You are an expert writer. Write a great, amazing, really good post about the block party. Make it good and interesting. This is VERY important!!!', better:'a', why:'Hype words (“amazing,” “VERY important”) add emotion, not information. A gives facts, length, purpose, and tone.'},
       {a:'Summarize this.', b:'Summarize the school email below in 3 bullets for my spouse, focusing only on dates and things we need to decide.\n\nEMAIL:\n"""\n(paste email here)\n"""', better:'b', why:'B gives a reader, a purpose, a focus, a format, and clearly marks where the source text begins and ends.'}
     ]},
-  pp:{type:'reflect', title:'Spot the Pattern', intro:'Look back at the winners.',
+  pp:{type:'reflect', title:'Spot the Pattern', steps:["Answer each question, then click Submit.", "Type a sentence or two in the last box, then click Submit."], intro:'Look back at the winners.',
     questions:[
       {q:'What did the winning prompts have in common?', opts:[{t:'They were longer',ok:0},{t:'They gave specifics the AI couldn’t guess',ok:1},{t:'They used more polite wording',ok:0},{t:'They used technical vocabulary',ok:0}],
        fb:'Length was a side effect, not the goal. The winners supplied details (audience, scope, format, facts) the AI had no way to know.'}
     ],
     journal:'Think of a time an AI gave you a disappointing answer. What do you think it was missing?'},
-  gen:{type:'lesson', title:'How the AI Reads Your Prompt', intro:'Five ideas explain almost every bad result.',
+  gen:{type:'lesson', title:'How the AI Reads Your Prompt', steps:["Read the five cards.", "Answer the question at the bottom, then click Submit."], intro:'Five ideas explain almost every bad result.',
     cards:[
       {h:'It predicts. It doesn’t read minds.', b:'The AI writes the most likely response to the words you give it. Anything you leave out gets filled with the average, and average reads as generic.'},
       {h:'Talk to it like a smart helper who just walked in.', b:'It\u2019s fast and well-read, but knows nothing about your life, your audience, or what you consider good. Tell it what you\u2019d tell a helpful friend who\u2019s new to the situation.'},
@@ -454,7 +462,7 @@ const MODULES = [
       {h:'Confident is not correct.', b:'AI can invent facts, numbers, and citations that sound right. Give it your source material and tell it not to add facts.', ex:'Answer only from the text below. If it isn’t there, say “Not in source.”'}
     ],
     check:{q:'Why does “Write a cover letter” usually produce a generic letter?', opts:['The AI is lazy with short prompts','The AI fills every missing detail with the most typical answer','Cover letters are too hard for AI','It needs the word “please”'], ok:1, why:'No job, company, experience, or tone means the AI defaults to the most common version of a cover letter.'}},
-  dev:{type:'quiz', title:'Classify the Miss', intro:'Name the failure type for each prompt. These five labels will come up again and again.', pass:0,
+  dev:{type:'quiz', title:'Classify the Miss', steps:["Read the prompt in quotes.", "Pick what’s wrong with it, then click Submit.", "Read the tip, then click Next question."], intro:'Name the failure type for each prompt. These five labels will come up again and again.', pass:0,
     questions:[
       {q:'“Write a short, detailed, comprehensive summary.”', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:3, why:'“Short” and “comprehensive” pull in opposite directions. The AI has to pick one.'},
       {q:'\u201cFix the problems in the plan we talked about.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:4, why:'The AI wasn\u2019t in that conversation and doesn\u2019t have the plan. Paste it in and list the problems.'},
@@ -463,7 +471,7 @@ const MODULES = [
       {q:'\u201cCompare three budgeting apps.\u201d (You wanted a side-by-side table.)', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:2, why:'Without a format you might get three essays. Ask for a table and name the columns.'},
       {q:'\u201cExplain my company\u2019s vacation policy.\u201d', opts:['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'], ok:4, why:'It doesn\u2019t know your company\u2019s policy, so it may invent one that sounds official.'}
     ]},
-  apply:{type:'quiz', boss:true, title:'The Explainer', intro:'Five questions on why prompts hit or miss. Get 4 right to win.', pass:4,
+  apply:{type:'quiz', boss:true, title:'The Explainer', steps:["Read the question and pick one answer.", "Click Submit to check it, then read the tip.", "Click Next question to keep going.", "Get 4 of 5 right to win."], intro:'Five questions on why prompts hit or miss. Get 4 right to win.', pass:4,
     questions:[
       {q:'A coworker says “AI is useless. It gives me junk.” Their prompt was \u201cWrite an email.\u201d What\u2019s the best explanation?', opts:['The AI tool is broken','The prompt left almost everything for the AI to guess','Emails are too personal for AI','They needed a longer email'], ok:1, why:'No subject, reader, purpose, or format, so the AI guessed all of it.'},
       {q:'Adding “This is VERY IMPORTANT!!!” to a prompt usually…', opts:['Makes the AI try harder','Adds emotion but no usable information','Gets a longer answer','Breaks the prompt'], ok:1, why:'Replace emphasis with specifics: who it’s for, what it must include, how long.'},
@@ -476,17 +484,17 @@ const MODULES = [
 {id:'m3', title:'The Workshop', bloom:'Apply', lvl:3,
  obj:'Build prompts from scratch that land on the first try.',
  phases:{
-  ce:{type:'sandbox', title:'Your First Build', intro:'Write a prompt for this scenario however you normally would. No rules yet. Then run it.',
+  ce:{type:'sandbox', title:'Your First Build', steps:["Read the situation in the gold box.", "Type a prompt for it in the box below, the way you normally would.", "Click Run Prompt and read the answer."], intro:'Write a prompt for this scenario however you normally would. No rules yet. Then run it.',
     scenario:'Your book club meets this Thursday and three people haven\u2019t said whether they\u2019re coming. You want a short, friendly reminder text you can send to the group.',
     free:true, meter:true, store:'m3ce',
     prompts:[{label:'Your prompt', text:'', canned:null}]},
-  pp:{type:'reflect', title:'Check Your Build', intro:'Here’s what the scanner found in the prompt you just wrote.',
+  pp:{type:'reflect', title:'Check Your Build', steps:["Look at which ingredients the scanner found in your prompt.", "Answer the question, then click Submit.", "Type what you’d change, then click Submit."], intro:'Here’s what the scanner found in the prompt you just wrote.',
     showLast:'m3ce',
     questions:[
       {q:'Which missing part would most improve your prompt?', any:true, opts:['Role','Context (who it\u2019s for, the date, the tone)','Format (length, text vs. email)','Constraints (what to avoid)'], fb:'For a reminder text, Context and Constraints usually matter most: the date and time, what you need from people, and that you want it friendly without guilt-tripping anyone.'}
     ],
     journal:'What would you add or change if you wrote that prompt again?'},
-  gen:{type:'lesson', title:'The Build Formula', intro:'Use this fill-in-the-blanks prompt until it becomes habit. Then trim the parts a task doesn\u2019t need.',
+  gen:{type:'lesson', title:'The Build Formula', steps:["Read the fill-in-the-blanks prompt and the four tips.", "Answer the question at the bottom, then click Submit."], intro:'Use this fill-in-the-blanks prompt until it becomes habit. Then trim the parts a task doesn\u2019t need.',
     template:`You are a [ROLE].\n[TASK] for [AUDIENCE] so that [PURPOSE].\n\nBackground: [CONTEXT]\n\nHere’s an example of what I like:\n[EXAMPLE]\n\nFormat: [FORMAT]\nRules: [CONSTRAINTS]`,
     cards:[
       {h:'Scale it to the job.', b:'A quick question needs Task + Context. Something important you’ll share with others needs all six.'},
@@ -495,9 +503,9 @@ const MODULES = [
       {h:'Give the why.', b:'A reason helps the AI make good choices you didn’t spell out.', ex:'Keep paragraphs short, because most people will read this on their phones.'}
     ],
     check:{q:'The first answer is close, but too long. What’s the best next move?', opts:['Start a brand-new chat and retype everything','Reply: “Cut this to 150 words and keep the three main points.”','Reply: “Better.”','Accept it and edit by hand'], ok:1, why:'A targeted follow-up keeps everything that worked and fixes only what didn’t.'}},
-  dev:{type:'builder', title:'Six-Part Build', intro:'Fill in all six parts for this scenario. The meter lights up as you go. When it’s full, run it or send it to the coach.',
+  dev:{type:'builder', title:'Six-Part Build', steps:["Read the situation in the gold box.", "Fill in all six boxes. The gray text in each box is an example.", "Watch the ingredient tags light up. When all six are lit, the stage is clear.", "Optional: click Run Prompt to try it, or Score my prompt for tips."], intro:'Fill in all six parts for this scenario. The meter lights up as you go. When it’s full, run it or send it to the coach.',
     scenario:'You want a 7-day dinner plan for a family of four on a tight budget. One of the kids is a very picky eater.', store:'m3dev'},
-  apply:{type:'rewrite', boss:true, title:'Rescue Mission', intro:'Three friends sent you weak prompts. Rescue each one so it works on the first try. Average 70 or higher to win.', pass:70,
+  apply:{type:'rewrite', boss:true, title:'Rescue Mission', steps:["Read the weak prompt and the situation under it.", "Write a better prompt in the box.", "Click Submit to get a score from 0 to 100. Use the tips, then Resubmit as often as you like.", "Do all three rounds. Average 70 or higher to win."], intro:'Three friends sent you weak prompts. Rescue each one so it works on the first try. Average 70 or higher to win.', pass:70,
     items:[
       {weak:'Write a post about my bakery.', scenario:'You run a small home bakery and want a social media post announcing your new weekend hours and a grand-reopening special.'},
       {weak:'Help me with my resume.', scenario:'You want AI help tailoring your resume for a specific job posting you\u2019re excited about.'},
@@ -508,17 +516,17 @@ const MODULES = [
 {id:'m4', title:'Case Files', bloom:'Analyze', lvl:4,
  obj:'Crack the case: figure out exactly why a prompt went wrong.',
  phases:{
-  ce:{type:'sandbox', title:'Case File 04-A', intro:'This prompt came back wrong. Run it and study what it produced.',
+  ce:{type:'sandbox', title:'Case File 04-A', steps:["Read the prompt in the box.", "Click Run Prompt and read the answer.", "Spot what went wrong. You’ll explain it in the next stage."], intro:'This prompt came back wrong. Run it and study what it produced.',
     prompts:[{label:'Case prompt', text:'You are a stand-up comedian. Write a serious, formal fire-safety speech for my kid\u2019s school assembly. Make it short but cover everything in detail. Add statistics.',
       canned:`Alright, alright, settle down, kids! So... FIRE. Hot. Bad. You know what else is hot? The cafeteria pizza on Fridays. (Kidding, Mrs. Johnson!)\n\nAccording to a 2023 National Fire Safety Institute study, 84% of house fires start in a kitchen where someone said "I'll just be a minute," and 61% of smoke alarms are disconnected because of burnt toast.\n\nBut seriously, folks: Stop, drop, and roll. Know two ways out. And never, ever let your dad make toast unsupervised.\n\nYou've been a great audience! Tip your fire marshal!`}]},
-  pp:{type:'reflect', title:'Process the Case', intro:'Trace the bad output back to the prompt.',
+  pp:{type:'reflect', title:'Process the Case', steps:["Pick every answer that applies, then click Submit.", "Type a sentence or two in the last box, then click Submit."], intro:'Trace the bad output back to the prompt.',
     questions:[
       {q:'Which problems in the prompt caused this output? (Select all that apply.)', multi:true,
        opts:[{t:'The role (comedian) conflicts with the tone (serious, formal)',ok:1},{t:'“Short” conflicts with “cover everything in detail”',ok:1},{t:'“Add statistics” with no source invites made-up numbers',ok:1},{t:'The prompt has no role',ok:0},{t:'The prompt is too long',ok:0}],
        fb:'Three conflicts in one prompt. The AI had to pick a side each time, and the request for statistics with no source produced numbers that look real but aren’t verifiable.'}
     ],
     journal:'Which flaw would cause the most trouble if this speech were actually read at the assembly? Why?'},
-  gen:{type:'lesson', title:'The Usual Suspects', intro:'Good detectives don\u2019t say \u201cit\u2019s bad.\u201d They name the culprit. Meet the lineup.',
+  gen:{type:'lesson', title:'The Usual Suspects', steps:["Read the eight suspect cards and the 4-step drill.", "Answer the question at the bottom, then click Submit."], intro:'Good detectives don\u2019t say \u201cit\u2019s bad.\u201d They name the culprit. Meet the lineup.',
     cards:[
       {h:'Ambiguity', b:'A word or phrase can be read two ways (“fun,” “professional,” “short”).'},
       {h:'Conflicting instructions', b:'Two instructions can’t both be true (“brief but detailed”).'},
@@ -531,7 +539,7 @@ const MODULES = [
     ],
     drill:['Read the output. What exactly is wrong?','Trace it to a word, or a missing piece, in the prompt.','Name the failure from the catalog.','Change one thing, re-run, and compare.'],
     check:{q:'An AI output includes a statistic you can’t verify. Most likely cause?', opts:['The AI was set to be creative','The prompt asked for facts without providing a source','The prompt was too short','The role was wrong'], ok:1, why:'That’s hallucination bait. Supply the data, or tell it to mark anything it can’t source.'}},
-  dev:{type:'flaws', title:'Flaw Hunt', intro:'Select every real flaw in each prompt, then check your answer. Exact matches earn full credit.',
+  dev:{type:'flaws', title:'Flaw Hunt', steps:["Read each prompt.", "Pick every problem you spot. Most have more than one.", "Click Submit to check your answer."], intro:'Select every real flaw in each prompt, then check your answer. Exact matches earn full credit.',
     items:[
       {p:'Plan my daughter\u2019s birthday party and also write the invitations and a shopping list and a game schedule and the thank-you notes. Make it fun.',
        opts:[{t:'Overloaded: too many deliverables at once',ok:1},{t:'No format or length for any deliverable',ok:1},{t:'“Fun” is ambiguous',ok:1},{t:'Missing a task',ok:0},{t:'Hallucination bait',ok:0}]},
@@ -540,7 +548,7 @@ const MODULES = [
       {p:'Don’t make it too long. Don’t use bullets. Don’t be boring. Don’t use jargon. Write about the new rule.',
        opts:[{t:'Negative-only rules: no target format',ok:1},{t:'Assumed knowledge: which rule?',ok:1},{t:'Missing context: no audience or purpose',ok:1},{t:'Overloaded prompt',ok:0},{t:'Too many examples',ok:0}]}
     ]},
-  apply:{type:'quiz', boss:true, title:'The Final Case', intro:'Five mysteries. Name the culprit in 4 of them to close the case.', pass:4,
+  apply:{type:'quiz', boss:true, title:'The Final Case', steps:["Read the question and pick one answer.", "Click Submit to check it, then read the tip.", "Click Next question to keep going.", "Get 4 of 5 right to win."], intro:'Five mysteries. Name the culprit in 4 of them to close the case.', pass:4,
     questions:[
       {q:'Prompt: “Write a 5-bullet summary as one paragraph.” The output was a paragraph. Root cause?', opts:['The AI ignored you','Conflicting format instructions','Missing context','No role'], ok:1, why:'Bullets and a paragraph can’t both happen. The AI picked one.'},
       {q:'Prompt: \u201cExplain how a 401(k) works to my son.\u201d The output was accurate but far too technical. What was missing?', opts:['A role','Context about his age, what he already knows, and why he\u2019s asking','A longer task','Statistics'], ok:1, why:'\u201cMy son\u201d names the audience, but not his age, knowledge level, or what he cares about.'},
@@ -553,21 +561,21 @@ const MODULES = [
 {id:'m5', title:'The Judge\u2019s Table', bloom:'Evaluate', lvl:5,
  obj:'Taste-test prompts like a pro and pick the right tricks.',
  phases:{
-  ce:{type:'rank', title:'Rank the Prompts', intro:'Goal: get help writing a message to your landlord about a heater that stopped working. Tap the prompts in order from best (1) to worst (3).',
+  ce:{type:'rank', title:'Rank the Prompts', steps:["The goal: get help writing a message to your landlord about a broken heater.", "Read the three prompts.", "Click the best one first, then the second best, then the worst. Numbers show your order.", "Changed your mind? Click Reset order. When you’re happy, click Submit."], intro:'Goal: get help writing a message to your landlord about a heater that stopped working. Tap the prompts in order from best (1) to worst (3).',
     items:[
       {t:'write something to yell at my landlord lol', r:3},
       {t:'You are a polite but firm tenant advocate. Write a short email to my landlord about my broken heater. Facts: it stopped working Monday, Jan 6; I called the office on Jan 7; no one has come; it\u2019s been under 60\u00b0F inside. Ask for a repair date within 48 hours. Respectful but firm. Under 150 words. Use only the facts I gave you.', r:1},
       {t:'Write an email to my landlord about my heater. Make it professional.', r:2}
     ],
     why:'The best prompt sets a role, gives facts with dates, states what you want, sets the tone, and limits the AI to those facts. The middle one has a task but no facts, so the AI will invent details. The last one invites a tone that won\u2019t get your heater fixed.'},
-  pp:{type:'reflect', title:'Name Your Criteria', intro:'You just made a judgment call. What drove it?',
+  pp:{type:'reflect', title:'Name Your Criteria', steps:["Pick every answer that applies, then click Submit.", "Type a sentence or two in the last box, then click Submit."], intro:'You just made a judgment call. What drove it?',
     questions:[
       {q:'Which criteria did you use to rank them? (Select all you used.)', multi:true, any:true,
        opts:[{t:'Clarity: it can only be read one way'},{t:'Completeness: it has what the AI can’t guess'},{t:'Specificity: real facts, numbers, names'},{t:'Testability: I could tell if the output met the requirement'},{t:'Efficiency: no filler or hype'}],
        fb:'All five are valid, and they’re the scorecard you’ll use next. Most people use clarity and specificity by instinct and forget testability.'}
     ],
     journal:'Which criterion do your own prompts most often miss?'},
-  gen:{type:'lesson', title:'Pro Tricks', intro:'A simple scorecard for judging prompts, plus six tricks the pros use.',
+  gen:{type:'lesson', title:'Pro Tricks', steps:["Read the scorecard and the trick cards.", "Answer the question at the bottom, then click Submit."], intro:'A simple scorecard for judging prompts, plus six tricks the pros use.',
     cards:[
       {h:'The 5-point scorecard', b:'Clarity · Completeness · Specificity · Testability · Efficiency. Score each 1–5.'},
       {h:'Few-shot examples', b:'Show 1\u20133 real samples of what you want. Best way to match a style or tone.'},
@@ -577,13 +585,13 @@ const MODULES = [
       {h:'Prompt chaining', b:'Break big jobs into stages (outline → approve → draft → edit) instead of one giant prompt.'}
     ],
     check:{q:'You want the AI to write in your own personal style. Best technique?', opts:['Step-by-step reasoning','Few-shot examples of your own writing','Prompt chaining','Delimiters'], ok:1, why:'Showing is more precise than describing. Two real samples of your writing beat a paragraph of adjectives.'}},
-  dev:{type:'rubric', title:'Score Like a Pro', intro:'Rate each prompt from 1 to 5 on three things, then see how the pro scored it. Within 1 point counts as a match.',
+  dev:{type:'rubric', title:'Score Like a Pro', steps:["Read each prompt.", "Rate it from 1 (poor) to 5 (great) on Clarity, Completeness, and Specificity.", "Click Submit to see the pro’s score, shown with a gold outline."], intro:'Rate each prompt from 1 to 5 on three things, then see how the pro scored it. Within 1 point counts as a match.',
     items:[
       {p:'Write a one-page guide for my family on sharing our second car. Include who can use it, how to sign up for a day, the gas rule (refill when it drops below 1/4 tank), and what to do after a fender-bender. Numbered steps, plain language.', e:{Clarity:5,Completeness:4,Specificity:5}, why:'Clear and specific. It could add an example or the tone to use (fun vs. strict), so Completeness is 4.'},
       {p:'Write a guide about sharing the family car. Make it clear and thorough and not too long.', e:{Clarity:3,Completeness:2,Specificity:2}, why:'\u201cThorough\u201d vs. \u201cnot too long\u201d is a soft conflict. No rules or details, so the AI will invent them.'},
       {p:'can u do something for the car thing, like a doc or whatever', e:{Clarity:1,Completeness:1,Specificity:1}, why:'No clear task, no audience, no format. Nearly everything is left to guessing.'}
     ]},
-  apply:{type:'quiz', boss:true, title:'Final Verdict', intro:'Pick the best move for each situation. Get 4 of 5 to win.', pass:4,
+  apply:{type:'quiz', boss:true, title:'Final Verdict', steps:["Read the question and pick one answer.", "Click Submit to check it, then read the tip.", "Click Next question to keep going.", "Get 4 of 5 right to win."], intro:'Pick the best move for each situation. Get 4 of 5 to win.', pass:4,
     questions:[
       {q:'You want a study guide for a 300-page textbook. Best approach?', opts:['One giant prompt with the whole book','Prompt chaining: outline first, approve it, then build section by section','Ask for 40 slides and fix it later','Few-shot examples only'], ok:1, why:'Big jobs fail in one shot. Chaining gives you checkpoints to steer.'},
       {q:'Answers keep including details that aren’t in your source document. Best fix?', opts:['Say “be accurate”','Wrap the source in delimiters and instruct: use only this; say “not in source” when missing','Use a bigger AI','Ask for shorter answers'], ok:1, why:'Clear boundaries plus permission to say “not in source”.'},
@@ -596,17 +604,17 @@ const MODULES = [
 {id:'m6', title:'Signature Move', bloom:'Create', lvl:6,
  obj:'Create a reusable prompt of your own and claim the crown.',
  phases:{
-  ce:{type:'sandbox', title:'A Template in Action', intro:'This is a reusable template. The parts in [BRACKETS] change each week; everything else stays the same. One copy is filled in for you. Run it.',
+  ce:{type:'sandbox', title:'A Template in Action', steps:["Read the prompt. The parts in [BRACKETS] change each time you use it.", "Click Run Prompt and read the answer.", "Optional: change something inside the brackets and run it again."], intro:'This is a reusable template. The parts in [BRACKETS] change each week; everything else stays the same. One copy is filled in for you. Run it.',
     prompts:[{label:'Filled template', text:`You are a friendly home cook and meal planner.\n\nCreate a dinner plan for [NIGHTS: 5 weeknights] for [WHO: 2 adults and 2 kids, one vegetarian] with a grocery budget of [BUDGET: $120].\n\nFormat:\n1. A table: Day | Meal | Prep time | Main ingredients\n2. One combined grocery list, grouped by store section\n3. One tip for saving time on a busy night\n\nRules: Every meal under 40 minutes. No repeating a protein two nights in a row. Kid-friendly flavors. If you need information I didn\u2019t give, list your assumptions at the end.`,
       canned:`Day | Meal | Prep time | Main ingredients\nMon | Black bean tacos | 25 min | beans, tortillas, cheese, salsa\nTue | Chicken & veggie sheet pan | 35 min | chicken thighs, potatoes, broccoli\nWed | Pasta primavera (veg) | 25 min | pasta, zucchini, peppers, parmesan\nThu | Turkey meatballs + rice | 35 min | ground turkey, rice, marinara\nFri | Homemade pizza night | 30 min | dough, sauce, mozzarella, toppings\n(Vegetarian swaps: bean tacos, primavera, veggie pizza; tofu for chicken Tue.)\n\nGrocery list\nProduce: broccoli, potatoes, zucchini, 2 peppers, onion\nProtein: chicken thighs, ground turkey, tofu, 2 cans black beans\nDairy: cheese, mozzarella, parmesan\nPantry: tortillas, pasta, rice, marinara, pizza dough, salsa\n\nTime-saver: Chop all the veggies Sunday night.\n\nAssumptions: Basic spices and oil on hand; kids are school-age.`}]},
-  pp:{type:'reflect', title:'What Made It Reusable?', intro:'Pull the template apart.',
+  pp:{type:'reflect', title:'What Made It Reusable?', steps:["Pick every answer that applies, then click Submit.", "Type a sentence or two in the last box, then click Submit."], intro:'Pull the template apart.',
     questions:[
       {q:'What makes a prompt reusable as a template? (Select all that apply.)', multi:true,
        opts:[{t:'Variables in [BRACKETS] for the parts that change',ok:1},{t:'Standing rules that apply every time',ok:1},{t:'A fixed output format',ok:1},{t:'A one-time detail hard-coded in the middle',ok:0},{t:'An instruction to state its assumptions',ok:1}],
        fb:'Variables, standing rules, a fixed format, and a way to surface gaps. Hard-coded one-time details break reuse.'}
     ],
     journal:'Name one thing you do every week or month that a template like this could help with.'},
-  gen:{type:'lesson', title:'Make It Reusable', intro:'Pros don\u2019t write great prompts one at a time. They build one great prompt and reuse it forever.',
+  gen:{type:'lesson', title:'Make It Reusable', steps:["Read the six cards.", "Answer the question at the bottom, then click Submit."], intro:'Pros don\u2019t write great prompts one at a time. They build one great prompt and reuse it forever.',
     cards:[
       {h:'Variables', b:'Put everything that changes in [BRACKETS] with a hint. Everything else is the standing order.', ex:'[AUDIENCE: who and how experienced]'},
       {h:'Standing instructions', b:'Role, standards, tone, and references that never change. Write them once, carefully.'},
@@ -616,15 +624,15 @@ const MODULES = [
       {h:'Save and share it', b:'Keep it where you\u2019ll find it again: a notes app, a doc, or saved instructions in your AI tool (many offer projects or custom assistants). Update it when you improve it.'}
     ],
     check:{q:'You tested your template with 3 inputs. One gave a bad result. Next step?', opts:['Delete the template','Find which instruction failed, revise it, and retest all three','Only use it for the 2 that worked','Add “IMPORTANT” to every line'], ok:1, why:'Revise, then retest everything. A fix for one case can break another.'}},
-  dev:{type:'builder', title:'Draft Your Template', intro:'Build a template for one of YOUR recurring tasks. Use at least one [VARIABLE] in square brackets for the parts that change.',
+  dev:{type:'builder', title:'Draft Your Template', steps:["Think of something you do again and again (meal plans, emails, workouts…).", "Fill in all six boxes for that task.", "Put the parts that change each time in [square brackets], like [DATE] or [WHO IT’S FOR].", "When every tag lights up, the stage is clear."], intro:'Build a template for one of YOUR recurring tasks. Use at least one [VARIABLE] in square brackets for the parts that change.',
     scenario:'Pick something you do again and again: meal plans, workout routines, emails, social posts, study guides, trip plans, gift ideas, anything.', requireVar:true, store:'m6dev'},
-  apply:{type:'capstone', boss:true, title:'Your Signature Prompt', intro:'Submit your finished template to the judges. It’s loaded from your draft, so polish it first. Score 80 or higher to win the crown and your Champion card.', pass:80}
+  apply:{type:'capstone', boss:true, title:'Your Signature Prompt', steps:["Your prompt from the last stage is already in the box.", "Polish it if you like.", "Click Submit to get your score. Score 80 or higher to win."], intro:'Submit your finished template to the judges. It’s loaded from your draft, so polish it first. Score 80 or higher to win the crown and your Champion card.', pass:80}
  }}
 ];
 
 /* ============ STATE ============ */
 const KEY='promptops.v1';
-const fresh=()=>({xp:0,done:{},scores:{},badges:{},streak:0,best:0,runs:0,journals:{},drafts:{},flawExact:{},rubricMatch:{},unlockAll:false,name:'',certDate:''});
+const fresh=()=>({ans:{},xp:0,done:{},scores:{},badges:{},streak:0,best:0,runs:0,journals:{},drafts:{},flawExact:{},rubricMatch:{},unlockAll:false,name:'',certDate:''});
 let S=fresh();
 try{const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -725,189 +733,229 @@ async function copyText(t,btn){try{await navigator.clipboard.writeText(t);btn.te
 
 /* ============ ACTIVITIES ============ */
 const A={};
+/* Saved answers live in S.ans[stageKey] and survive reloads until Reset or cleared browser data. */
+function ans(key){if(!S.ans)S.ans={};return S.ans[key]||(S.ans[key]={});}
+function finishIfNew(ctx,extra){if(!S.done[ctx.key])ctx.complete(extra);}
+
+/* One question with a Submit button. q: {q, opts:[string|{t,ok}], ok?:index, multi?, any?, fb?/why?}
+   saved: persisted object {sel:[], sub:bool, good:bool}. opt.retry: wrong answers can be tried again. */
+function questionEl(q,saved,onSubmit,opt={}){
+  const list=q.opts.map((o,i)=>typeof o==='string'?{t:o,ok:q.ok===i}:o);
+  const box=h('div',{class:'q'});
+  if(q.q)box.append(h('div',{class:'qt'},q.q));
+  if(q.multi)box.append(h('div',{class:'hint'},'Pick all that apply.'));
+  const opts=h('div',{class:'opts'});const sel=new Set(saved.sel||[]);const fb=h('div');const tried=new Set(saved.tried||[]);
+  const sub=h('button',{class:'btn primary submit'},'Submit');
+  list.forEach((o,i)=>{const b=h('button',{class:'opt'+(q.multi?'':' radio'),'aria-pressed':'false'},h('span',{class:'box'}),h('span',{},o.t));
+    b.onclick=()=>{if(box.dataset.locked||tried.has(i))return;if(q.multi){sel.has(i)?sel.delete(i):sel.add(i);}else{sel.clear();sel.add(i);}saved.sel=[...sel];save();paint();};opts.append(b);});
+  function paint(){[...opts.children].forEach((c,j)=>{c.setAttribute('aria-pressed',String(sel.has(j)));c.querySelector('.box').textContent=sel.has(j)?(q.multi?'✓':'●'):'';if(tried.has(j)){c.classList.add('wrong');c.disabled=true;}});sub.disabled=!sel.size||!!box.dataset.locked;}
+  function grade(){let good=true;list.forEach((o,i)=>{if(!!o.ok!==sel.has(i))good=false;});return q.any?true:good;}
+  function lock(restored){box.dataset.locked='1';const good=grade();
+    if(!q.any)list.forEach((o,i)=>{const c=opts.children[i];if(o.ok)c.classList.add('right');else if(sel.has(i))c.classList.add('wrong');});
+    [...opts.children].forEach(c=>c.disabled=true);sub.hidden=true;
+    fb.innerHTML='';fb.append(h('div',{class:'fb'+(q.any?'':good?' good':' bad')},h('b',{},q.any?'Thanks for sharing.':good?'Correct!':'Not quite. Here’s the answer.'),q.fb||q.why||''));
+    if(!restored&&!q.any)streakHit(good);
+    saved.sub=true;saved.good=good;save();onSubmit&&onSubmit(good,restored);}
+  sub.onclick=()=>{if(!sel.size)return;
+    if(opt.retry&&!q.multi&&!grade()){const i=[...sel][0];tried.add(i);saved.tried=[...tried];sel.clear();saved.sel=[];save();streakHit(false);
+      fb.innerHTML='';fb.append(h('div',{class:'fb bad'},h('b',{},'Not quite.'),'Pick another answer and click Submit again.'));paint();return;}
+    lock(false);};
+  box.append(opts,h('div',{class:'row'},sub),fb);paint();if(saved.sub)lock(true);
+  return box;
+}
 
 A.sandbox=(act,ctx)=>{
-  const done=new Set();let cur=0;const root=h('div');
-  if(act.scenario)root.append(h('div',{class:'scenario'},h('b',{},'Scenario'),act.scenario));
+  const st=ans(ctx.key);st.texts=st.texts||act.prompts.map(p=>p.text);st.outs=st.outs||{};st.ran=st.ran||[];
+  if(act.store&&S.drafts[act.store]&&!st.texts[0])st.texts[0]=S.drafts[act.store];
+  let cur=0;const root=h('div');
+  if(act.scenario)root.append(h('div',{class:'scenario'},h('b',{},'The situation'),act.scenario));
   const tabs=h('div',{class:'tabs'});const ta=h('textarea',{id:`sb-${ctx.key}`,'aria-label':'Prompt',placeholder:act.free?'Type your prompt here…':''});
-  const texts=act.prompts.map(p=>p.text);
-  if(act.store&&S.drafts[act.store])texts[0]=S.drafts[act.store];
-  ta.value=texts[0];
-  const meterBox=h('div');const out=h('div',{class:'out',html:'<span class="tag">Output</span>Run the prompt to see a response.'});
-  const runB=h('button',{class:'btn primary'},'Run prompt');const stopB=h('button',{class:'btn sm',hidden:true},'Stop');const copyB=h('button',{class:'btn sm'},'Copy prompt');
-  function drawTabs(){tabs.innerHTML='';if(act.prompts.length<2)return;act.prompts.forEach((p,i)=>tabs.append(h('button',{'aria-pressed':String(i===cur),onclick:()=>{texts[cur]=ta.value;cur=i;ta.value=texts[i];drawTabs();drawMeter();out.innerHTML='<span class="tag">Output</span>Run the prompt to see a response.';}},p.label,done.has(i)?h('span',{class:'ck'},'✓'):null)));}
+  const meterBox=h('div');const out=h('div',{class:'out'});
+  const runB=h('button',{class:'btn primary'},'Run Prompt');const stopB=h('button',{class:'btn sm',hidden:true},'Stop');const copyB=h('button',{class:'btn sm'},'Copy prompt');
+  const resetB=h('button',{class:'btn sm ghost',hidden:!!act.free},'Restore original');
+  function showOut(){out.innerHTML='';const o=st.outs[cur];if(o){out.append(h('span',{class:'tag'},o.tag),h('div',{},o.body));}else out.append(h('span',{class:'tag'},'The answer will appear here'),'Click Run Prompt to see what the AI sends back.');}
+  function drawTabs(){tabs.innerHTML='';if(act.prompts.length<2)return;act.prompts.forEach((p,i)=>tabs.append(h('button',{'aria-pressed':String(i===cur),onclick:()=>{cur=i;ta.value=st.texts[i];drawTabs();drawMeter();showOut();}},p.label,st.ran.includes(i)?h('span',{class:'ck'},'✓'):null)));}
   function drawMeter(){if(!act.meter)return;meterBox.innerHTML='';meterBox.append(meterEl(ta.value));}
-  ta.addEventListener('input',()=>{texts[cur]=ta.value;drawMeter();if(act.store){S.drafts[act.store]=ta.value;save();}});
-  runB.onclick=async()=>{const t=ta.value.trim();if(words(t)<3){out.innerHTML='';out.append(h('span',{class:'tag'},'Need a prompt'),'Write at least a few words first.');return;}
+  ta.value=st.texts[0];
+  ta.addEventListener('input',()=>{st.texts[cur]=ta.value;if(act.store)S.drafts[act.store]=ta.value;save();drawMeter();});
+  resetB.onclick=()=>{ta.value=act.prompts[cur].text;st.texts[cur]=ta.value;save();drawMeter();};
+  runB.onclick=async()=>{const t=ta.value.trim();if(words(t)<3){out.innerHTML='';out.append(h('span',{class:'tag'},'Your prompt is empty'),'Type a prompt in the box first, then click Run Prompt.');return;}
     runB.disabled=true;stopB.hidden=false;await runPrompt(t,out,act.prompts[cur].canned);runB.disabled=false;stopB.hidden=true;
-    done.add(cur);drawTabs();const need=act.requireAll?act.prompts.length:1;if(done.size>=need)ctx.complete();else toast('Nice. Now run the other prompt.');};
+    const tg=out.querySelector('.tag');st.outs[cur]={tag:tg?tg.textContent:'Answer',body:(out.lastChild&&out.lastChild.textContent)||''};
+    if(!st.ran.includes(cur))st.ran.push(cur);save();drawTabs();
+    const need=act.requireAll?act.prompts.length:1;if(st.ran.length>=need)finishIfNew(ctx);else toast('Now click the Prompt B tab and run it.');};
   stopB.onclick=()=>runCtl&&runCtl.abort();copyB.onclick=()=>copyText(ta.value,copyB);
-  drawTabs();drawMeter();
-  root.append(tabs,ta,meterBox,h('div',{class:'row'},runB,stopB,copyB),out);return root;
+  drawTabs();drawMeter();showOut();
+  root.append(tabs,ta,meterBox,h('div',{class:'row'},runB,stopB,copyB,resetB),out);
+  if(st.ran.length>=(act.requireAll?act.prompts.length:1))finishIfNew(ctx);
+  return root;
 };
 
 A.reflect=(act,ctx)=>{
-  const root=h('div');const answered=new Set();
-  if(act.showLast){const t=S.drafts[act.showLast]||'';root.append(h('div',{class:'panel',style:'margin-bottom:16px;background:var(--bg)'},h('div',{class:'eyebrow'},'Your prompt from Try It'),h('p',{style:'font-family:var(--mono);font-size:13px;white-space:pre-wrap;margin:6px 0'},t||'(No prompt saved. Go back to Try It and run one.)'),meterEl(t),h('p',{class:'muted',style:'font-size:13px;margin:8px 0 0'},`The scanner found ${Object.values(analyze(t)).filter(Boolean).length} of 6 parts.`)));}
-  act.questions.forEach((q,qi)=>{
-    const box=h('div',{class:'q'},h('div',{class:'qt'},q.q));const opts=h('div',{class:'opts'});const fb=h('div');const sel=new Set();
-    const list=q.opts.map(o=>typeof o==='string'?{t:o}:o);
-    list.forEach((o,i)=>{const b=h('button',{class:'opt'+(q.multi?'':' radio'),'aria-pressed':'false'},h('span',{class:'box'},''),h('span',{},o.t));
-      b.onclick=()=>{if(box.dataset.locked)return;if(q.multi){sel.has(i)?sel.delete(i):sel.add(i);}else{sel.clear();sel.add(i);}
-        [...opts.children].forEach((c,j)=>{c.setAttribute('aria-pressed',String(sel.has(j)));c.querySelector('.box').textContent=sel.has(j)?'✓':'';});
-        if(!q.multi)check();};opts.append(b);});
-    function check(){if(!sel.size)return;box.dataset.locked='1';let good=true;
-      if(!q.any){list.forEach((o,i)=>{const c=opts.children[i];if(o.ok&&sel.has(i))c.classList.add('right');else if(!o.ok&&sel.has(i)){c.classList.add('wrong');good=false;}else if(o.ok&&!sel.has(i)){c.classList.add('right');good=false;}});streakHit(good);}
-      [...opts.children].forEach(c=>c.disabled=true);
-      fb.innerHTML='';fb.append(h('div',{class:'fb'+(q.any?'':good?' good':' bad')},h('b',{},q.any?'Noted.':good?'Exactly right.':'Close. Here’s the full picture.'),q.fb));
-      answered.add(qi);maybe();}
-    box.append(opts);if(q.multi)box.append(h('div',{class:'row'},h('button',{class:'btn sm',onclick:check},'Check')));box.append(fb);root.append(box);
-  });
-  const jt=h('textarea',{id:`jr-${ctx.key}`,placeholder:'Your answer…',style:'min-height:80px;font-family:var(--body)'});jt.value=S.journals[ctx.key]||'';
-  const jmsg=h('p',{class:'muted',style:'font-size:12.5px;margin:4px 0 0'},'Write at least one full sentence (15+ characters).');
-  jt.addEventListener('input',()=>{S.journals[ctx.key]=jt.value;save();maybe();});
-  root.append(h('div',{class:'q'},h('div',{class:'qt'},'Your take: '+act.journal),jt,jmsg));
-  function maybe(){const jok=(jt.value.trim().length>=15);jmsg.textContent=jok?'Saved.':'Write at least one full sentence (15+ characters).';
-    if(answered.size===act.questions.length&&jok){if(Object.values(S.journals).filter(v=>v&&v.trim().length>=15).length>=4)award('reflect');ctx.complete();}}
-  setTimeout(maybe,0);return root;
+  const st=ans(ctx.key);st.q=st.q||{};const root=h('div');
+  if(act.showLast){const t=S.drafts[act.showLast]||'';root.append(h('div',{class:'panel',style:'margin-bottom:18px;background:var(--surface-2)'},h('div',{class:'eyebrow'},'Your prompt from Try It'),h('p',{style:'font-family:var(--mono);font-size:13px;white-space:pre-wrap;margin:6px 0'},t||'(No prompt saved yet. Go back to Try It, type a prompt, and run it.)'),meterEl(t),h('p',{class:'muted',style:'font-size:13.5px;margin:8px 0 0'},`The scanner found ${Object.values(analyze(t)).filter(Boolean).length} of 6 ingredients.`)));}
+  act.questions.forEach((q,qi)=>{const sv=st.q[qi]||(st.q[qi]={});root.append(questionEl(q,sv,()=>maybe()));});
+  const jt=h('textarea',{id:`jr-${ctx.key}`,placeholder:'Type your answer here…',style:'min-height:84px;font-family:var(--body);font-size:15px'});jt.value=S.journals[ctx.key]||'';
+  const jb=h('button',{class:'btn primary submit'},'Submit');const jmsg=h('span',{class:'muted',style:'font-size:13.5px'});
+  function jstate(){const ok=jt.value.trim().length>=15;if(st.jsub&&jt.value===S.journals[ctx.key]){jb.disabled=true;jb.textContent='Saved ✓';jmsg.textContent='';}else{jb.disabled=!ok;jb.textContent=st.jsub?'Update':'Submit';jmsg.textContent=ok?'':'Write at least one full sentence.';}}
+  jt.addEventListener('input',jstate);
+  jb.onclick=()=>{if(jt.value.trim().length<15)return;S.journals[ctx.key]=jt.value;st.jsub=true;save();jstate();toast('Answer saved');if(Object.values(S.journals).filter(v=>v&&v.trim().length>=15).length>=4)award('reflect');maybe();};
+  root.append(h('div',{class:'q'},h('div',{class:'qt'},act.journal),jt,h('div',{class:'row'},jb,jmsg)));jstate();
+  function maybe(){if(act.questions.every((q,qi)=>st.q[qi]&&st.q[qi].sub)&&st.jsub)finishIfNew(ctx);}
+  maybe();return root;
 };
 
 A.lesson=(act,ctx)=>{
-  const root=h('div');
-  if(act.showParts){root.append(h('div',{class:'mnemonic',html:act.mnemonic}),h('p',{class:'muted',style:'margin:-10px 0 14px;font-family:var(--mono);font-size:12.5px'},act.mnemonicNote));
+  const st=ans(ctx.key);const root=h('div');
+  if(act.showParts){root.append(h('div',{class:'mnemonic',html:act.mnemonic}),h('p',{class:'muted',style:'margin:-10px 0 14px;font-size:14px;font-weight:600'},act.mnemonicNote));
     root.append(h('div',{class:'cards'},PARTS.map(p=>h('div',{class:'lcard pcard',style:`--pc:var(--p-${p.k})`},h('h4',{},p.n),h('p',{},p.d),h('div',{class:'ex'},p.ex)))));}
   if(act.template)root.append(h('div',{class:'eyebrow',style:'margin-bottom:6px'},'Fill-in-the-blanks prompt'),h('pre',{class:'tpl'},act.template));
   if(act.cards)root.append(h('div',{class:'cards'},act.cards.map(c=>h('div',{class:'lcard'},h('h4',{},c.h),h('p',{},c.b),c.ex?h('div',{class:'ex'},c.ex):null))));
-  if(act.drill)root.append(h('div',{class:'panel',style:'margin-bottom:16px;background:var(--bg)'},h('h3',{style:'font-size:19px'},'The diagnosis drill'),h('ol',{style:'margin:4px 0 0;padding-left:20px'},act.drill.map(d=>h('li',{},d)))));
-  const c=act.check;const box=h('div',{class:'q panel',style:'background:var(--bg)'},h('div',{class:'eyebrow'},'Lock it in'),h('div',{class:'qt',style:'margin-top:4px'},c.q));const opts=h('div',{class:'opts'});const fb=h('div');
-  c.opts.forEach((o,i)=>{const b=h('button',{class:'opt radio'},h('span',{class:'box'}),h('span',{},o));b.onclick=()=>{const ok=i===c.ok;streakHit(ok);b.classList.add(ok?'right':'wrong');fb.innerHTML='';fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Correct.':'Not quite. Try another answer.'),ok?c.why:''));if(ok){[...opts.children].forEach(x=>x.disabled=true);ctx.complete();}else b.disabled=true;};opts.append(b);});
-  box.append(opts,fb);root.append(box);return root;
+  if(act.drill)root.append(h('div',{class:'panel',style:'margin-bottom:18px;background:var(--surface-2)'},h('h3',{style:'font-size:19px'},'The 4-step detective drill'),h('ol',{style:'margin:4px 0 0;padding-left:20px'},act.drill.map(d=>h('li',{},d)))));
+  const c=act.check;st.check=st.check||{};
+  root.append(h('div',{class:'panel',style:'background:var(--surface-2)'},h('div',{class:'eyebrow',style:'margin-bottom:6px'},'Lock it in'),questionEl({q:c.q,opts:c.opts,ok:c.ok,why:c.why},st.check,()=>finishIfNew(ctx),{retry:true})));
+  return root;
 };
 
 A.tagger=(act,ctx)=>{
-  const root=h('div');let label=null;let doneCount=0;
-  const pal=h('div',{class:'palette',role:'group','aria-label':'Part labels'});
+  const st=ans(ctx.key);st.tags=st.tags||{};const root=h('div');let label=null;
+  const pal=h('div',{class:'palette',role:'group','aria-label':'Ingredients'});
   PARTS.forEach(p=>pal.append(h('button',{style:`--pc:var(--p-${p.k})`,'aria-pressed':'false',onclick:e=>{label=p.k;[...pal.children].forEach(c=>c.setAttribute('aria-pressed',String(c===e.currentTarget)));}},p.n)));
-  root.append(h('p',{class:'muted',style:'font-size:13px;margin:0 0 6px'},'1. Pick an ingredient   2. Tap the matching text'),pal);
-  act.items.forEach((it,ii)=>{const box=h('div',{class:'segs',style:'margin-bottom:12px'},h('div',{class:'eyebrow',style:'margin-bottom:4px'},`Prompt ${ii+1}`));let left=it.segs.length;
-    it.segs.forEach(([k,t])=>{const s=h('button',{class:'seg'},t);s.onclick=()=>{if(s.classList.contains('ok'))return;if(!label){toast('Pick an ingredient first');return;}
-      if(label===k){s.classList.add('ok');s.style.setProperty('--pc',`var(--p-${k})`);s.append(h('sup',{},PART[k].n));streakHit(true);left--;if(!left){doneCount++;toast(`Prompt ${ii+1} fully labeled`);if(doneCount===act.items.length)ctx.complete();}}
-      else{streakHit(false);s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake');toast(`Not ${PART[label].n}`,'Try a different label for that piece.');}};box.append(s,' ');});
+  root.append(pal);
+  const total=act.items.reduce((a,it)=>a+it.segs.length,0);
+  const check=()=>{if(Object.keys(st.tags).length>=total)finishIfNew(ctx);};
+  act.items.forEach((it,ii)=>{const box=h('div',{class:'segs',style:'margin-bottom:12px'},h('div',{class:'eyebrow',style:'margin-bottom:4px'},`Prompt ${ii+1}`));
+    it.segs.forEach(([k,t],si)=>{const id=`${ii}-${si}`;const s=h('button',{class:'seg'},t);
+      const mark=()=>{s.classList.add('ok');s.style.setProperty('--pc',`var(--p-${k})`);s.append(h('sup',{},PART[k].n));};
+      if(st.tags[id])mark();
+      s.onclick=()=>{if(s.classList.contains('ok'))return;if(!label){toast('First click an ingredient button at the top.');return;}
+        if(label===k){mark();st.tags[id]=1;save();streakHit(true);check();}
+        else{streakHit(false);s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake');toast(`That isn’t ${PART[label].n}`,'Pick a different ingredient and try again.');}};box.append(s,' ');});
     root.append(box);});
-  return root;
+  check();return root;
 };
 
 A.duel=(act,ctx)=>{
-  const root=h('div');let n=0,right=0;
-  act.pairs.forEach((p,pi)=>{const wrap=h('div',{class:'q'},h('div',{class:'qt'},`Matchup ${pi+1}`));const d=h('div',{class:'duel'});const fb=h('div');
-    ['a','b'].forEach(s=>{const c=h('button',{class:'dcard'},h('span',{class:'lab'},s.toUpperCase()),p[s]);c.onclick=()=>{if(wrap.dataset.locked)return;wrap.dataset.locked='1';const ok=s===p.better;streakHit(ok);if(ok)right++;
-      [...d.children].forEach((x,j)=>{x.disabled=true;x.classList.add(['a','b'][j]===p.better?'right':'wrong');});
-      fb.innerHTML='';fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Good call.':'The other one wins this round.'),p.why));n++;if(n===act.pairs.length){toast(`${right}/${act.pairs.length} duels won`);ctx.complete();}};d.append(c);});
-    wrap.append(d,fb);root.append(wrap);});
-  return root;
+  const st=ans(ctx.key);st.p=st.p||{};const root=h('div');
+  const check=()=>{if(act.pairs.every((p,i)=>st.p[i]&&st.p[i].sub))finishIfNew(ctx);};
+  act.pairs.forEach((p,pi)=>{const sv=st.p[pi]||(st.p[pi]={});const wrap=h('div',{class:'q'},h('div',{class:'qt'},`Matchup ${pi+1}`));const d=h('div',{class:'duel'});const fb=h('div');
+    const sub=h('button',{class:'btn primary submit',disabled:!sv.sel},'Submit');
+    const cards={};['a','b'].forEach(s=>{const c=h('button',{class:'dcard','aria-pressed':String(sv.sel===s)},h('span',{class:'lab'},s.toUpperCase()),p[s]);cards[s]=c;
+      c.onclick=()=>{if(sv.sub)return;sv.sel=s;save();cards.a.setAttribute('aria-pressed',String(s==='a'));cards.b.setAttribute('aria-pressed',String(s==='b'));sub.disabled=false;};d.append(c);});
+    function lock(restored){const ok=sv.sel===p.better;['a','b'].forEach(s=>{cards[s].disabled=true;cards[s].classList.add(s===p.better?'right':'wrong');});sub.hidden=true;
+      fb.innerHTML='';fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Good call!':`Prompt ${p.better.toUpperCase()} wins this one.`),p.why));if(!restored)streakHit(ok);}
+    sub.onclick=()=>{if(!sv.sel)return;sv.sub=true;save();lock(false);check();};
+    if(sv.sub)lock(true);
+    wrap.append(d,h('div',{class:'row'},sub),fb);root.append(wrap);});
+  check();return root;
 };
 
 A.quiz=(act,ctx)=>{
-  const root=h('div');let i=0,score=0;const res=[];
+  const st=ans(ctx.key);st.a=st.a||[];st.i=st.i||0;const root=h('div');const n=act.questions.length;
   const prog=h('div',{class:'qprog'},act.questions.map(()=>h('i')));const stage=h('div');root.append(prog,stage);
-  function show(){stage.innerHTML='';[...prog.children].forEach((b,j)=>b.className=res[j]===true?'g':res[j]===false?'b':j===i?'c':'');
-    if(i>=act.questions.length)return finish();
-    const q=act.questions[i];const opts=h('div',{class:'opts'});const fb=h('div');const nextB=h('button',{class:'btn primary',hidden:true,onclick:()=>{i++;show();}},i===act.questions.length-1?'See results':'Next question');
-    q.opts.forEach((o,j)=>{const b=h('button',{class:'opt radio'},h('span',{class:'box'}),h('span',{},o));b.onclick=()=>{const ok=j===q.ok;res[i]=ok;if(ok)score++;streakHit(ok);
-      [...opts.children].forEach((x,k)=>{x.disabled=true;if(k===q.ok)x.classList.add('right');else if(k===j)x.classList.add('wrong');});
-      fb.append(h('div',{class:'fb '+(ok?'good':'bad')},h('b',{},ok?'Correct.':'Not this time.'),q.why));nextB.hidden=false;nextB.focus();[...prog.children][i].className=ok?'g':'b';};opts.append(b);});
-    stage.append(h('div',{class:'eyebrow'},`Question ${i+1} of ${act.questions.length}`),h('div',{class:'qt',style:'font-weight:600;margin:6px 0 10px;font-size:16.5px'},q.q),opts,fb,h('div',{class:'row'},nextB));}
-  function finish(){const total=act.questions.length;const pct=Math.round(score/total*100);const passed=score>=(act.pass||0);
-    stage.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},act.boss?'Boss result':'Results'),h('div',{class:'score '+(passed?'pass':'fail')},`${score} / ${total}`),
-      h('p',{style:'margin:6px 0 0'},act.boss?(passed?'Boss defeated! The next world is open.':`You need ${act.pass} to win. Read the tips and take another swing.`):'Review any misses above, then continue.'),
-      h('div',{class:'row'},h('button',{class:'btn',onclick:()=>{i=0;score=0;res.length=0;show();}},'Retry'))));
-    if(passed)ctx.complete({score:pct});}
+  function paintProg(){[...prog.children].forEach((b,j)=>b.className=st.a[j]&&st.a[j].sub?(st.a[j].good?'g':'b'):j===st.i&&!st.fin?'c':'');}
+  function show(){stage.innerHTML='';paintProg();if(st.fin)return finish(true);
+    const q=act.questions[st.i];const sv=st.a[st.i]||(st.a[st.i]={});const last=st.i===n-1;
+    const nextB=h('button',{class:'btn primary',hidden:!sv.sub,onclick:()=>{if(last){st.fin=true;save();finish(false);}else{st.i++;save();show();}}},last?'See my score':'Next question →');
+    stage.append(h('div',{class:'eyebrow'},`Question ${st.i+1} of ${n}`),h('div',{style:'height:6px'}),
+      questionEl({q:q.q,opts:q.opts,ok:q.ok,why:q.why},sv,()=>{paintProg();nextB.hidden=false;}),h('div',{class:'row'},nextB));}
+  function finish(restored){stage.innerHTML='';paintProg();const score=st.a.filter(x=>x&&x.good).length;const pct=Math.round(score/n*100);const passed=score>=(act.pass||0);
+    stage.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},act.boss?'Boss result':'Your score'),h('div',{class:'score '+(passed?'pass':'fail')},`${score} / ${n}`),
+      h('p',{style:'margin:6px 0 0'},act.boss?(passed?'Boss defeated! The next world is open.':`You need ${act.pass} right to win. Click Try Again to take another swing.`):'Nice work. Click Next stage below to keep going.'),
+      h('div',{class:'row'},h('button',{class:'btn',onclick:()=>{S.ans[ctx.key]={};save();renderModule();}},'Try again'))));
+    if(passed)finishIfNew(ctx,{score:pct});}
   show();return root;
 };
 
 A.flaws=(act,ctx)=>{
-  const root=h('div');let n=0,exact=0;
-  act.items.forEach((it,ii)=>{const box=h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--bg);border-color:var(--line);display:block'},it.p));const opts=h('div',{class:'opts'});const sel=new Set();const fb=h('div');
-    it.opts.forEach((o,i)=>{const b=h('button',{class:'opt','aria-pressed':'false'},h('span',{class:'box'}),h('span',{},o.t));b.onclick=()=>{sel.has(i)?sel.delete(i):sel.add(i);b.setAttribute('aria-pressed',String(sel.has(i)));b.querySelector('.box').textContent=sel.has(i)?'✓':'';};opts.append(b);});
-    const chk=h('button',{class:'btn sm'},'Check');chk.onclick=()=>{if(!sel.size){toast('Select at least one flaw');return;}chk.disabled=true;let hits=0,errs=0,total=it.opts.filter(o=>o.ok).length;
-      it.opts.forEach((o,i)=>{const c=opts.children[i];c.disabled=true;if(o.ok){c.classList.add('right');if(sel.has(i))hits++;}else if(sel.has(i)){c.classList.add('wrong');errs++;}});
-      const ex=hits===total&&!errs;if(ex)exact++;streakHit(ex);fb.append(h('div',{class:'fb '+(ex?'good':'bad')},h('b',{},ex?'Exact diagnosis.':`Found ${hits} of ${total} flaws${errs?`, with ${errs} false alarm${errs>1?'s':''}`:''}.`),'Green items are the real flaws.'));
-      n++;if(n===act.items.length){if(exact===act.items.length)award('bughunter');ctx.complete();}};
-    box.append(opts,h('div',{class:'row'},chk),fb);root.append(box);});
-  return root;
+  const st=ans(ctx.key);st.f=st.f||{};const root=h('div');
+  const check=(restored)=>{if(!act.items.every((it,i)=>st.f[i]&&st.f[i].sub))return;if(!restored&&act.items.every((it,i)=>st.f[i].good))award('bughunter');finishIfNew(ctx);};
+  act.items.forEach((it,ii)=>{const sv=st.f[ii]||(st.f[ii]={});
+    root.append(h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--surface-2);display:block'},it.p),
+      questionEl({q:'What’s wrong with this prompt?',opts:it.opts,multi:true,fb:'Green answers are the real problems.'},sv,(g,r)=>check(r))));});
+  check(true);return root;
 };
 
 A.builder=(act,ctx)=>{
-  const root=h('div');const d=S.drafts[act.store+'_slots']||{};
-  root.append(h('div',{class:'scenario'},h('b',{},'Scenario'),act.scenario));
-  const hints={role:'Who should the AI be?',task:act.requireVar?'The job, with [VARIABLES] for what changes':'Action verb + deliverable',context:'Audience, purpose, background',examples:'A sample of what good looks like',format:'Shape: table, bullets, length…',constraints:'Limits, tone, rules, guardrails'};
+  const st=ans(ctx.key);const root=h('div');const d=S.drafts[act.store+'_slots']||{};
+  root.append(h('div',{class:'scenario'},h('b',{},'The situation'),act.scenario));
+  const hints={role:'Who should the AI be?',task:act.requireVar?'The job, with [BRACKETS] for parts that change':'What should it make or do?',context:'Who is it for? Why? Any background?',examples:'A sample of what good looks like',format:'Table, list, bullets, length…',constraints:'Limits, tone, things to avoid'};
   const slots=h('div',{class:'slots'});const tas={};
-  PARTS.forEach(p=>{const t=h('textarea',{id:`bd-${ctx.key}-${p.k}`,placeholder:p.ex});t.value=d[p.k]||'';tas[p.k]=t;t.addEventListener('input',upd);
+  PARTS.forEach(p=>{const t=h('textarea',{id:`bd-${ctx.key}-${p.k}`,placeholder:'Example: '+p.ex});t.value=d[p.k]||'';tas[p.k]=t;t.addEventListener('input',upd);
     slots.append(h('div',{class:'slot',style:`--pc:var(--p-${p.k})`},h('label',{for:t.id},p.n,h('small',{},hints[p.k])),t));});
-  const status=h('div',{class:'meter'});const preview=h('pre',{class:'tpl',style:'margin-top:14px'});
-  const out=h('div',{class:'out',hidden:true});const gbox=h('div');
-  const runB=h('button',{class:'btn'},'Run it');const coachB=h('button',{class:'btn brass'},'Send to coach');const copyB=h('button',{class:'btn sm'},'Copy prompt');const stopB=h('button',{class:'btn sm',hidden:true,onclick:()=>runCtl&&runCtl.abort()},'Stop');
+  const status=h('div',{class:'meter'});const preview=h('pre',{class:'tpl',style:'margin-top:8px'});
+  const out=h('div',{class:'out',hidden:!st.out});const gbox=h('div');
+  const runB=h('button',{class:'btn'},'Run Prompt');const coachB=h('button',{class:'btn gold'},'Score my prompt');const copyB=h('button',{class:'btn sm'},'Copy prompt');const stopB=h('button',{class:'btn sm',hidden:true,onclick:()=>runCtl&&runCtl.abort()},'Stop');
   function assembled(){const v=k=>tas[k].value.trim();return [v('role'),[v('task'),v('context')].filter(Boolean).join(' '),v('examples')?'Example of what I want:\n'+v('examples'):'',v('format')?'Format: '+v('format'):'',v('constraints')?'Rules: '+v('constraints'):''].filter(Boolean).join('\n\n');}
-  let completed=false;
-  function upd(){const slotsD={};PARTS.forEach(p=>slotsD[p.k]=tas[p.k].value);S.drafts[act.store+'_slots']=slotsD;S.drafts[act.store]=assembled();save();
+  function upd(){const sd={};PARTS.forEach(p=>sd[p.k]=tas[p.k].value);S.drafts[act.store+'_slots']=sd;S.drafts[act.store]=assembled();save();
     status.innerHTML='';let full=0;PARTS.forEach(p=>{const ok=words(tas[p.k].value)>=3;if(ok)full++;status.append(h('span',{class:ok?'on':'',style:ok?`background:var(--p-${p.k})`:''},(ok?'✓ ':'')+p.n));});
-    const hasVar=/\[[^\]]{2,}\]/.test(assembled());if(act.requireVar)status.append(h('span',{class:hasVar?'on':'',style:hasVar?'background:var(--olive)':''},(hasVar?'✓ ':'')+'[VARIABLE]'));
-    preview.textContent=assembled()||'Your assembled prompt will appear here.';
-    if(!completed&&full===6&&(!act.requireVar||hasVar)){completed=true;award('builder');ctx.complete();}}
-  runB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few parts first');out.hidden=false;runB.disabled=true;stopB.hidden=false;await runPrompt(t,out,null);runB.disabled=false;stopB.hidden=true;};
-  coachB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few parts first');coachB.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Reviewing… (the coach can take up to a minute)'));
-    const g=await grade(t,act.scenario,{template:!!act.requireVar});gbox.innerHTML='';gbox.append(gradeEl(g,act.requireVar?80:70));coachB.disabled=false;};
+    const hasVar=/\[[^\]]{2,}\]/.test(assembled());if(act.requireVar)status.append(h('span',{class:hasVar?'on':'',style:hasVar?'background:var(--w4)':''},(hasVar?'✓ ':'')+'[BRACKETS]'));
+    preview.textContent=assembled()||'Your finished prompt will build itself here as you type.';
+    if(full===6&&(!act.requireVar||hasVar)&&!S.done[ctx.key]){award('builder');ctx.complete();}}
+  if(st.out){out.append(h('span',{class:'tag'},st.out.tag),h('div',{},st.out.body));}
+  if(st.grade)gbox.append(gradeEl(st.grade,act.requireVar?80:70));
+  runB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few boxes first');out.hidden=false;runB.disabled=true;stopB.hidden=false;await runPrompt(t,out,null);runB.disabled=false;stopB.hidden=true;const tg=out.querySelector('.tag');st.out={tag:tg?tg.textContent:'Answer',body:(out.lastChild&&out.lastChild.textContent)||''};save();};
+  coachB.onclick=async()=>{const t=assembled();if(words(t)<5)return toast('Fill in a few boxes first');coachB.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Scoring… this can take up to a minute.'));
+    const g=await grade(t,act.scenario,{template:!!act.requireVar});st.grade=g;save();gbox.innerHTML='';gbox.append(gradeEl(g,act.requireVar?80:70));coachB.disabled=false;};
   copyB.onclick=()=>copyText(assembled(),copyB);
-  root.append(slots,h('div',{style:'margin-top:12px'},h('div',{class:'eyebrow'},'Build status'),status),h('div',{class:'eyebrow',style:'margin-top:14px'},'Assembled prompt'),preview,h('div',{class:'row'},runB,stopB,coachB,copyB),out,gbox);
+  root.append(slots,h('div',{style:'margin-top:14px'},h('div',{class:'eyebrow'},'Ingredients filled in'),status),h('div',{class:'eyebrow',style:'margin-top:16px'},'Your finished prompt'),preview,h('div',{class:'row'},runB,stopB,coachB,copyB),out,gbox);
   upd();return root;
 };
 
 async function gradeMission(ta,scenario,gbox,btn,pass,opts){const t=ta.value.trim();if(words(t)<4){toast('Write a fuller prompt first');return null;}
-  btn.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Grading… (the coach can take up to a minute)'));const g=await grade(t,scenario,opts);gbox.innerHTML='';gbox.append(gradeEl(g,pass));btn.disabled=false;return g;}
+  btn.disabled=true;gbox.innerHTML='';gbox.append(h('div',{class:'grade'},'Scoring… this can take up to a minute.'));const g=await grade(t,scenario,opts);gbox.innerHTML='';gbox.append(gradeEl(g,pass));btn.disabled=false;return g;}
 
 A.rewrite=(act,ctx)=>{
-  const root=h('div');const scores={};const sumB=h('div');
-  act.items.forEach((it,ii)=>{const ta=h('textarea',{id:`rw-${ctx.key}-${ii}`,placeholder:'Your rewritten prompt…'});ta.value=S.drafts[`${ctx.key}-${ii}`]||'';ta.addEventListener('input',()=>{S.drafts[`${ctx.key}-${ii}`]=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));});
-    const mt=h('div');mt.append(meterEl(ta.value));const gbox=h('div');const b=h('button',{class:'btn primary'},'Grade this rewrite');
-    b.onclick=async()=>{const g=await gradeMission(ta,it.scenario,gbox,b,act.pass);if(!g)return;scores[ii]=Math.max(scores[ii]||0,g.score);streakHit(g.score>=act.pass);sum();};
-    root.append(h('div',{class:'mission'},h('h4',{},`Round ${ii+1}`),h('div',{class:'weak'},'Weak: '+it.weak),h('p',{style:'margin:0 0 8px;font-size:14px'},it.scenario),ta,mt,h('div',{class:'row'},b),gbox));});
-  function sum(){const ks=Object.keys(scores);sumB.innerHTML='';if(!ks.length)return;const avg=Math.round(ks.reduce((a,k)=>a+scores[k],0)/act.items.length);
-    sumB.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},'Your average (best score per round)'),h('div',{class:'score '+(avg>=act.pass&&ks.length===act.items.length?'pass':'fail')},avg),h('p',{style:'margin:4px 0 0'},ks.length<act.items.length?`Graded ${ks.length} of ${act.items.length}. Finish all three.`:avg>=act.pass?'Boss defeated!':`Average must reach ${act.pass}. Use the fixes and regrade any round.`)));
-    if(ks.length===act.items.length&&avg>=act.pass)ctx.complete({score:avg});}
-  root.append(sumB);return root;
+  const st=ans(ctx.key);st.g=st.g||{};const root=h('div');const sumB=h('div');
+  act.items.forEach((it,ii)=>{const ta=h('textarea',{id:`rw-${ctx.key}-${ii}`,placeholder:'Write your better prompt here…'});ta.value=S.drafts[`${ctx.key}-${ii}`]||'';
+    const mt=h('div');mt.append(meterEl(ta.value));ta.addEventListener('input',()=>{S.drafts[`${ctx.key}-${ii}`]=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));});
+    const gbox=h('div');if(st.g[ii])gbox.append(gradeEl(st.g[ii],act.pass));const b=h('button',{class:'btn primary'},st.g[ii]?'Resubmit':'Submit');
+    b.onclick=async()=>{const g=await gradeMission(ta,it.scenario,gbox,b,act.pass);if(!g)return;if(!st.g[ii]||g.score>=st.g[ii].score)st.g[ii]=g;save();b.textContent='Resubmit';streakHit(g.score>=act.pass);sum();};
+    root.append(h('div',{class:'mission'},h('h4',{},`Round ${ii+1}`),h('div',{class:'weak'},'Weak prompt: '+it.weak),h('p',{style:'margin:0 0 10px;font-size:15px'},h('b',{},'The situation: '),it.scenario),ta,mt,h('div',{class:'row'},b),gbox));});
+  function sum(){const ks=Object.keys(st.g);sumB.innerHTML='';if(!ks.length)return;const avg=Math.round(ks.reduce((a,k)=>a+st.g[k].score,0)/act.items.length);const all=ks.length===act.items.length;
+    sumB.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},'Your average (best score per round)'),h('div',{class:'score '+(avg>=act.pass&&all?'pass':'fail')},avg),h('p',{style:'margin:4px 0 0'},!all?`You’ve submitted ${ks.length} of ${act.items.length} rounds. Submit all three.`:avg>=act.pass?'Boss defeated!':`Your average needs to reach ${act.pass}. Use the tips to improve a round and click Resubmit.`)));
+    if(all&&avg>=act.pass)finishIfNew(ctx,{score:avg});}
+  root.append(sumB);sum();return root;
 };
 
 A.capstone=(act,ctx)=>{
-  const root=h('div');const ta=h('textarea',{id:`cap-${ctx.key}`,style:'min-height:220px'});ta.value=S.drafts.m6cap||S.drafts.m6dev||'';
-  const mt=h('div');const upd=()=>{S.drafts.m6cap=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));const v=(ta.value.match(/\[[^\]]{2,}\]/g)||[]).length;mt.firstChild.append(h('span',{class:v?'on':'',style:v?'background:var(--olive)':''},`${v} variable${v===1?'':'s'}`));};
+  const st=ans(ctx.key);const root=h('div');const ta=h('textarea',{id:`cap-${ctx.key}`,style:'min-height:220px'});ta.value=S.drafts.m6cap||S.drafts.m6dev||'';
+  const mt=h('div');const upd=()=>{S.drafts.m6cap=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));const v=(ta.value.match(/\[[^\]]{2,}\]/g)||[]).length;mt.firstChild.append(h('span',{class:v?'on':'',style:v?'background:var(--w4)':''},`${v} [bracket]${v===1?'':'s'}`));};
   ta.addEventListener('input',upd);upd();
-  const gbox=h('div');const b=h('button',{class:'btn brass'},'Submit for grading');
+  const gbox=h('div');if(st.grade)gbox.append(gradeEl(st.grade,act.pass));const b=h('button',{class:'btn primary'},st.grade?'Resubmit':'Submit');
   const sc='The learner is building a reusable prompt template for a recurring task in their everyday life or work.';
-  b.onclick=async()=>{const g=await gradeMission(ta,sc,gbox,b,act.pass,{template:true});if(!g)return;if(g.score>=act.pass){award('capstone');if(!S.certDate){S.certDate=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});save();}ctx.complete({score:g.score});}};
-  root.append(h('div',{class:'scenario'},h('b',{},'Judged on'),'All six parts \u00b7 [VARIABLES] for what changes \u00b7 standing rules \u00b7 a fixed output format \u00b7 guardrails (sources, assumptions, privacy)'),ta,mt,h('div',{class:'row'},b,h('button',{class:'btn sm',onclick:e=>copyText(ta.value,e.currentTarget)},'Copy prompt')),gbox);
+  b.onclick=async()=>{const g=await gradeMission(ta,sc,gbox,b,act.pass,{template:true});if(!g)return;st.grade=g;save();b.textContent='Resubmit';if(g.score>=act.pass){award('capstone');if(!S.certDate){S.certDate=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});save();}finishIfNew(ctx,{score:g.score});}};
+  root.append(h('div',{class:'scenario'},h('b',{},'The judges look for'),'All six ingredients · [BRACKETS] for the parts that change · rules that apply every time · a set format for the answer · safety rules (stick to the facts, state assumptions, protect privacy)'),ta,mt,h('div',{class:'row'},b,h('button',{class:'btn sm',onclick:e=>copyText(ta.value,e.currentTarget)},'Copy prompt')),gbox);
   return root;
 };
 
 A.rank=(act,ctx)=>{
-  const root=h('div');let order=[];const list=h('div',{class:'ranklist'});const fb=h('div');const chk=h('button',{class:'btn primary',disabled:true},'Check ranking');const reset=h('button',{class:'btn sm'},'Reset');
-  function draw(){list.innerHTML='';act.items.forEach((it,i)=>{const pos=order.indexOf(i);const b=h('button',{class:'ritem'+(pos>=0?' set':'')},h('span',{class:'pos'},pos>=0?pos+1:'–'),h('span',{},it.t));b.onclick=()=>{if(chk.dataset.done)return;if(pos>=0)order.splice(pos,1);else order.push(i);draw();};list.append(b);});chk.disabled=order.length!==act.items.length||!!chk.dataset.done;}
-  chk.onclick=()=>{chk.dataset.done='1';let right=0;order.forEach((idx,p)=>{const ok=act.items[idx].r===p+1;if(ok)right++;list.children[idx].classList.add(ok?'right':'wrong');});streakHit(right===act.items.length);
-    fb.append(h('div',{class:'fb '+(right===act.items.length?'good':'bad')},h('b',{},right===act.items.length?'Perfect ranking.':`${right} of ${act.items.length} in the right spot. Pro\u2019s order: ${act.items.map((x,i)=>[x.r,i]).sort((a,b)=>a[0]-b[0]).map(([r,i])=>'#'+r+': '+act.items[i].t.slice(0,32)+'…').join('  ')}`),act.why));chk.disabled=true;ctx.complete();};
-  reset.onclick=()=>{if(chk.dataset.done)return;order=[];draw();};
-  draw();root.append(list,h('div',{class:'row'},chk,reset),fb);return root;
+  const st=ans(ctx.key);st.order=st.order||[];const root=h('div');const list=h('div',{class:'ranklist'});const fb=h('div');
+  const sub=h('button',{class:'btn primary submit'},'Submit');const reset=h('button',{class:'btn sm'},'Reset order');
+  function draw(){list.innerHTML='';act.items.forEach((it,i)=>{const pos=st.order.indexOf(i);const b=h('button',{class:'ritem'+(pos>=0?' set':'')},h('span',{class:'pos'},pos>=0?pos+1:'?'),h('span',{},it.t));b.onclick=()=>{if(st.sub)return;if(pos>=0)st.order.splice(pos,1);else st.order.push(i);save();draw();};list.append(b);});sub.disabled=st.order.length!==act.items.length||!!st.sub;}
+  function lock(restored){let right=0;st.order.forEach((idx,p)=>{const ok=act.items[idx].r===p+1;if(ok)right++;list.children[idx].classList.add(ok?'right':'wrong');list.children[idx].disabled=true;});
+    sub.hidden=true;reset.hidden=true;if(!restored)streakHit(right===act.items.length);
+    const best=act.items.map((x,i)=>[x.r,i]).sort((a,b)=>a[0]-b[0]).map(([r,i])=>`${r}. ${act.items[i].t.slice(0,40)}…`);
+    fb.innerHTML='';fb.append(h('div',{class:'fb '+(right===act.items.length?'good':'bad')},h('b',{},right===act.items.length?'Perfect ranking!':`${right} of ${act.items.length} in the right spot.`),act.why,h('div',{style:'margin-top:8px;font-size:14px'},h('b',{style:'font-size:14px;font-family:var(--body)'},'The pro’s order:'),best.map(x=>h('div',{},x)))));}
+  sub.onclick=()=>{st.sub=true;save();draw();lock(false);finishIfNew(ctx);};
+  reset.onclick=()=>{if(st.sub)return;st.order=[];save();draw();};
+  draw();if(st.sub)lock(true);root.append(list,h('div',{class:'row'},sub,reset),fb);
+  if(st.sub)finishIfNew(ctx);return root;
 };
 
 A.rubric=(act,ctx)=>{
-  const root=h('div');let n=0,allMatch=true;
-  act.items.forEach((it,ii)=>{const box=h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--bg);border-color:var(--line);display:block'},it.p));const val={};const rows=h('div',{class:'rub'});
-    Object.keys(it.e).forEach(cr=>{const seg=h('div',{class:'seg5',role:'group','aria-label':cr});for(let s=1;s<=5;s++){seg.append(h('button',{'aria-pressed':'false',onclick:e=>{if(box.dataset.done)return;val[cr]=s;[...seg.children].forEach((c,j)=>c.setAttribute('aria-pressed',String(j===s-1)));}},String(s)));}rows.append(h('div',{class:'rubrow'},h('b',{style:'font-size:14px'},cr),seg));});
-    const fb=h('div');const chk=h('button',{class:'btn sm'},'Reveal the pro\u2019s score');
-    chk.onclick=()=>{const ks=Object.keys(it.e);if(ks.some(k=>!val[k])){toast('Score all three criteria');return;}box.dataset.done='1';chk.disabled=true;let m=0;
-      ks.forEach((k,ki)=>{const seg=rows.children[ki].querySelector('.seg5');seg.children[it.e[k]-1].classList.add('exp');if(Math.abs(val[k]-it.e[k])<=1)m++;});
-      if(m<ks.length)allMatch=false;streakHit(m===ks.length);fb.append(h('div',{class:'fb '+(m===ks.length?'good':'bad')},h('b',{},`${m} of ${ks.length} within 1 point of the pro (gold outline).`),it.why));
-      n++;if(n===act.items.length){if(allMatch)award('judge');ctx.complete();}};
-    box.append(rows,h('div',{class:'row'},chk),fb);root.append(box);});
-  return root;
+  const st=ans(ctx.key);st.r=st.r||{};const root=h('div');
+  const check=(restored)=>{if(!act.items.every((it,i)=>st.r[i]&&st.r[i].sub))return;if(!restored&&act.items.every((it,i)=>st.r[i].match))award('judge');finishIfNew(ctx);};
+  act.items.forEach((it,ii)=>{const sv=st.r[ii]||(st.r[ii]={val:{}});const box=h('div',{class:'mission'},h('h4',{},`Prompt ${ii+1}`),h('div',{class:'weak',style:'background:var(--surface-2);display:block'},it.p));const rows=h('div',{class:'rub'});const ks=Object.keys(it.e);
+    const sub=h('button',{class:'btn primary submit'},'Submit');const fb=h('div');
+    ks.forEach(cr=>{const seg=h('div',{class:'seg5',role:'group','aria-label':cr});for(let s=1;s<=5;s++){seg.append(h('button',{'aria-pressed':String(sv.val[cr]===s),onclick:()=>{if(sv.sub)return;sv.val[cr]=s;save();[...seg.children].forEach((c,j)=>c.setAttribute('aria-pressed',String(j===s-1)));sub.disabled=ks.some(k=>!sv.val[k]);}},String(s)));}rows.append(h('div',{class:'rubrow'},h('b',{style:'font-size:15px'},cr),seg));});
+    sub.disabled=ks.some(k=>!sv.val[k]);
+    function lock(restored){let m=0;ks.forEach((k,ki)=>{const seg=rows.children[ki].querySelector('.seg5');seg.children[it.e[k]-1].classList.add('exp');[...seg.children].forEach(c=>c.disabled=true);if(Math.abs(sv.val[k]-it.e[k])<=1)m++;});
+      sv.match=m===ks.length;save();sub.hidden=true;if(!restored)streakHit(sv.match);fb.innerHTML='';fb.append(h('div',{class:'fb '+(sv.match?'good':'bad')},h('b',{},`${m} of ${ks.length} within 1 point of the pro (gold outline).`),it.why));}
+    sub.onclick=()=>{if(ks.some(k=>!sv.val[k]))return;sv.sub=true;save();lock(false);check(false);};
+    if(sv.sub)lock(true);
+    box.append(h('div',{class:'hint',style:'margin:10px 0 0'},'1 = poor, 5 = great'),rows,h('div',{class:'row'},sub),fb);root.append(box);});
+  check(true);return root;
 };
 
 /* ============ GAME ART ============ */
@@ -1033,6 +1081,7 @@ function renderTrack(){const tr=$('#track');if(!tr)return;const mi=view.mi,m=MOD
   PHASES.forEach((p,pi)=>{const d=!!S.done[pk(m.id,p.k)];tr.append(h('button',{class:'stage'+(d?' done':'')+(p.k==='apply'?' boss':''),'aria-current':String(pi===view.pi),disabled:!phaseUnlocked(mi,pi),onclick:()=>go('module',mi,pi),'aria-label':`Stage ${pi+1}: ${p.n}`},
     h('span',{class:'dot',html:d&&pi!==view.pi?ico('check',24,3):ico(phaseUnlocked(mi,pi)?STAGE_ICON[p.k]:'lock',24)}),h('span',{class:'lbl'},p.n)));});}
 
+function stepsEl(act){if(!act.steps)return h('p',{class:'intro'},act.intro);return h('div',{class:'steps'},h('div',{class:'eyebrow'},'How to play'),h('ol',{},act.steps.map(x=>h('li',{},x))));}
 function renderModule(){
   const app=$('#app');app.innerHTML='';const mi=view.mi,pi=view.pi,m=MODULES[mi],ph=PHASES[pi],act=m.phases[ph.k];const key=pk(m.id,ph.k);
   if(!phaseUnlocked(mi,pi)){return go('home');}
@@ -1048,7 +1097,7 @@ function renderModule(){
   const clear=h('div',{class:'clear',id:'clear',hidden:!done},h('span',{class:'burst',html:ico('check',22,3)}),h('div',{},h('b',{},act.boss?'Boss defeated!':'Stage clear!'),h('span',{class:'gain muted',style:'font-size:14px'},done?'Play it again any time.':'')));
   app.append(h('section',{class:'act'},
     h('div',{class:'act-h'},h('div',{},h('div',{class:'kicker',html:`${ico(STAGE_ICON[ph.k],16,2.6)} ${act.boss?'Boss round':`Stage ${pi+1} · ${ph.n}`}`}),h('h2',{},act.title)),h('span',{class:'xptag',html:`${coinSvg} +${XP[ph.k]}${act.boss?' + bonus':''}`})),
-    h('p',{class:'intro'},act.intro),actEl,
+    stepsEl(act),actEl,
     h('div',{class:'next-row'},clear,h('span',{id:'phaseDone',class:'muted',style:'font-size:14.5px;font-weight:600',hidden:done},act.boss?'Beat the boss to move on.':'Finish this stage to move on.'),nextB)));
 }
 
