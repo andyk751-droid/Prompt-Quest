@@ -14,7 +14,7 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 
 const BUY_URL = process.env.BUY_URL || 'https://ko-fi.com/s/cbce6e01b8'; // <-- your Ko-fi Shop item link for the full game
-const TIP_URL = process.env.TIP_URL || ''; // <-- paste your Buy Me a Coffee link here (blank = button hidden)
+const TIP_URL = process.env.TIP_URL || 'https://ko-fi.com/akratechnologies'; // <-- paste your Buy Me a Coffee link here (blank = button hidden)
 const FREE_STAGES = 1; // how many stages of World 1 are free
 
 const src = process.argv[2] || 'index.html';
