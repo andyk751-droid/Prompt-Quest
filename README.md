@@ -1,17 +1,19 @@
-# Prompt Quest
+# Prompt Quest — Free Trial
 
-A hands-on game for learning to get great results from AI. Six worlds, thirty quick stages, coins, levels, trophies and boss rounds.
+A hands-on game for learning to get great results from AI.
 
-## Play it
-Open `index.html` in any modern browser. No install, no build step, no server needed.
+**Play the free trial:** open this site and play Stage 1 of World 1.
+**Get the full game** (6 worlds, 30 stages): https://ko-fi.com/s/cbce6e01b8
 
-## Put it on GitHub Pages
-1. Create a new repository on GitHub (for example `prompt-quest`).
-2. Upload `index.html` (and this README) to the repository.
-3. Go to **Settings > Pages**, set **Source** to **Deploy from a branch**, pick `main` and `/ (root)`, then **Save**.
-4. After a minute, your game is live at `https://<your-username>.github.io/prompt-quest/`.
+On a phone, use your browser's "Add to Home Screen" to install it like an app.
 
-## Notes
-- Progress (coins, levels, trophies) is saved in each player's own browser.
-- Written prompts are scored by a built-in checker that looks for the six prompt ingredients.
-- Stages that ask you to run a prompt show a sample response, or ask you to paste the prompt into your own AI tool.
+---
+
+## For Andrew: how this repo works
+- This repo is public, so it holds **only the free trial**. The full game is never committed here.
+- Keep the full master file (`Prompt Quest.html`) somewhere private, like Dropbox.
+- To update after changing the master file:
+  `node tools/build.mjs "path/to/Prompt Quest.html"`
+  Then copy `dist/trial/*` here and upload `dist/full/PromptQuest-Full.zip` to Ko-fi.
+
+© 2026 Akra Technologies LLC. All rights reserved.

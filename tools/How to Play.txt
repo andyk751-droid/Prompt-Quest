@@ -1,0 +1,21 @@
+PROMPT QUEST: FULL GAME
+Thanks for buying Prompt Quest! You now have all 6 worlds and 30 stages.
+
+HOW TO START
+1. Unzip this folder (on Windows: right-click > Extract All. On a Mac: double-click it).
+2. Double-click "Prompt Quest.html".
+3. It opens in your web browser. That's it. No install, no account, no internet needed.
+
+TIPS
+- Best on a laptop or desktop computer using Chrome, Edge, Safari, or Firefox.
+- Your progress saves automatically in the browser you play in. Use the same browser each time.
+- Clearing your browser history or data will erase your progress.
+- Keep this folder somewhere safe (like Documents) so you can come back to it.
+
+NEED HELP?
+Email me at andrew.krayenhagen@akratechnologies.com and I'll get you sorted out.
+
+Educate. Illuminate. Inspire.
+Andrew Krayenhagen
+Akra Technologies LLC
+https://www.akratechnologies.com/
