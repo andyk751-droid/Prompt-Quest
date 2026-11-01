@@ -16,6 +16,8 @@ import { execSync } from 'node:child_process';
 const BUY_URL = process.env.BUY_URL || 'https://ko-fi.com/s/cbce6e01b8'; // <-- your Ko-fi Shop item link for the full game
 const TIP_URL = process.env.TIP_URL || 'https://ko-fi.com/akratechnologies'; // <-- paste your Buy Me a Coffee link here (blank = button hidden)
 const FREE_STAGES = 1; // how many stages of World 1 are free
+// Visitor counter (GoatCounter: free, no cookies, no personal data). Trial only. Blank = turned off.
+const GC_CODE = process.env.GC_CODE ?? 'akratech'; // <-- your GoatCounter account name, e.g. 'akratech'
 
 const src = process.argv[2] || 'index.html';
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
@@ -66,7 +68,7 @@ trial = swap(trial, '<title>Prompt Quest</title>',
 <meta name="theme-color" content="#F0623F">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Prompt Quest">`, 'title + install tags');
+<meta name="apple-mobile-web-app-title" content="Prompt Quest">${GC_CODE?`\n<script data-goatcounter="https://${GC_CODE}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>`:''}`, 'title + install tags');
 
 trial = swap(trial, 'const MODULES = [', `const BUY_URL='${BUY_URL}';\nconst MODULES = [`, 'buy link');
 trial = addTip(trial, 'trial');
@@ -106,7 +108,11 @@ trial = swap(trial, ":`Next stage →`);",
 // Helper functions, styles, and phone-install support.
 const extras = `
 /* ============ FREE TRIAL ============ */
-function upsell(){const m=h('div',{class:'modal',role:'dialog','aria-modal':'true'},h('div',{class:'card'},
+/* Counts a few anonymous events (no names, no cookies) so you can see where trial players go. */
+function track(name){try{if(window.goatcounter&&goatcounter.count)goatcounter.count({path:name,title:name,event:true});}catch(e){}}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href]');if(!a)return;if(a.href===BUY_URL)track('buy-click');else if(TIP_URL&&a.href===TIP_URL)track('tip-click');});
+{const _cp=completePhase;completePhase=function(mi,pi,extra){const first=!S.done[pk(MODULES[mi].id,PHASES[pi].k)];_cp(mi,pi,extra);if(first)track('stage-cleared-w'+(mi+1)+'-s'+(pi+1));};}
+function upsell(){track('upsell-shown');const m=h('div',{class:'modal',role:'dialog','aria-modal':'true'},h('div',{class:'card'},
   h('div',{class:'eyebrow'},'Free stage complete'),
   h('h2',{},'Nice work. Ready for the rest?'),
   h('p',{class:'muted'},'The full game has 6 worlds and 30 stages. Spot the six prompt ingredients, fix broken prompts, build your own from scratch, judge like a pro, and create a reusable Signature Prompt. Finish to earn your Champion card.'),
@@ -143,7 +149,7 @@ fs.writeFileSync(path.join(tdir, 'sw.js'), `// Lets Prompt Quest work offline on
 const C='pq-${ver}';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png'])));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r;}).catch(()=>caches.match(e.request,{ignoreSearch:true})));});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==location.origin)return;e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r;}).catch(()=>caches.match(e.request,{ignoreSearch:true})));});
 `);
 for (const f of ['icon-192.png', 'icon-512.png']) fs.copyFileSync(path.join(root, 'tools', f), path.join(tdir, f));
 
@@ -159,4 +165,5 @@ execSync(`cd "${fdir}" && zip -qr "PromptQuest-Full.zip" "Prompt Quest"`);
 console.log('Trial: World 1, stage(s) 1 to', FREE_STAGES);
 console.log('Full worlds :', MODULES.map(m => m.title).join(', '));
 if (BUY_URL.startsWith('PASTE')) console.warn('WARNING: BUY_URL is still a placeholder. Do not publish the trial until it is set.');
+console.log('Visitor counter:', GC_CODE ? `on (https://${GC_CODE}.goatcounter.com)` : 'off (set GC_CODE to turn it on)');
 console.log('Done -> dist/trial and dist/full/PromptQuest-Full.zip');
