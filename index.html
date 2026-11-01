@@ -126,7 +126,7 @@ main{padding-block:30px 70px}
 .wnode.current::after{content:"";position:absolute;inset:6px;border-radius:50%;border:3px solid var(--wc);animation:halo 1.8s ease-out infinite;pointer-events:none}
 @keyframes halo{from{transform:scale(.95);opacity:.9}to{transform:scale(1.35);opacity:0}}
 .wcard{flex:0 1 420px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);display:grid;gap:6px;position:relative;z-index:1}
-.wcard.locked{opacity:.62}
+.wcard.locked{background:var(--surface-2);box-shadow:none;border-style:dashed}
 .wcard .wn{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--wc) var(--tm),#000)}
 .wcard h3{font-size:24px;font-weight:800}
 .wcard p{margin:0;font-size:14.5px;color:var(--muted)}
@@ -288,6 +288,38 @@ pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:
 .steps li::before{content:counter(st);width:28px;height:28px;border-radius:50%;background:color-mix(in srgb,var(--wc,var(--accent)) var(--fm),#000);color:var(--fill-ink);font-weight:800;font-size:14px;display:grid;place-items:center}
 .btn.submit{min-width:120px}
 .dcard[aria-pressed="true"]{border-color:var(--wc);box-shadow:0 4px 0 var(--wc);background:color-mix(in srgb,var(--wc) 8%,var(--surface))}
+.pack-tag{margin-left:8px;font-family:var(--body);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:7px;background:var(--ink);color:var(--bg)}
+.sort-row{border:2px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;display:grid;gap:9px;background:var(--surface)}
+.sort-t{font-weight:700;font-size:15.5px}
+.sort-pills{display:flex;flex-wrap:wrap;gap:6px}
+.sort-pill{border:2px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:700}
+.sort-pill[aria-pressed="true"]{background:color-mix(in srgb,var(--wc,var(--accent)) var(--fm),#000);border-color:color-mix(in srgb,var(--wc,var(--accent)) var(--fm),#000);color:var(--fill-ink)}
+.sort-pill:disabled{cursor:default}
+.sort-row.right{border-color:var(--good);background:var(--good-soft)}
+.sort-row.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.sort-fix{font-size:14px;font-weight:700;color:var(--bad)}
+.cs-world{margin:30px 0 12px}
+.cs-world .wn{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--wc) var(--tm),#000)}
+.cs-world h3{font-size:26px;font-weight:800}
+.addon-promo{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:34px;padding:16px 18px;border-radius:var(--r);border:2px dashed color-mix(in srgb,var(--w2) 45%,var(--line));background:color-mix(in srgb,var(--w2) 7%,var(--surface))}
+.addon-promo-ico{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--w2) var(--im),#000);color:var(--fill-ink)}
+.addon-help{display:flex;align-items:center;gap:10px;margin:0 0 18px;padding:11px 14px;border-radius:14px;background:var(--surface-2);font-size:14.5px}
+.addon-help .spark-m{width:30px;height:30px;flex:none}
+.addons{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px}
+.addon{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);min-width:0}
+.addon-art{position:relative;height:110px;display:flex;align-items:flex-end;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,color-mix(in srgb,var(--wc) 64%,#141846),color-mix(in srgb,var(--wc) 34%,#141846));color:#fff}
+.addon-glyph{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.18)}
+.addon-n{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.addon-body{display:flex;flex-direction:column;gap:8px;padding:16px;flex:1}
+.addon-body h3{font-size:22px;font-weight:800}
+.addon-body p{margin:0;font-size:14.5px}
+.addon-worlds{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.addon-worlds span{font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--surface-2)}
+.addon .chip{display:inline-flex;align-items:center;font-weight:800;font-size:13px;padding:5px 12px;border-radius:999px;background:var(--surface-2);border:2px solid var(--line)}
+.addon .chip.ok{border-color:var(--good);background:var(--good-soft)}
+.pack-head{display:grid;gap:2px;justify-items:center;text-align:center;margin:26px 0 4px}
+.pack-head .wn{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:color-mix(in srgb,var(--wc) var(--tm),#000)}
+.pack-head h3{font-size:28px;font-weight:800}
 /* Trophies */
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:12px}
 .badge{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--surface);display:flex;gap:12px;align-items:center;box-shadow:var(--shadow)}
@@ -395,8 +427,8 @@ a.btn{text-decoration:none}
   .stats{margin-left:auto;width:auto;gap:6px;flex-wrap:nowrap}
   .pill.lvl,.pill.trophy{display:none}
   .pill{font-size:13px;padding:4px 9px 4px 5px}
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:12;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px -12px rgba(0,0,0,.25);padding:6px max(10px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-right,0px))}
-  .nav button{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px;padding:6px 4px;font-size:12px}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:12;display:flex;gap:4px;margin:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px -12px rgba(0,0,0,.25);padding:6px max(10px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-right,0px))}
+  .nav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px;padding:6px 4px;font-size:12px}
   .nav .ico{display:block;width:22px;height:22px}
   .nav button[aria-current="true"]{background:var(--surface-2);color:var(--ink)}
   main{padding-block:16px 112px}
@@ -541,21 +573,33 @@ const DETECT={
   constraints:/\b(no more than|under \d+|at most|at least|avoid|don't|do not|never|must|only|limit|maximum|minimum|tone|plain language|keep it|without|define|cite|if you (need|don'?t)|assumptions?)\b/i
 };
 function analyze(text){const p={};PARTS.forEach(x=>p[x.k]=DETECT[x.k].test(text||''));return p;}
+const CHECKS={
+  connector:[{re:/\b(e-?mail|gmail|outlook|inbox|calendar|drive|dropbox|onedrive|connected|folder)\b/i,label:'Say which connected app to use (email, calendar, Drive\u2026).'},
+             {re:/\b(draft|don'?t send|do not send|don'?t (change|delete|move)|do not (change|delete|move)|confirm|approve|ask (me )?(first|before)|until I|read-only|without (changing|deleting|sending))\b/i,label:'Add a safety rule, like \u201cdraft only\u201d or \u201cdon\u2019t delete anything.\u201d'},
+             {re:/\b(list|table|bullets?|summary|summari[sz]e|steps|draft|\d+\s*(items|bullets|minutes?|points))\b/i,label:'Say what you want back (a list, a summary, a draft\u2026).'}],
+  power:[{re:/\b(e-?mail|gmail|outlook|inbox|calendar|drive|dropbox|onedrive|connected|attached|attachment|upload(ed)?|spreadsheet|pdf|file|document|photo|screenshot)\b/i,label:'Name the connected app or uploaded file to use.'},
+         {re:/\b(draft|don'?t send|do not send|don'?t (change|delete|move)|do not (change|delete|move)|confirm|approve|ask (me )?(first|before)|not found|until I|read-only|without (changing|deleting|sending))\b/i,label:'Add a safety rule: draft only, ask before acting, or say \u201cNot found.\u201d'},
+         {re:/\b(table|list|bullets?|steps|summary|csv|word document|docx|chart|columns?|draft|\d+\s*(words|items|bullets))\b/i,label:'Ask for a specific result and format.'}]
+};
+const CHECK_TEXT={connector:'This prompt uses connected apps: reward naming which app to use, saying what to return, and a safety rule such as draft-only, confirm before sending, or do not delete.',
+  power:'This is a power-user prompt: it should name the connected app or uploaded file to use, ask for a specific result and format, and include a safety rule such as draft only, ask before acting, or say Not found.'};
 function localGrade(text,opts={}){
   const p=analyze(text);const n=Object.values(p).filter(Boolean).length;const w=words(text);
   let score=n*13; if(w>=25)score+=8; if(w>=45)score+=6; if(w>350)score-=6;
   const vars=(text.match(/\[[^\]]{2,}\]/g)||[]).length;
   if(opts.template){score+=vars>=2?8:vars===1?4:-10;}
+  const ck=CHECKS[opts.checks]||[];ck.forEach(c=>{score+=c.re.test(text)?7:-6;});
   score=Math.max(5,Math.min(100,Math.round(score)));
   const miss=PARTS.filter(x=>!p[x.k]);
   const fixes=miss.slice(0,3).map(x=>`Add ${x.n}: ${x.d.toLowerCase()} e.g. “${x.ex}”`);
   if(opts.template&&vars===0)fixes.unshift('Add [VARIABLES] in square brackets for the parts that change each time.');
+  ck.forEach(c=>{if(!c.re.test(text))fixes.unshift(c.label);});
   if(w<20)fixes.unshift('It’s very short. Add the details the AI can’t guess.');
   const strengths=PARTS.filter(x=>p[x.k]).slice(0,2).map(x=>`Includes ${x.n.toLowerCase()}.`);
   return {score,parts:p,strengths,fixes:fixes.slice(0,3),improved:'',source:'local'};
 }
 async function aiGrade(text,scenario,opts={}){
-  const extra=opts.template?'This is meant to be a REUSABLE TEMPLATE: reward [BRACKETED VARIABLES] for parts that change, standing rules, a fixed output format, and guardrails. Penalize hard-coded one-time details.':'';
+  const extra=opts.template?'This is meant to be a REUSABLE TEMPLATE: reward [BRACKETED VARIABLES] for parts that change, standing rules, a fixed output format, and guardrails. Penalize hard-coded one-time details.':''+(CHECK_TEXT[opts.checks]?' '+CHECK_TEXT[opts.checks]:'');
   const prompt=`You are a prompt-engineering instructor grading a learner's prompt in a training course.\n\nScenario the learner was given: ${scenario}\n\nLearner's prompt:\n<prompt>\n${text.slice(0,6000)}\n</prompt>\n\nGrade how well this prompt would get a useful first-try result from an AI assistant. Check six parts: role, task, context, examples, format, constraints. Not every task needs every part; judge fitness for this scenario. ${extra}\nScore 0-100, where 70 is solid and 85+ is excellent. Be encouraging but honest and specific. Write plain sentences.\n\nReply with only JSON in this shape:\n{"score": 0, "parts": {"role": false, "task": false, "context": false, "examples": false, "format": false, "constraints": false}, "strengths": ["up to 2 short strings"], "fixes": ["up to 3 short, specific strings"], "improved": "a stronger version of the prompt, under 130 words"}`;
   const r=await sample.json(prompt,{modelTier:'default'});
   if(!r||typeof r.score!=='number')throw {code:'invalid_json'};
@@ -779,7 +823,7 @@ A.rewrite=(act,ctx)=>{
   act.items.forEach((it,ii)=>{const ta=h('textarea',{id:`rw-${ctx.key}-${ii}`,placeholder:'Write your better prompt here…'});ta.value=S.drafts[`${ctx.key}-${ii}`]||'';
     const mt=h('div');mt.append(meterEl(ta.value));ta.addEventListener('input',()=>{S.drafts[`${ctx.key}-${ii}`]=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));});
     const gbox=h('div',{'aria-live':'polite'});if(st.g[ii])gbox.append(gradeEl(st.g[ii],act.pass));const b=h('button',{class:'btn primary'},st.g[ii]?'Resubmit':'Submit');
-    b.onclick=async()=>{const g=await gradeMission(ta,it.scenario,gbox,b,act.pass);if(!g)return;if(!st.g[ii]||g.score>=st.g[ii].score)st.g[ii]=g;save();b.textContent='Resubmit';streakHit(g.score>=act.pass);sum();};
+    b.onclick=async()=>{const g=await gradeMission(ta,it.scenario,gbox,b,act.pass,{checks:act.checks});if(!g)return;if(!st.g[ii]||g.score>=st.g[ii].score)st.g[ii]=g;save();b.textContent='Resubmit';streakHit(g.score>=act.pass);sum();};
     root.append(h('div',{class:'mission'},h('h4',{},`Round ${ii+1}`),h('div',{class:'weak'},'Weak prompt: '+it.weak),h('p',{style:'margin:0 0 10px;font-size:15px'},h('b',{},'The situation: '),it.scenario),ta,mt,h('div',{class:'row'},b),gbox));});
   function sum(){const ks=Object.keys(st.g);sumB.innerHTML='';if(!ks.length)return;const avg=Math.round(ks.reduce((a,k)=>a+st.g[k].score,0)/act.items.length);const all=ks.length===act.items.length;
     sumB.append(h('div',{class:'grade'},h('div',{class:'eyebrow'},'Your average (best score per round)'),h('div',{class:'score '+(avg>=act.pass&&all?'pass':'fail')},avg),h('p',{style:'margin:4px 0 0'},!all?`You’ve submitted ${ks.length} of ${act.items.length} rounds. Submit all three.`:avg>=act.pass?'Boss defeated!':`Your average needs to reach ${act.pass}. Use the tips to improve a round and click Resubmit.`)));
@@ -788,14 +832,33 @@ A.rewrite=(act,ctx)=>{
 };
 
 A.capstone=(act,ctx)=>{
-  const st=ans(ctx.key);const root=h('div');const ta=h('textarea',{id:`cap-${ctx.key}`,style:'min-height:220px'});ta.value=S.drafts.m6cap||S.drafts.m6dev||'';
-  const mt=h('div');const upd=()=>{S.drafts.m6cap=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));const v=(ta.value.match(/\[[^\]]{2,}\]/g)||[]).length;mt.firstChild.append(h('span',{class:v?'on':'',style:v?'--mb:var(--w4)':''},`${v} [bracket]${v===1?'':'s'}`));};
+  const st=ans(ctx.key);const root=h('div');const dk=act.draftKey||'m6cap';const tpl=act.template!==false;
+  const ta=h('textarea',{id:`cap-${ctx.key}`,style:'min-height:200px',placeholder:act.placeholder||''});ta.value=S.drafts[dk]||S.drafts[act.prefillFrom||'m6dev']||'';
+  const mt=h('div');const upd=()=>{S.drafts[dk]=ta.value;save();mt.innerHTML='';mt.append(meterEl(ta.value));if(tpl){const v=(ta.value.match(/\[[^\]]{2,}\]/g)||[]).length;mt.firstChild.append(h('span',{class:v?'on':'',style:v?'--mb:var(--w4)':''},`${v} [bracket]${v===1?'':'s'}`));}};
   ta.addEventListener('input',upd);upd();
   const gbox=h('div',{'aria-live':'polite'});if(st.grade)gbox.append(gradeEl(st.grade,act.pass));const b=h('button',{class:'btn primary'},st.grade?'Resubmit':'Submit');
-  const sc='The learner is building a reusable prompt template for a recurring task in their everyday life or work.';
-  b.onclick=async()=>{const g=await gradeMission(ta,sc,gbox,b,act.pass,{template:true});if(!g)return;st.grade=g;save();b.textContent='Resubmit';if(g.score>=act.pass){award('capstone');if(!S.certDate){S.certDate=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});save();}finishIfNew(ctx,{score:g.score});}};
-  root.append(h('div',{class:'scenario'},h('b',{},'The judges look for'),'All six ingredients · [BRACKETS] for the parts that change · rules that apply every time · a set format for the answer · safety rules (stick to the facts, state assumptions, protect privacy)'),ta,mt,h('div',{class:'row'},b,h('button',{class:'btn sm',onclick:e=>copyText(ta.value,e.currentTarget)},'Copy prompt')),gbox);
+  const sc=act.scenario||'The learner is building a reusable prompt template for a recurring task in their everyday life or work.';
+  b.onclick=async()=>{const g=await gradeMission(ta,sc,gbox,b,act.pass,{template:tpl,checks:act.checks});if(!g)return;st.grade=g;save();b.textContent='Resubmit';if(g.score>=act.pass){award('capstone');if(!S.certDate){S.certDate=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});save();}finishIfNew(ctx,{score:g.score});}};
+  if(act.situation)root.append(h('div',{class:'scenario'},h('b',{},'The situation'),act.situation));
+  root.append(h('div',{class:'scenario',style:'background:var(--surface-2)'},h('b',{},'The judges look for'),act.judgedOn||'All six ingredients \u00b7 [BRACKETS] for the parts that change \u00b7 rules that apply every time \u00b7 a set format for the answer \u00b7 safety rules (stick to the facts, state assumptions, protect privacy)'),ta,mt,h('div',{class:'row'},b,h('button',{class:'btn sm',onclick:e=>copyText(ta.value,e.currentTarget)},'Copy prompt')),gbox);
   return root;
+};
+
+/* Sorting round: put each item in the right box. */
+A.sort=(act,ctx)=>{
+  const st=ans(ctx.key);st.pl=st.pl||{};const root=h('div');const rows=[];const fb=h('div',{'aria-live':'polite'});
+  const sub=h('button',{class:'btn primary submit'},'Submit');
+  const allPlaced=()=>act.items.every((it,i)=>st.pl[i]!=null);
+  act.items.forEach((it,i)=>{const pills=h('div',{class:'sort-pills',role:'group','aria-label':it.t});
+    act.buckets.forEach(bk=>pills.append(h('button',{class:'sort-pill','aria-pressed':String(st.pl[i]===bk),'data-ok':bk===it.b?'1':null,onclick:()=>{if(st.sub)return;st.pl[i]=bk;save();[...pills.children].forEach(c=>c.setAttribute('aria-pressed',String(c.textContent===bk)));sub.disabled=!allPlaced();}},bk)));
+    const fix=h('div',{class:'sort-fix',hidden:true});
+    const row=h('div',{class:'sort-row'},h('div',{class:'sort-t'},it.t),pills,fix);rows.push({row,fix,pills});root.append(row);});
+  function lock(restored){let right=0;act.items.forEach((it,i)=>{const r=rows[i];const ok=st.pl[i]===it.b;if(ok)right++;r.row.classList.add(ok?'right':'wrong');[...r.pills.children].forEach(c=>c.disabled=true);if(!ok){r.fix.hidden=false;r.fix.textContent='Best fit: '+it.b;}});
+    sub.hidden=true;const all=right===act.items.length;if(!restored){streakHit(all);if(all)award('judge');}
+    fb.innerHTML='';fb.append(h('div',{class:'fb '+(all?'good':'bad')},h('b',{},all?'Perfect sort!':`${right} of ${act.items.length} in the right box.`),act.why||'Check the ones marked in red to see the best fit.'));}
+  sub.onclick=()=>{if(!allPlaced())return;st.sub=true;save();lock(false);finishIfNew(ctx);};
+  sub.disabled=!allPlaced();if(st.sub){lock(true);finishIfNew(ctx);}
+  root.append(h('div',{class:'row'},sub),fb);return root;
 };
 
 A.rank=(act,ctx)=>{
@@ -841,10 +904,15 @@ const G={
   lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
   spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
-  back:'<path d="M15 5l-7 7 7 7"/>'
+  back:'<path d="M15 5l-7 7 7 7"/>',
+  toolbox:'<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V5h6v3M3 13h18M11 13v2h2v-2"/>',
+  plug:'<path d="M9 2.5v5M15 2.5v5"/><path d="M6 7.5h12v3a6 6 0 0 1-12 0z"/><path d="M12 16.5v5"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  files:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'
 };
 const ico=(n,s=24,sw=2.2)=>`<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${G[n]}</svg>`;
 Object.assign(G,{
+  addon:'<rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8v8M8 12h8"/>',
   map:'<path d="M9 4L3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
   book:'<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/>',
   sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
@@ -866,7 +934,7 @@ function confetti(){
 /* ============ PROGRESS ============ */
 const pk=(m,p)=>`${m}.${p}`;
 const isPaid=(mi,pi)=>pi>=(MODULES[mi].free??5);
-const modUnlocked=i=>!MODULES[i].full&&(S.unlockAll||i===0||!!S.done[pk(MODULES[i-1].id,'apply')]);
+const modUnlocked=i=>!MODULES[i].full&&(S.unlockAll||i===0||!!MODULES[i].packStart||!!S.done[pk(MODULES[i-1].id,'apply')]);
 const phaseUnlocked=(mi,pi)=>!isPaid(mi,pi)&&modUnlocked(mi)&&(S.unlockAll||pi===0||!!S.done[pk(MODULES[mi].id,PHASES[pi-1].k)]);
 const stars=sc=>sc>=100?3:sc>=85?2:sc>=1?1:0;
 function starEl(n){return h('span',{class:'stars','aria-label':`${n} of 3 stars`},[0,1,2].map(i=>h('span',{class:i<n?'':'off'},'★')));}
@@ -886,7 +954,7 @@ function completePhase(mi,pi,extra={}){
 /* ============ RENDER ============ */
 function renderHUD(){
   const ri=rankIdx(S.xp),r=RANKS[ri];
-  $('#nav').innerHTML='';[['home','Map','map'],['card','Cheat Sheet','book'],['badges','Trophies','crown']].forEach(([k,l,ic])=>$('#nav').append(h('button',{'aria-current':String(view.screen===k||(k==='home'&&view.screen==='module')),onclick:()=>go(k),html:`${ico(ic,22)}<span>${l}</span>`})));
+  $('#nav').innerHTML='';[['home','Map','map'],['card','Cheat Sheet','book'],['badges','Trophies','crown']].concat(IS_PACK?[]:[['addons','Add-ons','addon']]).forEach(([k,l,ic])=>$('#nav').append(h('button',{'aria-current':String(view.screen===k||(k==='home'&&view.screen==='module')),onclick:()=>go(k),html:`${ico(ic,22)}<span>${l}</span>`})));
   const on=aiState==='ready'||aiState==='live';const ds=dayStreak();
   $('#stats').innerHTML='';$('#stats').append(
     h('span',{class:'pill lvl',title:`Level ${ri+1}: ${r.n}`,html:`${insignia(ri)}${esc(r.n)}`}),
@@ -897,7 +965,7 @@ function renderHUD(){
     window.claude?h('span',{class:'pill ai'+(on?' on':'')},h('i'),aiState==='checking'?'Coach loading':on?'AI coach on':'AI coach offline'):'');
 }
 function go(screen,mi,pi){view.screen=screen;if(mi!=null)view.mi=mi;if(pi!=null)view.pi=pi;render();window.scrollTo({top:0,behavior:'instant'});}
-function render(){renderHUD();const app=$('#app');app.style.removeProperty('--wc');({home:renderHome,module:renderModule,badges:renderBadges,card:renderCard})[view.screen]();}
+function render(){renderHUD();const app=$('#app');app.style.removeProperty('--wc');({home:renderHome,module:renderModule,badges:renderBadges,card:renderCard,addons:renderAddons})[view.screen]();}
 function resumePoint(){for(let i=0;i<MODULES.length;i++){if(!modUnlocked(i))break;for(let p=0;p<5;p++){if(!S.done[pk(MODULES[i].id,PHASES[p].k)])return [i,p];}}return [MODULES.length-1,4];}
 
 function xpBar(){const ri=rankIdx(S.xp),r=RANKS[ri],nx=RANKS[ri+1];const pct=nx?Math.round((S.xp-r.xp)/(nx.xp-r.xp)*100):100;
@@ -909,7 +977,7 @@ let trailRO=null;
 function drawTrail(){const tr=$('.trail');if(!tr)return;const svg=tr.querySelector('.trail-svg');const box=tr.getBoundingClientRect();
   const pts=[...tr.querySelectorAll('.wnode')].map(n=>{const b=n.getBoundingClientRect();return [b.left-box.left+b.width/2,b.top-box.top+b.height/2];});
   let d='',dd='';const doneUpTo=MODULES.reduce((a,m,i)=>S.done[pk(m.id,'apply')]?i+1:a,0);
-  for(let i=1;i<pts.length;i++){const [x0,y0]=pts[i-1],[x1,y1]=pts[i];const my=(y0+y1)/2;const seg=`M${x0} ${y0} C${x0} ${my} ${x1} ${my} ${x1} ${y1}`;if(i<=doneUpTo)dd+=seg;else d+=seg;}
+  const nodes=[...tr.querySelectorAll('.wnode')];for(let i=1;i<pts.length;i++){if(nodes[i].dataset.g!==nodes[i-1].dataset.g)continue;const [x0,y0]=pts[i-1],[x1,y1]=pts[i];const my=(y0+y1)/2;const seg=`M${x0} ${y0} C${x0} ${my} ${x1} ${my} ${x1} ${y1}`;if(S.done[pk(MODULES[i-1].id,'apply')])dd+=seg;else d+=seg;}
   svg.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
   svg.innerHTML=`<path d="${d}" fill="none" stroke="var(--line)" stroke-width="7" stroke-linecap="round" stroke-dasharray="2 16"/><path d="${dd}" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round"/>`;}
 
@@ -930,12 +998,14 @@ function renderHome(){
   const trail=h('div',{class:'trail'});trail.innerHTML='<svg class="trail-svg" aria-hidden="true"></svg>';
   MODULES.forEach((m,i)=>{const un=modUnlocked(i);const dn=PHASES.filter(p=>S.done[pk(m.id,p.k)]).length;const beat=!!S.done[pk(m.id,'apply')];const cur=un&&!beat&&i===rm;
     const open=()=>{const ff=PHASES.findIndex(p=>!S.done[pk(m.id,p.k)]);go('module',i,ff<0?0:ff);};
-    const node=h('button',{class:'wnode'+(cur?' current':''),disabled:!un,'aria-label':`World ${i+1}: ${m.title}`,onclick:open,html:`${ringSvg(dn)}<span class="disc">${un?ico(WORLD[i].g,38,2.4):ico('lock',30,2.4)}</span>${beat?`<span class="crown">${ico('crown',20,2.4)}</span>`:''}`});
-    const card=h('div',{class:'wcard'+(un?'':' locked')},h('div',{class:'wn'},`World ${i+1}`),h('h3',{},m.title),h('p',{},m.obj),
+    const node=h('button',{class:'wnode'+(cur?' current':''),disabled:!un,'data-g':m.pack||'base','aria-label':`${worldLabel(i)}: ${m.title}`,onclick:open,html:`${ringSvg(dn)}<span class="disc">${un?ico(WORLD[i].g,38,2.4):ico('lock',30,2.4)}</span>${beat?`<span class="crown">${ico('crown',20,2.4)}</span>`:''}`});
+    const card=h('div',{class:'wcard'+(un?'':' locked')},h('div',{class:'wn'},`${worldLabel(i)}`),h('h3',{},m.title),h('p',{},m.obj),
       h('div',{class:'foot'},h('div',{class:'pips','aria-label':`${dn} of 5 stages cleared`},PHASES.map(p=>h('i',{class:S.done[pk(m.id,p.k)]?'on':''}))),
         un?h('div',{class:'row',style:'margin:0'},beat?starEl(stars(S.scores[m.id]||0)):null,h('button',{class:'btn sm'+(cur?' primary':''),onclick:open},beat?'Replay':dn?'Continue':'Play')):(m.full?h('a',{class:'btn sm primary',href:BUY_URL,target:'_blank',rel:'noopener'},'Get the full game'):h('span',{class:'muted',style:'font-size:13.5px;font-weight:700'},'Locked'))));
+    if(m.packStart)trail.append(h('div',{class:'pack-head',style:`--wc:var(${WORLD[i].c})`},h('span',{class:'wn'},'Add-on pack'),h('h3',{},(CATALOG.find(c=>c.id===m.pack)||{}).name||m.packName)));
     trail.append(h('div',{class:'trow'+(i%2?' alt':''),style:`--wc:var(${WORLD[i].c})`},node,card));});
   app.append(trail);requestAnimationFrame(drawTrail);
+  if(!IS_PACK&&!MODULES.some(m=>m.pack))app.append(h('div',{class:'addon-promo'},h('span',{class:'addon-promo-ico',html:ico('addon',22)}),h('div',{style:'flex:1;min-width:0'},h('b',{},'Want more worlds?'),h('div',{class:'muted',style:'font-size:14.5px'},'Add-on packs take you further: connectors, creating with AI, and building your own agents.')),h('button',{class:'btn sm',onclick:()=>go('addons')},'See add-ons')));
   if(!trailRO&&window.ResizeObserver){trailRO=new ResizeObserver(()=>drawTrail());}
   if(trailRO){trailRO.disconnect();trailRO.observe(trail);}
 
@@ -969,7 +1039,7 @@ function renderModule(){
   app.style.setProperty('--wc',`var(${WORLD[mi].c})`);
   app.append(h('section',{class:'whead'},
     h('div',{class:'row1'},h('button',{class:'back',onclick:()=>go('home'),html:`${ico('back',14,3)} Map`}),S.done[pk(m.id,'apply')]?starEl(stars(S.scores[m.id]||0)):h('span',{class:'wn'},`${PHASES.filter(p=>S.done[pk(m.id,p.k)]).length} of 5 cleared`)),
-    h('div',{class:'main'},h('div',{class:'glyph',html:ico(WORLD[mi].g,40,2.2)}),h('div',{},h('div',{class:'wn'},`World ${mi+1}`),h('h1',{},m.title),h('p',{},m.obj)))));
+    h('div',{class:'main'},h('div',{class:'glyph',html:ico(WORLD[mi].g,40,2.2)}),h('div',{},h('div',{class:'wn'},`${worldLabel(mi)}`),h('h1',{},m.title),h('p',{},m.obj)))));
   app.append(h('nav',{class:'track',id:'track','aria-label':'Stages'}));renderTrack();
   const ctx={key,complete:(extra)=>completePhase(mi,pi,extra||{})};
   const actEl=A[act.type](act,ctx);
@@ -990,7 +1060,7 @@ function renderBadges(){const app=$('#app');app.innerHTML='';const ri=rankIdx(S.
     app.append(h('div',{class:'collection'},cards.map(c=>h('div',{class:'cchip'+(has(c)?' on':''),style:`--wc:var(${WORLD[c.mi].c})`},h('span',{class:'wn'},`W${c.mi+1}`),has(c)?c.h:'Not found yet'))));}}
   app.append(h('div',{class:'sec-h',style:'margin-top:40px'},h('h2',{},'Levels')));
   app.append(h('div',{class:'ranks'},RANKS.map((r,i)=>h('div',{class:'rk'+(i===ri?' me':''),html:`${insignia(i)}<b>${esc(r.n)}</b><div class="x">${r.xp} coins${i===ri?' · you':''}</div>`}))));
-  const sc=h('div',{class:'panel',style:'margin-top:40px'},h('h3',{},'Boss scores'));MODULES.forEach((m,i)=>sc.append(h('div',{class:'row',style:'justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:8px'},h('span',{style:'font-weight:600'},`World ${i+1} · ${m.title}`),h('span',{},S.scores[m.id]!=null?`${S.scores[m.id]}% `:'– ',starEl(stars(S.scores[m.id]||0))))));app.append(sc);
+  const sc=h('div',{class:'panel',style:'margin-top:40px'},h('h3',{},'Boss scores'));MODULES.forEach((m,i)=>sc.append(h('div',{class:'row',style:'justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:8px'},h('span',{style:'font-weight:600'},`${worldLabel(i)} · ${m.title}`),h('span',{},S.scores[m.id]!=null?`${S.scores[m.id]}% `:'– ',starEl(stars(S.scores[m.id]||0))))));app.append(sc);
 }
 
 function renderCard(){const app=$('#app');app.innerHTML='';
@@ -1002,6 +1072,7 @@ function renderCard(){const app=$('#app');app.innerHTML='';
     h('div',{class:'lcard'},h('h4',{},'Five classic misses'),h('ul',{style:'margin:4px 0 0;padding-left:18px;font-size:14.5px'},['Vague task','Missing context','No format','Conflicting instructions','Assumed knowledge'].map(x=>h('li',{},x)))),
     h('div',{class:'lcard'},h('h4',{},'Power moves'),h('ul',{style:'margin:4px 0 0;padding-left:18px;font-size:14.5px;display:grid;gap:4px'},
       ['“Before you start, ask me up to 3 questions.”','“Answer only from the text below. If it isn’t there, say ‘Not in source.’”','Show 1–3 real examples to match a style.','Fence source text with """ or <document> tags.','“Check your draft against each requirement and fix gaps.”','Chain big jobs: outline → approve → draft → edit.','Never paste passwords, account numbers, or other people’s private info.'].map(x=>h('li',{},x))))));
+  MODULES.forEach((m,i)=>{if(!m.pack)return;const g=m.phases.gen;if(!g||!g.cards)return;app.append(h('div',{class:'cs-world',style:`--wc:var(${WORLD[i].c})`},h('div',{class:'wn'},worldLabel(i)),h('h3',{},m.title)));app.append(h('div',{class:'cards'},g.cards.map(c=>h('div',{class:'lcard'},h('h4',{},c.h),h('p',{},c.b),c.ex?h('div',{class:'ex'},c.ex):null))));});
 }
 
 /* ============ FIRST-TIME WELCOME ============ */
@@ -1088,6 +1159,49 @@ async function openShare(){const cv=await shareCanvas();let url='';try{url=cv.to
     h('p',{class:'muted',style:'margin:0 0 14px;font-size:14.5px'},'Download the image, then post it anywhere. On a phone, you can also press and hold the image to save it.'),
     h('div',{class:'row',style:'justify-content:center'},url?h('a',{class:'btn primary',href:url,download:'prompt-quest-progress.png'},'Download image'):null,sh,h('button',{class:'btn ghost',onclick:()=>m.remove()},'Close'))));
   $('#modalRoot').innerHTML='';$('#modalRoot').append(m);}
+/* ============ ADD-ONS ============ */
+const IS_PACK=false;
+/* Ko-fi Shop links for each pack. Blank = shows "Coming soon to Ko-fi". */
+const ADDON_LINKS={poweruser:'',creator:'',agent:''};
+const CATALOG=[
+  {id:'poweruser',name:'Power User Pack',tag:'Connectors, using any AI like a pro, and getting real answers from your files.',worlds:['Know Your Toolbox','Plug It In','One Prompt, Any AI','Files In, Files Out'],price:'$2.99',c:'--w3',g:'plug',status:'available'},
+  {id:'creator',name:'Creator Pack',tag:'Make documents, images, charts, and more with AI.',worlds:['Document Factory','Picture This','Numbers to Charts','Sound and Motion'],price:'$2.99',c:'--w6',g:'files',status:'soon'},
+  {id:'agent',name:'Agent Architect Pack',tag:'Write agent instructions, design workflows, and build your own AI agent.',worlds:['What’s an Agent?','The System Prompt','Tools and Workflows','Test It, Break It','Final Boss'],price:'$2.99',c:'--w2',g:'crown',status:'soon'}
+];
+const PACK_KEY=KEY+'.packs';
+function loadPacks(){try{return JSON.parse(localStorage.getItem(PACK_KEY)||'{}')||{};}catch(e){return {};}}
+function savePacks(p){try{localStorage.setItem(PACK_KEY,JSON.stringify(p));return true;}catch(e){return false;}}
+function worldLabel(i){const m=MODULES[i];return m&&m.pack?`${m.packName} · World ${m.packNum}`:`World ${i+1}`;}
+function packTrack(n){try{if(typeof track==='function')track(n);}catch(e){}}
+function applyPack(p){if(!p||!Array.isArray(p.worlds)||MODULES.some(m=>m.pack===p.id))return;if(p.glyphs)Object.assign(G,p.glyphs);
+  p.worlds.forEach((w,i)=>{const m=JSON.parse(JSON.stringify(w));m.id=`${p.id}-${w.id}`;m.pack=p.id;m.packName=p.short||p.name;m.packNum=i+1;if(i===0)m.packStart=true;MODULES.push(m);WORLD.push((p.world&&p.world[i])||{c:'--w4',g:'target'});});}
+function removePack(id){const all=loadPacks();delete all[id];savePacks(all);for(let i=MODULES.length-1;i>=0;i--){if(MODULES[i].pack===id){MODULES.splice(i,1);WORLD.splice(i,1);}}}
+function installFromFile(file){const r=new FileReader();
+  r.onload=()=>{let p=null;try{const mt=String(r.result).match(/<script type="application\/json" id="pq-pack">([\s\S]*?)<\/script>/);if(mt)p=JSON.parse(mt[1]);}catch(e){p=null;}
+    if(!p||!p.id||!Array.isArray(p.worlds)){toast('That file isn’t a Prompt Quest pack','Choose the pack file you downloaded from Ko-fi. It ends in .html.');return;}
+    const all=loadPacks();const had=!!all[p.id];all[p.id]=p;
+    if(!savePacks(all)){toast('Couldn’t save the pack','Your browser blocked storage. Try a normal (not private) window.');return;}
+    if(had)removePackModules(p.id);applyPack(p);packTrack('addon-installed-'+p.id);sfx('level');confetti();
+    toast(`${p.name} installed!`,'Its worlds are now on your map.');view.screen='addons';render();};
+  r.onerror=()=>toast('Couldn’t read that file','Try downloading the pack again.');r.readAsText(file);}
+function removePackModules(id){for(let i=MODULES.length-1;i>=0;i--){if(MODULES[i].pack===id){MODULES.splice(i,1);WORLD.splice(i,1);}}}
+let addonInput=null;
+function pickPackFile(){if(!addonInput){addonInput=h('input',{type:'file',accept:'.html,.htm,text/html',id:'pack-file',style:'display:none'});addonInput.addEventListener('change',()=>{const fl=addonInput.files&&addonInput.files[0];if(fl)installFromFile(fl);addonInput.value='';});document.body.append(addonInput);}addonInput.click();}
+function renderAddons(){const app=$('#app');app.innerHTML='';const inst=loadPacks();packTrack('addons-viewed');
+  app.append(h('div',{class:'sec-h'},h('div',{},h('h2',{},'Add-ons'),h('p',{class:'muted',style:'margin:6px 0 0;max-width:60ch;font-size:15px'},'New worlds for Prompt Quest. Install a pack once and its worlds join your map, with the same coins, levels, and trophies.')),
+    h('button',{class:'btn primary',onclick:pickPackFile,html:`${ico('addon',18)} Install a pack`})));
+  app.append(h('div',{class:'addon-help',html:`${spark('happy')}<span>Bought a pack? Click <b>Install a pack</b> and choose the file you downloaded from Ko-fi. It ends in .html.</span>`}));
+  const grid=h('div',{class:'addons'});
+  CATALOG.forEach(c=>{const installed=!!inst[c.id]&&MODULES.some(m=>m.pack===c.id);const link=ADDON_LINKS[c.id];const first=MODULES.findIndex(m=>m.pack===c.id);let actions;
+    if(installed)actions=[h('span',{class:'chip ok'},'✓ Installed'),h('button',{class:'btn primary sm',onclick:()=>{const ff=PHASES.findIndex(p=>!S.done[pk(MODULES[first].id,p.k)]);go('module',first,ff<0?0:ff);}},'Play'),
+      h('button',{class:'btn ghost sm',onclick:e=>{const b=e.currentTarget;if(!b.dataset.arm){b.dataset.arm='1';b.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Remove';}},4000);return;}removePack(c.id);toast(`${c.name} removed`,'Your progress is kept if you install it again.');render();}},'Remove')];
+    else if(c.status==='soon')actions=[h('span',{class:'chip'},'Coming soon')];
+    else actions=[link?h('a',{class:'btn primary sm',href:link,target:'_blank',rel:'noopener',onclick:()=>packTrack('addon-buy-'+c.id)},`Get it · ${c.price}`):h('span',{class:'chip'},'Coming soon to Ko-fi'),h('button',{class:'btn sm',onclick:pickPackFile},'Already bought it? Install')];
+    grid.append(h('article',{class:'addon',style:`--wc:var(${c.c})`},
+      h('div',{class:'addon-art'},h('span',{class:'addon-glyph',html:ico(c.g,32,2.2)}),h('span',{class:'addon-n'},`${c.worlds.length} worlds · ${c.worlds.length*5} stages`)),
+      h('div',{class:'addon-body'},h('h3',{},c.name),h('p',{class:'muted'},c.tag),h('div',{class:'addon-worlds'},c.worlds.map(w=>h('span',{},w))),h('div',{class:'row',style:'margin-top:auto'},actions))));});
+  app.append(grid);}
+if(!IS_PACK){Object.values(loadPacks()).forEach(p=>{try{applyPack(p);}catch(e){}});}
 
 /* ============ FREE TRIAL ============ */
 /* Counts a few anonymous events (no names, no cookies) so you can see where trial players go. */
