@@ -145,7 +145,7 @@ main{padding-block:30px 70px}
 .foot-tools{display:flex;justify-content:center;gap:8px;margin-top:34px;flex-wrap:wrap}
 
 /* World screen */
-.whead{position:relative;border-radius:26px;padding:22px clamp(18px,3vw,30px);background:linear-gradient(135deg,color-mix(in srgb,var(--wc) 58%,#000),color-mix(in srgb,var(--wc) 45%,#1B2140));color:#fff;overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow)}
+.whead{position:relative;border-radius:26px;padding:22px clamp(18px,3vw,30px);background:linear-gradient(135deg,color-mix(in srgb,var(--wc) 64%,#141846),color-mix(in srgb,var(--wc) 34%,#141846));color:#fff;overflow:hidden;margin-bottom:18px;box-shadow:var(--shadow)}
 .whead::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.1);box-shadow:-120px 140px 0 -40px rgba(255,255,255,.07)}
 .whead .row1{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:1;flex-wrap:wrap}
 .whead .back{background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
@@ -305,7 +305,7 @@ pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:
 
 /* Champion card */
 .cert{margin-top:46px}
-.certificate{border-radius:28px;padding:34px 22px;text-align:center;background:linear-gradient(135deg,color-mix(in srgb,var(--w2) 70%,#000),color-mix(in srgb,var(--w6) 64%,#000) 55%,color-mix(in srgb,var(--w1) 60%,#000));color:#fff;box-shadow:var(--shadow)}
+.certificate{border-radius:28px;padding:34px 22px;text-align:center;background:linear-gradient(135deg,color-mix(in srgb,var(--w2) 66%,#141846),color-mix(in srgb,var(--w6) 60%,#141846) 55%,color-mix(in srgb,var(--w1) 58%,#141846));color:#fff;box-shadow:var(--shadow)}
 .certificate .eyebrow{color:rgba(255,255,255,.85)}
 .certificate h2{font-size:clamp(30px,5vw,48px);font-weight:800;color:#fff}
 .certificate .who{font-family:var(--display);font-size:36px;font-weight:800;border-bottom:2px solid rgba(255,255,255,.5);display:inline-block;padding:0 18px 2px;margin:10px 0}
@@ -327,6 +327,53 @@ pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:
 .wl-dots i.on{width:24px;background:var(--accent)}
 .welcome h2{font-size:30px;margin:4px 0 8px}
 
+/* ---- polish: steps, flip cards, celebrations, mascot, streak, share ---- */
+.nav .ico{display:none}
+.pill.snd{padding:6px 9px}
+.pill.snd .ico{width:18px;height:18px}
+details.steps>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+details.steps>summary::-webkit-details-marker{display:none}
+details.steps>summary::after{content:"Hide";margin-left:auto;font-size:11.5px;letter-spacing:.06em;color:var(--muted)}
+details.steps:not([open])>summary::after{content:"Show"}
+details.steps:not([open]){padding:10px 18px;margin-bottom:16px}
+.spark-m.tiny{width:22px;height:22px;flex:none}
+.cards.flips{perspective:1400px}
+.flip{position:relative;display:grid;border:0;padding:0;background:none;text-align:left;min-height:178px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1);color:inherit;font:inherit}
+.flip>.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:16px;border:2px solid var(--line);box-shadow:0 3px 0 var(--line);background:var(--surface);display:flex;flex-direction:column;gap:8px;min-width:0}
+.flip .front{justify-content:space-between;background:linear-gradient(150deg,color-mix(in srgb,var(--wc,var(--accent)) 16%,var(--surface)),var(--surface) 70%);border-color:color-mix(in srgb,var(--wc,var(--accent)) 35%,var(--line))}
+.flip:hover .front{border-color:var(--wc,var(--accent))}
+.flip .cico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--wc,var(--accent)) var(--im),#000);color:var(--fill-ink)}
+.flip .front h4{font-size:19px;margin:0}
+.flip .front small{font-size:12.5px;font-weight:700;color:var(--muted)}
+.flip .back{transform:rotateY(180deg)}
+.flip.on{transform:rotateY(180deg)}
+.flip .back h4{font-size:16px;margin:0}
+.flip .back p{margin:0;font-size:14.5px}
+.flip .back .ex{font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--surface-2);border-radius:10px;padding:8px 10px}
+.cardnote{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:-4px 0 12px;font-size:14px;font-weight:700;color:var(--muted)}
+.opt.pop{animation:bounce .45s cubic-bezier(.2,1.8,.4,1)}
+@keyframes bounce{0%{transform:scale(.97)}50%{transform:scale(1.025)}100%{transform:scale(1)}}
+.flycoin{position:fixed;z-index:45;width:28px;height:28px;pointer-events:none;transition:transform .8s cubic-bezier(.3,.7,.3,1),opacity .8s}
+.flycoin svg{width:28px;height:28px}
+.pill.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.2)}}
+.clear .mascot{width:54px;height:54px;flex:none;display:block}
+.clear .mascot svg{width:54px;height:54px}
+.spark-m.float{animation:floaty 3s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-5px)}}
+.welcome .wl-mascot{width:116px;height:116px;margin:0 auto 6px}
+.modal .welcome .wl-mascot svg,.modal .lvl-pair .spark-m{width:110px;height:110px}
+.lvl-pair{display:flex;justify-content:center;align-items:center;gap:4px}
+.daygoal{display:flex;align-items:center;gap:9px;margin-top:12px;padding:9px 12px;border-radius:12px;background:var(--surface-2);font-weight:700;font-size:14px;position:relative}
+.daygoal .dg-ico{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--brass-soft);color:var(--gold-deep)}
+.daygoal.done .dg-ico{background:var(--good);color:var(--fill-ink)}
+.collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:8px}
+.cchip{border:2px dashed var(--line);border-radius:12px;padding:9px 11px;font-weight:700;font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center;min-width:0}
+.cchip.on{border-style:solid;border-color:color-mix(in srgb,var(--wc) 45%,var(--line));color:var(--ink);background:color-mix(in srgb,var(--wc) 8%,var(--surface))}
+.cchip .wn{font-size:11px;font-weight:800;flex:none;color:color-mix(in srgb,var(--wc) var(--tm),#000)}
+.modal .card.share{max-width:600px}
+a.btn{text-decoration:none}
+.share img{display:block}
 @media (max-width:860px){
   .hero{grid-template-columns:1fr}
   .howto{grid-template-columns:1fr}
@@ -341,7 +388,28 @@ pre.tpl{background:var(--surface-2);border:2px dashed var(--line);border-radius:
   .stage .lbl{font-size:11.5px}
   .duel{grid-template-columns:1fr}
   .rubrow{grid-template-columns:1fr}
-  .hud{position:static}
+  .hud{position:sticky;backdrop-filter:none;background:var(--surface)}
+  .hud .wrap{flex-wrap:nowrap;gap:8px;padding-block:8px}
+  .brand{font-size:18px;gap:7px}.brand .logo{width:30px;height:30px;border-radius:9px}
+  .pack-tag{display:none}
+  .stats{margin-left:auto;width:auto;gap:6px;flex-wrap:nowrap}
+  .pill.lvl,.pill.trophy{display:none}
+  .pill{font-size:13px;padding:4px 9px 4px 5px}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:12;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px -12px rgba(0,0,0,.25);padding:6px max(10px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-right,0px))}
+  .nav button{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px;padding:6px 4px;font-size:12px}
+  .nav .ico{display:block;width:22px;height:22px}
+  .nav button[aria-current="true"]{background:var(--surface-2);color:var(--ink)}
+  main{padding-block:16px 112px}
+  .toasts{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .whead{padding:14px 16px;border-radius:20px;margin-bottom:12px}
+  .whead .main{margin-top:10px;gap:12px}
+  .whead .glyph{width:48px;height:48px;border-radius:14px}.whead .glyph svg{width:26px;height:26px}
+  .whead h1{font-size:26px}
+  .whead p{display:none}
+  .whead .row1 .wn{display:none}
+  .act{padding:16px;border-radius:20px}
+  .act-h h2{font-size:24px}
+  .track{margin:2px 0 14px}
   .pill.ai{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -406,6 +474,8 @@ const BADGES = [
   {k:'bughunter', n:'Bug Hunter', d:'Diagnose every flawed prompt exactly.'},
   {k:'judge', n:'Sound Judgment', d:'Match the pro on every score (within 1).'},
   {k:'capstone', n:'Prompt Master', d:'Beat the final boss.'},
+  {k:'collector', n:'Card Collector', d:'Collect every Power-Up card.'},
+  {k:'streak3', n:'Three-Day Streak', d:'Play on 3 days in a row.'},
   {k:'dhg', n:'Gold Standard', d:'Earn 3 stars in every world.'}
 ];
 
@@ -455,10 +525,10 @@ const flame=`<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1c1 3 4 4.5
 function toast(t,sub){const el=h('div',{class:'toast'},t,sub?h('small',{},sub):null);$('#toasts').append(el);setTimeout(()=>el.remove(),3200);}
 function modal(html,btn='Carry on'){const m=h('div',{class:'modal',role:'dialog','aria-modal':'true'},h('div',{class:'card',html}));const b=h('button',{class:'btn primary',onclick:()=>m.remove()},btn);m.firstChild.append(b);$('#modalRoot').append(m);b.focus();}
 
-function addXP(n,why){const before=rankIdx(S.xp);S.xp+=n;save();toast(`+${n} coins`,why);const after=rankIdx(S.xp);
-  if(after>before){const r=RANKS[after];setTimeout(()=>modal(`${insignia(after)}<div class="eyebrow">Level up</div><h2>${esc(r.n)}</h2><p class="muted">You\u2019ve reached ${r.xp} coins. Keep going.</p>`,"Let\u2019s go"),500);} renderHUD();}
+function addXP(n,why){const before=rankIdx(S.xp);S.xp+=n;save();toast(`+${n} coins`,why);sfx('coin');setTimeout(flyCoin,60);const after=rankIdx(S.xp);
+  if(after>before){const r=RANKS[after];setTimeout(()=>{sfx('level');modal(`<div class="lvl-pair">${spark('wow')}${insignia(after)}</div><div class="eyebrow">Level up</div><h2>${esc(r.n)}</h2><p class="muted">You\u2019ve reached ${r.xp} coins. Keep going.</p>`,"Let\u2019s go");},500);} renderHUD();}
 function award(k){if(S.badges[k])return;S.badges[k]=Date.now();save();const b=BADGES.find(x=>x.k===k);toast(`Badge earned: ${b.n}`,b.d);setTimeout(()=>addXP(25,'Badge bonus'),400);}
-function streakHit(ok){if(ok){S.streak++;S.best=Math.max(S.best,S.streak);if(S.streak>=5)award('combo5');if(S.streak>=10)award('combo10');}else S.streak=0;save();renderHUD();}
+function streakHit(ok){sfx(ok?'right':'wrong');if(ok){S.streak++;S.best=Math.max(S.best,S.streak);if(S.streak>=5)award('combo5');if(S.streak>=10)award('combo10');}else S.streak=0;save();renderHUD();}
 function checkAllStars(){if(MODULES.every(m=>(S.scores[m.id]||0)>=100))award('dhg');}
 
 /* ============ PROMPT ANALYSIS (local) ============ */
@@ -544,6 +614,7 @@ function questionEl(q,saved,onSubmit,opt={}){
   function grade(){let good=true;list.forEach((o,i)=>{if(!!o.ok!==sel.has(i))good=false;});return q.any?true:good;}
   function lock(restored){box.dataset.locked='1';const good=grade();
     if(!q.any)list.forEach((o,i)=>{const c=opts.children[i];if(o.ok)c.classList.add('right');else if(sel.has(i))c.classList.add('wrong');});
+    if(!restored&&!q.any)[...opts.children].forEach((c,i)=>{if(sel.has(i))c.classList.add(list[i].ok?'pop':'shake');});
     [...opts.children].forEach(c=>c.disabled=true);sub.hidden=true;
     fb.innerHTML='';fb.append(h('div',{class:'fb'+(q.any?'':good?' good':' bad')},h('b',{},q.any?'Thanks for sharing.':good?'Correct!':'Not quite. Here’s the answer.'),q.fb||q.why||''));
     if(!restored&&!q.any)streakHit(good);
@@ -602,7 +673,13 @@ A.lesson=(act,ctx)=>{
   if(act.showParts){root.append(h('div',{class:'mnemonic',html:act.mnemonic}),h('p',{class:'muted',style:'margin:-10px 0 14px;font-size:14px;font-weight:600'},act.mnemonicNote));
     root.append(h('div',{class:'cards'},PARTS.map(p=>h('div',{class:'lcard pcard',style:`--pc:var(--p-${p.k})`},h('h4',{},p.n),h('p',{},p.d),h('div',{class:'ex'},p.ex)))));}
   if(act.template)root.append(h('div',{class:'eyebrow',style:'margin-bottom:6px'},'Fill-in-the-blanks prompt'),h('pre',{class:'tpl'},act.template));
-  if(act.cards)root.append(h('div',{class:'cards'},act.cards.map(c=>h('div',{class:'lcard'},h('h4',{},c.h),h('p',{},c.b),c.ex?h('div',{class:'ex'},c.ex):null))));
+  if(act.cards){const CI=['bolt','spark','target','lens','bubble','crown','play','hammer'];const sc=ans(ctx.key);sc.flip=sc.flip||{};
+    const note=h('div',{class:'cardnote'});const upd=()=>{note.innerHTML='';note.append(h('span',{},'Tap a card to flip it and add it to your collection.'),h('span',{},`${Object.keys(sc.flip).length} of ${act.cards.length} collected`));};
+    root.append(note,h('div',{class:'cards flips'},act.cards.map((c,i)=>{const b=h('button',{class:'flip'+(sc.flip[i]?' on':''),'aria-pressed':String(!!sc.flip[i])},
+      h('div',{class:'face front'},h('span',{class:'cico',html:ico(CI[i%CI.length],24,2.4)}),h('h4',{},c.h),h('small',{},sc.flip[i]?'Collected ✓ · tap to flip':'Tap to flip')),
+      h('div',{class:'face back'},h('h4',{},c.h),h('p',{},c.b),c.ex?h('div',{class:'ex'},c.ex):null));
+      b.onclick=()=>{const on=!b.classList.contains('on');b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));
+        if(on&&!sc.flip[i]){sc.flip[i]=1;if(!S.cards)S.cards={};S.cards[`${ctx.key}-${i}`]=1;save();b.querySelector('.front small').textContent='Collected ✓ · tap to flip';sfx('coin');upd();checkCards();}};return b;})));upd();}
   if(act.drill)root.append(h('div',{class:'panel',style:'margin-bottom:18px;background:var(--surface-2)'},h('h3',{style:'font-size:19px'},'The 4-step detective drill'),h('ol',{style:'margin:4px 0 0;padding-left:20px'},act.drill.map(d=>h('li',{},d)))));
   const c=act.check;st.check=st.check||{};
   root.append(h('div',{class:'panel',style:'background:var(--surface-2)'},h('div',{class:'eyebrow',style:'margin-bottom:6px'},'Lock it in'),questionEl({q:c.q,opts:c.opts,ok:c.ok,why:c.why},st.check,()=>finishIfNew(ctx),{retry:true})));
@@ -767,6 +844,13 @@ const G={
   back:'<path d="M15 5l-7 7 7 7"/>'
 };
 const ico=(n,s=24,sw=2.2)=>`<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${G[n]}</svg>`;
+Object.assign(G,{
+  map:'<path d="M9 4L3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/>',
+  book:'<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/>',
+  sound:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+  mute:'<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+  share:'<path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/>'
+});
 const coinSvg=`<svg class="coin ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--gold)"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6"/><path d="M12 8.5v7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`;
 const WORLD=[{c:'--w1',g:'bowl'},{c:'--w2',g:'target'},{c:'--w3',g:'hammer'},{c:'--w4',g:'lens'},{c:'--w5',g:'scales'},{c:'--w6',g:'crown'}];
 const STAGE_ICON={ce:'play',pp:'bubble',gen:'bolt',dev:'target',apply:'crown'};
@@ -790,10 +874,10 @@ function starEl(n){return h('span',{class:'stars','aria-label':`${n} of 3 stars`
 function completePhase(mi,pi,extra={}){
   const m=MODULES[mi],ph=PHASES[pi],key=pk(m.id,ph.k);let first=!S.done[key];let gained=0;
   if(extra.score!=null){const prev=S.scores[m.id]||0;if(extra.score>prev){S.scores[m.id]=extra.score;if(extra.score>=100&&m.id==='m1')award('anatomy');}}
-  if(first){S.done[key]=Date.now();save();gained=XP[ph.k];if(ph.k==='apply')gained+=Math.round((extra.score||0)/4);addXP(gained,`${m.title}: ${ph.n}`);}
+  if(first){S.done[key]=Date.now();save();bumpDay();gained=XP[ph.k];if(ph.k==='apply')gained+=Math.round((extra.score||0)/4);addXP(gained,`${m.title}: ${ph.n}`);}
   save();checkAllStars();
   if(ph.k==='apply'&&(first||extra.score>=85))confetti();
-  const nb=$('#nextBtn');if(nb){nb.disabled=false;nb.classList.add('primary');}
+  const nb=$('#nextBtn');if(nb){nb.disabled=false;nb.hidden=false;nb.classList.add('primary');}
   const cl=$('#clear');if(cl){cl.hidden=false;cl.classList.remove('pop');void cl.offsetWidth;cl.classList.add('pop');const g=cl.querySelector('.gain');if(g)g.textContent=gained?`+${gained} coins`:'Replayed. Nice practice.';}
   const pd=$('#phaseDone');if(pd)pd.hidden=true;
   renderTrack();
@@ -802,13 +886,14 @@ function completePhase(mi,pi,extra={}){
 /* ============ RENDER ============ */
 function renderHUD(){
   const ri=rankIdx(S.xp),r=RANKS[ri];
-  $('#nav').innerHTML='';[['home','Map'],['card','Cheat Sheet'],['badges','Trophies']].forEach(([k,l])=>$('#nav').append(h('button',{'aria-current':String(view.screen===k||(k==='home'&&view.screen==='module')),onclick:()=>go(k)},l)));
-  const on=aiState==='ready'||aiState==='live';
+  $('#nav').innerHTML='';[['home','Map','map'],['card','Cheat Sheet','book'],['badges','Trophies','crown']].forEach(([k,l,ic])=>$('#nav').append(h('button',{'aria-current':String(view.screen===k||(k==='home'&&view.screen==='module')),onclick:()=>go(k),html:`${ico(ic,22)}<span>${l}</span>`})));
+  const on=aiState==='ready'||aiState==='live';const ds=dayStreak();
   $('#stats').innerHTML='';$('#stats').append(
     h('span',{class:'pill lvl',title:`Level ${ri+1}: ${r.n}`,html:`${insignia(ri)}${esc(r.n)}`}),
-    h('span',{class:'pill',title:'Coins',html:`${coinSvg}${S.xp}`}),
-    h('span',{class:'pill'+(S.streak>=3?' hot':''),title:'Correct answers in a row',html:`${flame.replace('<svg','<svg class="ico" width="18" height="18"')} ${S.streak}`}),
-    h('span',{class:'pill',title:'Trophies',html:`${ico('crown',18)} ${Object.keys(S.badges).length}`}),
+    h('span',{class:'pill coins',title:'Coins',html:`${coinSvg}${S.xp}`}),
+    h('span',{class:'pill'+(ds>=3?' hot':''),title:'Day streak: days in a row you’ve played',html:`${flame.replace('<svg','<svg class="ico" width="18" height="18"')} ${ds}`}),
+    h('span',{class:'pill trophy',title:'Trophies',html:`${ico('crown',18)} ${Object.keys(S.badges).length}`}),
+    h('button',{class:'pill snd','aria-pressed':String(!!S.sound),'aria-label':S.sound?'Sound is on':'Sound is off',title:S.sound?'Sound is on':'Sound is off',onclick:()=>{S.sound=!S.sound;save();renderHUD();if(S.sound)sfx('right');},html:ico(S.sound?'sound':'mute',18)}),
     window.claude?h('span',{class:'pill ai'+(on?' on':'')},h('i'),aiState==='checking'?'Coach loading':on?'AI coach on':'AI coach offline'):'');
 }
 function go(screen,mi,pi){view.screen=screen;if(mi!=null)view.mi=mi;if(pi!=null)view.pi=pi;render();window.scrollTo({top:0,behavior:'instant'});}
@@ -838,8 +923,8 @@ function renderHome(){
     h('div',{class:'player'},
       h('div',{class:'top',html:`${insignia(ri)}<div><div class="eyebrow">Level ${ri+1}</div><div class="lv">${esc(r.n)}</div></div>`}),
       xpBar(),
-      h('div',{class:'statgrid'},h('div',{class:'stat'},h('b',{},S.xp),h('span',{},'Coins')),h('div',{class:'stat'},h('b',{},S.best),h('span',{},'Best streak')),h('div',{class:'stat'},h('b',{},`${Object.keys(S.badges).length}/${BADGES.length}`),h('span',{},'Trophies'))),
-      h('div',{class:'nextup',style:`--wc:var(${WORLD[rm].c})`},h('div',{},h('div',{class:'eyebrow'},'Up next'),h('b',{},`${nextM.title} · ${PHASES[rp].n}`)),h('button',{class:'btn sm',onclick:()=>go('module',rm,rp),html:`${ico('play',14)} Go`})))));
+      h('div',{class:'statgrid'},h('div',{class:'stat'},h('b',{},S.xp),h('span',{},'Coins')),h('div',{class:'stat'},h('b',{},dayStreak()),h('span',{},'Day streak')),h('div',{class:'stat'},h('b',{},`${Object.keys(S.badges).length}/${BADGES.length}`),h('span',{},'Trophies'))),
+      dayGoalEl(),h('div',{class:'nextup',style:`--wc:var(${WORLD[rm].c})`},h('div',{},h('div',{class:'eyebrow'},'Up next'),h('b',{},`${nextM.title} · ${PHASES[rp].n}`)),h('button',{class:'btn sm',onclick:()=>go('module',rm,rp),html:`${ico('play',14)} Go`})))));
 
   app.append(trialBanner());app.append(h('div',{class:'sec-h'},h('h2',{},'The Map'),h('span',{class:'muted',style:'font-size:14.5px'},'Beat a world’s boss to open the next one.')));
   const trail=h('div',{class:'trail'});trail.innerHTML='<svg class="trail-svg" aria-hidden="true"></svg>';
@@ -868,14 +953,16 @@ function certEl(){const ip=h('input',{type:'text',id:'certName',placeholder:'Typ
   const r=RANKS[rankIdx(S.xp)];
   return h('section',{class:'cert'},h('div',{class:'certificate'},h('div',{class:'eyebrow'},'Prompt Quest'),h('h2',{},'Champion'),h('p',{style:'margin:8px 0 0;opacity:.9'},'Awarded to'),nm,
     h('p',{style:'max-width:52ch;margin:6px auto'},'for conquering all six worlds and building a signature prompt that gets AI to deliver, every time.'),
-    h('p',{class:'eyebrow',style:'margin-top:12px'},`${r.n} · ${S.xp} coins · ${Object.keys(S.badges).length} trophies · ${S.certDate||''}`)),h('div',{class:'row',style:'justify-content:center'},ip));}
+    h('p',{class:'eyebrow',style:'margin-top:12px'},`${r.n} · ${S.xp} coins · ${Object.keys(S.badges).length} trophies · ${S.certDate||''}`)),h('div',{class:'row',style:'justify-content:center'},ip,h('button',{class:'btn',onclick:openShare,html:`${ico('share',16)} Share`})));}
 
 function renderTrack(){const tr=$('#track');if(!tr)return;const mi=view.mi,m=MODULES[mi];tr.innerHTML='';
   const dn=PHASES.filter(p=>S.done[pk(m.id,p.k)]).length;tr.append(h('div',{class:'prog',style:`width:${Math.min(dn,4)/4*80}%`}));
   PHASES.forEach((p,pi)=>{const d=!!S.done[pk(m.id,p.k)];tr.append(h('button',{class:'stage'+(d?' done':'')+(p.k==='apply'?' boss':''),'aria-current':String(pi===view.pi),disabled:!phaseUnlocked(mi,pi),onclick:()=>go('module',mi,pi),'aria-label':`Stage ${pi+1}: ${p.n}`},
     h('span',{class:'dot',html:d&&pi!==view.pi?ico('check',24,3):ico(phaseUnlocked(mi,pi)?STAGE_ICON[p.k]:'lock',24)}),h('span',{class:'lbl'},p.n)));});}
 
-function stepsEl(act){if(!act.steps)return h('p',{class:'intro'},act.intro);return h('div',{class:'steps'},h('div',{class:'eyebrow'},'How to play'),h('ol',{},act.steps.map(x=>h('li',{},x))));}
+function stepsEl(act,key){if(!act.steps)return h('p',{class:'intro'},act.intro);const open=!S.done[key]&&S.stepsPref!=='closed';
+  const d=h('details',{class:'steps',open:open},h('summary',{html:`${spark('happy','tiny')}<span>How to play</span>`}),h('ol',{},act.steps.map(x=>h('li',{},x))));
+  d.addEventListener('toggle',()=>{if(!S.done[key]){S.stepsPref=d.open?'open':'closed';save();}});return d;}
 function renderModule(){
   const app=$('#app');app.innerHTML='';const mi=view.mi,pi=view.pi,m=MODULES[mi],ph=PHASES[pi],act=m.phases[ph.k];const key=pk(m.id,ph.k);
   if(!phaseUnlocked(mi,pi)){if(isPaid(mi,pi)){view.screen='home';render();return upsell();}return go('home');}
@@ -887,17 +974,20 @@ function renderModule(){
   const ctx={key,complete:(extra)=>completePhase(mi,pi,extra||{})};
   const actEl=A[act.type](act,ctx);
   const done=!!S.done[key];const isLast=pi===4;
-  const nextB=h('button',{class:'btn big'+(done?' primary':''),id:'nextBtn',disabled:!done,onclick:()=>{if(!isLast)go('module',mi,pi+1);else if(mi<MODULES.length-1)go('module',mi+1,0);else go('home');}},isLast?(mi<MODULES.length-1?`Next world →`:'Back to the map'):(isPaid(mi,pi+1)?'Unlock the full game →':`Next stage →`));
-  const clear=h('div',{class:'clear',id:'clear',role:'status',hidden:!done},h('span',{class:'burst',html:ico('check',22,3)}),h('div',{},h('b',{},act.boss?'Boss defeated!':'Stage clear!'),h('span',{class:'gain muted',style:'font-size:14px'},done?'Play it again any time.':'')));
+  const nextB=h('button',{class:'btn big'+(done?' primary':''),id:'nextBtn',disabled:!done,hidden:!done,onclick:()=>{if(!isLast)go('module',mi,pi+1);else if(mi<MODULES.length-1)go('module',mi+1,0);else go('home');}},isLast?(mi<MODULES.length-1?`Next world →`:'Back to the map'):(isPaid(mi,pi+1)?'Unlock the full game →':`Next stage →`));
+  const clear=h('div',{class:'clear',id:'clear',role:'status',hidden:!done},h('span',{class:'mascot',html:spark(act.boss?'wow':'happy')}),h('div',{},h('b',{},act.boss?'Boss defeated!':'Stage clear!'),h('span',{class:'gain muted',style:'font-size:14px'},done?'Play it again any time.':'')));
   app.append(h('section',{class:'act'},
     h('div',{class:'act-h'},h('div',{},h('div',{class:'kicker',html:`${ico(STAGE_ICON[ph.k],16,2.6)} ${act.boss?'Boss round':`Stage ${pi+1} · ${ph.n}`}`}),h('h2',{},act.title)),h('span',{class:'xptag',html:`${coinSvg} +${XP[ph.k]}${act.boss?' + bonus':''}`})),
-    stepsEl(act),actEl,
+    stepsEl(act,key),actEl,
     h('div',{class:'next-row'},clear,h('span',{id:'phaseDone',class:'muted',style:'font-size:14.5px;font-weight:600',hidden:done},act.boss?'Beat the boss to move on.':'Finish this stage to move on.'),nextB)));
 }
 
 function renderBadges(){const app=$('#app');app.innerHTML='';const ri=rankIdx(S.xp);
-  app.append(h('div',{class:'sec-h'},h('h2',{},'Trophies'),h('span',{class:'muted'},`${Object.keys(S.badges).length} of ${BADGES.length} earned · Best streak: ${S.best}`)));
+  app.append(h('div',{class:'sec-h'},h('h2',{},'Trophies'),h('button',{class:'btn sm',onclick:openShare,html:`${ico('share',16)} Share my progress`}),h('span',{class:'muted'},`${Object.keys(S.badges).length} of ${BADGES.length} earned · Best streak: ${S.best}`)));
   app.append(h('div',{class:'badges'},BADGES.map((b,i)=>h('div',{class:'badge'+(S.badges[b.k]?'':' off'),html:`${badgeSvg(i,!!S.badges[b.k])}<div><b>${esc(b.n)}</b><span>${esc(b.d)}</span></div>`}))));
+  {const cards=allCards();if(cards.length){const has=c=>S.cards&&S.cards[c.id];const got=cards.filter(has).length;
+    app.append(h('div',{class:'sec-h',style:'margin-top:40px'},h('h2',{},'Power-Up Cards'),h('span',{class:'muted'},`${got} of ${cards.length} collected`)));
+    app.append(h('div',{class:'collection'},cards.map(c=>h('div',{class:'cchip'+(has(c)?' on':''),style:`--wc:var(${WORLD[c.mi].c})`},h('span',{class:'wn'},`W${c.mi+1}`),has(c)?c.h:'Not found yet'))));}}
   app.append(h('div',{class:'sec-h',style:'margin-top:40px'},h('h2',{},'Levels')));
   app.append(h('div',{class:'ranks'},RANKS.map((r,i)=>h('div',{class:'rk'+(i===ri?' me':''),html:`${insignia(i)}<b>${esc(r.n)}</b><div class="x">${r.xp} coins${i===ri?' · you':''}</div>`}))));
   const sc=h('div',{class:'panel',style:'margin-top:40px'},h('h3',{},'Boss scores'));MODULES.forEach((m,i)=>sc.append(h('div',{class:'row',style:'justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:8px'},h('span',{style:'font-weight:600'},`World ${i+1} · ${m.title}`),h('span',{},S.scores[m.id]!=null?`${S.scores[m.id]}% `:'– ',starEl(stars(S.scores[m.id]||0))))));app.append(sc);
@@ -916,15 +1006,15 @@ function renderCard(){const app=$('#app');app.innerHTML='';
 
 /* ============ FIRST-TIME WELCOME ============ */
 const WELCOME=[
-  {i:'play',c:'--w1',h:'Welcome to Prompt Quest',p:`A game about getting great results from AI. There are ${MODULES.length} worlds to explore, and beating each one opens the next.`},
-  {i:'bolt',c:'--w2',h:'Five quick stages per world',p:'Try It, Your Take, Power-Up, Practice, and a Boss round. You jump in first, then pick up the tricks as you go.'},
-  {i:'crown',c:'--w5',h:'Earn coins and level up',p:'Clear stages for coins, build answer streaks, and collect trophies. Your progress saves on this device automatically.'}
+  {m:'happy',h:'Hi! I’m Spark.',p:`Welcome to Prompt Quest, a game about getting great results from AI. There are ${MODULES.length} worlds to explore, and beating each one opens the next.`},
+  {m:'wink',h:'Five quick stages per world',p:'Try It, Your Take, Power-Up, Practice, and a Boss round. You jump in first, then pick up the tricks as you go.'},
+  {m:'wow',h:'Coins, streaks, and trophies',p:'Clear stages for coins, play a stage a day to keep your streak going, and collect trophies and Power-Up cards. Your progress saves on this device.'}
 ];
 function welcome(n){$('#modalRoot').innerHTML='';let i=n||0;const m=h('div',{class:'modal',role:'dialog','aria-modal':'true','aria-labelledby':'wl-h'});
   function close(){S.welcomed=1;save();m.remove();}
   function draw(){const st=WELCOME[i];const last=i===WELCOME.length-1;m.innerHTML='';
     const card=h('div',{class:'card welcome'},
-      h('div',{class:'wl-ico',style:`--wc:var(${st.c})`,html:ico(st.i,34,2.4)}),
+      h('div',{class:'wl-mascot',html:spark(st.m,'float')}),
       h('div',{class:'wl-dots','aria-hidden':'true'},WELCOME.map((x,j)=>h('i',{class:j===i?'on':''}))),
       h('h2',{id:'wl-h'},st.h),h('p',{class:'muted',style:'margin:0 0 18px'},st.p),
       h('div',{class:'row',style:'justify-content:center'},
@@ -932,6 +1022,72 @@ function welcome(n){$('#modalRoot').innerHTML='';let i=n||0;const m=h('div',{cla
         h('button',{class:'btn primary',onclick:()=>{if(last)close();else{i++;draw();}}},last?'Let\u2019s play':'Next \u2192')));
     m.append(card);const b=card.querySelector('.btn.primary');if(b)b.focus();}
   draw();$('#modalRoot').append(m);}
+/* ============ POLISH HELPERS ============ */
+const SHARE_TAG='Learn to get great results from AI · andyk751-droid.github.io/Prompt-Quest';
+/* Spark, the guide character (original art). Moods: happy, wink, wow. */
+function spark(mood='happy',cls=''){const ink='#1B2140';
+  const eyes=mood==='wink'?`<circle cx="39" cy="52" r="5.5" fill="${ink}"/><circle cx="41" cy="50" r="1.8" fill="#fff"/><path d="M56 53q5-5 10 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    :`<circle cx="39" cy="52" r="5.5" fill="${ink}"/><circle cx="61" cy="52" r="5.5" fill="${ink}"/><circle cx="41" cy="50" r="1.8" fill="#fff"/><circle cx="63" cy="50" r="1.8" fill="#fff"/>`;
+  const mouth=mood==='wow'?`<ellipse cx="50" cy="68" rx="6" ry="7" fill="${ink}"/>`:`<path d="M39 64q11 11 22 0" stroke="${ink}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  return `<svg class="spark-m ${cls}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="spk-${mood}" cx="38%" cy="34%" r="75%"><stop offset="0" stop-color="#FFE7A3"/><stop offset=".55" stop-color="#FFB547"/><stop offset="1" stop-color="#FF7A45"/></radialGradient></defs>
+<path d="M50 6c6 8 11 12 8 19-2-3-5-4-8-2-3-2-6-1-8 2-3-7 2-11 8-19z" fill="#FF8A45"/>
+<path d="M17 60q-9-1-10 8" stroke="#FF8A45" stroke-width="5.5" fill="none" stroke-linecap="round"/><path d="M83 58q9-3 11-12" stroke="#FF8A45" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+<circle cx="50" cy="58" r="33" fill="url(#spk-${mood})"/>
+<circle cx="29" cy="64" r="5" fill="#FF6B6B" opacity=".35"/><circle cx="71" cy="64" r="5" fill="#FF6B6B" opacity=".35"/>${eyes}${mouth}
+<path d="M86 16l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFD166"/><path d="M12 20l1.5 3.5 3.5 1.5-3.5 1.5L12 30l-1.5-3.5L7 25l3.5-1.5z" fill="#FFD166"/></svg>`;}
+/* Optional sounds (off by default), made on the fly with Web Audio: no files. */
+let AC=null;
+function sfx(kind){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  const seq={right:[[660,.08],[880,.13]],wrong:[[220,.18]],coin:[[988,.05],[1319,.09]],level:[[523,.1],[659,.1],[784,.1],[1047,.24]],goal:[[784,.1],[988,.2]]}[kind]||[];
+  let t=AC.currentTime;seq.forEach(([fq,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=kind==='wrong'?'triangle':'sine';o.frequency.value=fq;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03);t+=d*.9;});}catch(e){}}
+/* Coins fly into the coin counter. */
+function flyCoin(){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const pill=document.querySelector('.pill.coins');if(!pill)return;
+  const cl=document.getElementById('clear');const src=(cl&&!cl.hidden)?cl:(document.querySelector('.act')||pill);const a=src.getBoundingClientRect(),b=pill.getBoundingClientRect();
+  const y0b=Math.min(Math.max(a.top+20,40),innerHeight-60);
+  for(let i=0;i<5;i++){const c=h('div',{class:'flycoin',html:coinSvg});const x0=Math.min(a.left+30+Math.random()*80,innerWidth-40),y0=y0b+Math.random()*20;c.style.left=x0+'px';c.style.top=y0+'px';document.body.append(c);
+    setTimeout(()=>{c.style.transform=`translate(${b.left+b.width/2-x0-14}px,${b.top+b.height/2-y0-14}px) scale(.6)`;c.style.opacity='.15';},30+i*70);
+    setTimeout(()=>{c.remove();const p=document.querySelector('.pill.coins');if(p){p.classList.remove('bump');void p.offsetWidth;p.classList.add('bump');}},880+i*70);}}catch(e){}}
+/* Daily streak and daily goal (1 stage a day). */
+function today(){return new Date().toLocaleDateString('en-CA');}
+function yesterday(){const y=new Date();y.setDate(y.getDate()-1);return y.toLocaleDateString('en-CA');}
+function dayStreak(){const d=S.day;if(!d||!d.last)return 0;return (d.last===today()||d.last===yesterday())?d.streak:0;}
+function bumpDay(){const t=today();if(!S.day)S.day={last:'',streak:0,best:0,date:'',count:0};const d=S.day;
+  if(d.date!==t){d.date=t;d.count=0;}d.count++;
+  if(d.last!==t){d.streak=(d.last===yesterday())?d.streak+1:1;d.last=t;d.best=Math.max(d.best||0,d.streak);
+    setTimeout(()=>{toast(`Daily goal done! ${d.streak}-day streak`,'Come back tomorrow to keep it going.');sfx('goal');},1100);
+    if(d.streak>=3)setTimeout(()=>award('streak3'),1600);}
+  save();}
+function dayGoalEl(){const done=S.day&&S.day.date===today()&&S.day.count>=1;
+  return h('div',{class:'daygoal'+(done?' done':'')},h('span',{class:'dg-ico',html:done?ico('check',16,3):flame.replace('<svg','<svg class="ico" width="16" height="16"')}),h('span',{},done?`Daily goal done. ${dayStreak()}-day streak!`:'Daily goal: clear 1 stage today'));}
+/* Power-Up card collection. */
+function allCards(){const out=[];MODULES.forEach((m,mi)=>{const g=m.phases&&m.phases.gen;if(g&&g.cards)g.cards.forEach((c,i)=>out.push({id:`${m.id}.gen-${i}`,h:c.h,mi}));});return out;}
+function checkCards(){const c=allCards();if(c.length&&c.every(x=>S.cards&&S.cards[x.id]))award('collector');}
+/* Shareable progress image. */
+function rrect(x,a,b,w,hh,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+hh,r);x.arcTo(a+w,b+hh,a,b+hh,r);x.arcTo(a,b+hh,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+async function shareCanvas(){const W=1200,H=630;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#3A2B97');g.addColorStop(.55,'#8E2C66');g.addColorStop(1,'#A8442C');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(255,255,255,.07)';for(let i=14;i<W;i+=28)for(let j=14;j<H;j+=28){x.beginPath();x.arc(i,j,1.6,0,7);x.fill();}
+  try{await document.fonts.ready;}catch(e){}
+  const ri=rankIdx(S.xp),r=RANKS[ri];const beat=MODULES.filter(m=>S.done[pk(m.id,'apply')]).length;
+  const F=(w,sz)=>`${w} ${sz}px 'Bricolage Grotesque','Figtree',system-ui,sans-serif`;
+  x.fillStyle='#fff';x.font=F(800,34);x.fillText(document.title.replace(/ Admin$/,''),70,96);
+  x.globalAlpha=.85;x.font=F(700,28);x.fillText(`Level ${ri+1}`,70,190);x.globalAlpha=1;
+  x.font=F(800,92);x.fillText(r.n,70,282);
+  [[S.xp,'coins'],[`${beat}/${MODULES.length}`,'worlds beaten'],[Object.keys(S.badges).length,'trophies'],[dayStreak(),'day streak']].forEach(([v,l],i)=>{const bx=70+i*196,by=336;
+    x.fillStyle='rgba(255,255,255,.15)';rrect(x,bx,by,178,124,22);x.fill();x.fillStyle='#fff';x.font=F(800,46);x.fillText(String(v),bx+22,by+64);x.globalAlpha=.85;x.font=F(600,21);x.fillText(l,bx+22,by+100);x.globalAlpha=1;});
+  x.font=F(700,24);x.fillText(SHARE_TAG,70,566);
+  const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(spark('happy'));
+  await new Promise(res=>{img.onload=res;img.onerror=res;});try{x.drawImage(img,850,130,300,300);}catch(e){}
+  return cv;}
+async function openShare(){const cv=await shareCanvas();let url='';try{url=cv.toDataURL('image/png');}catch(e){}
+  const m=h('div',{class:'modal',role:'dialog','aria-modal':'true','aria-label':'Share your progress'});
+  const sh=h('button',{class:'btn',hidden:true},'Share');
+  if(cv.toBlob)cv.toBlob(b=>{try{if(!b)return;const file=new File([b],'prompt-quest-progress.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){sh.hidden=false;sh.onclick=()=>navigator.share({files:[file],title:'My Prompt Quest progress',text:SHARE_TAG}).catch(()=>{});}}catch(e){}});
+  m.append(h('div',{class:'card share'},h('h2',{style:'font-size:28px'},'Show off your progress'),
+    url?h('img',{src:url,alt:'Your Prompt Quest progress card',style:'width:100%;border-radius:16px;margin:8px 0 14px'}):null,
+    h('p',{class:'muted',style:'margin:0 0 14px;font-size:14.5px'},'Download the image, then post it anywhere. On a phone, you can also press and hold the image to save it.'),
+    h('div',{class:'row',style:'justify-content:center'},url?h('a',{class:'btn primary',href:url,download:'prompt-quest-progress.png'},'Download image'):null,sh,h('button',{class:'btn ghost',onclick:()=>m.remove()},'Close'))));
+  $('#modalRoot').innerHTML='';$('#modalRoot').append(m);}
 
 /* ============ FREE TRIAL ============ */
 /* Counts a few anonymous events (no names, no cookies) so you can see where trial players go. */
