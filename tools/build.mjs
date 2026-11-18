@@ -1,3 +1,4 @@
+// OLD: builds the paid free-trial version. Prompt Quest is free now; use tools/build-free.mjs instead.
 // Prompt Quest build tool
 // Makes two versions from ONE master game file:
 //   dist/trial/  -> free trial (Worlds 1-2), installable on phones, goes on GitHub Pages

@@ -1,7 +1,7 @@
 {
   "name": "Prompt Quest",
   "short_name": "Prompt Quest",
-  "description": "A hands-on game for learning to get great results from AI.",
+  "description": "A free, hands-on game for learning to get great results from AI.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
